@@ -1,0 +1,27 @@
+name: similar_eats_desktop
+description: Offline mock simulation of Similar Eats desktop
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  flutter_svg: ^2.0.10+1
+  google_fonts: ^6.1.0
+  collection: ^1.18.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/food1.jpg
+    - assets/food2.jpg
+    - assets/food3.jpg
+    - assets/food4.jpg

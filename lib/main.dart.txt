@@ -1,0 +1,422 @@
+import 'dart:math';
+import 'package:flutter/material.dart';
+
+void main() => runApp(const SimilarEatsApp());
+
+class SimilarEatsApp extends StatelessWidget {
+  const SimilarEatsApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final seed = const Color(0xFFF25C54);
+    return MaterialApp(
+      title: 'Similar Eats',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        useMaterial3: true,
+        colorScheme: ColorScheme.fromSeed(seedColor: seed, brightness: Brightness.light),
+        scaffoldBackgroundColor: const Color(0xFFFFF4EF),
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Colors.white,
+          foregroundColor: Colors.black,
+          centerTitle: false,
+          elevation: 0,
+        ),
+        chipTheme: const ChipThemeData(
+          side: BorderSide(color: Colors.transparent),
+          shape: StadiumBorder(),
+          labelStyle: TextStyle(fontWeight: FontWeight.w600),
+        ),
+      ),
+      home: const HomeScreen(),
+    );
+  }
+}
+
+/// --------------------------- DATA ---------------------------
+
+class Restaurant {
+  final String name;
+  final String category;
+  final double rating;
+  final List<String> tags;
+  final Color color;
+
+  const Restaurant({
+    required this.name,
+    required this.category,
+    required this.rating,
+    required this.tags,
+    required this.color,
+  });
+}
+
+const _restaurants = <Restaurant>[
+  Restaurant(
+    name: 'Spicy Palace',
+    category: 'Thai',
+    rating: 4.5,
+    tags: ['🌶️ spicy', '🍗 crispy', '🌿 cilantro', '🍋 lime'],
+    color: Color(0xFFF25C54),
+  ),
+  Restaurant(
+    name: 'Crispy Corner',
+    category: 'Fried Chicken',
+    rating: 4.2,
+    tags: ['🧀 cheesy', '🍗 crispy'],
+    color: Color(0xFF41B883),
+  ),
+  Restaurant(
+    name: 'Cheesy Bites',
+    category: 'Pizza',
+    rating: 4.8,
+    tags: ['🧀 cheesy', '🍗 crispy', '🍕 pizza'],
+    color: Color(0xFFFFC107),
+  ),
+  Restaurant(
+    name: 'Umami House Ramen',
+    category: 'Ramen',
+    rating: 4.6,
+    tags: ['🍜 umami', '🍜 noodles', '🥩 pork', '🥚 egg'],
+    color: Color(0xFF2F6BFF),
+  ),
+];
+
+/// Fun prompts – one will be picked each app start.
+const _prompts = <String>[
+  'Where do you want to eat?',
+  'What are you craving?',
+  'What’s for dinner tonight?',
+  'Pick a vibe for tonight’s bites',
+  'Choose your food adventure',
+];
+
+/// --------------------------- HOME ---------------------------
+
+class HomeScreen extends StatefulWidget {
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  late final String _prompt = _prompts[Random().nextInt(_prompts.length)];
+  final List<String> _wants = <String>[
+    // starter examples (you’ll replace from CravingScreen)
+    //'🍗 Wings',
+    //'Johnny’s Wings',
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'Similar Eats',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22),
+        ),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+        children: [
+          // Avatar
+          const SizedBox(height: 8),
+          Center(
+            child: CircleAvatar(
+              radius: 52,
+              backgroundColor: Colors.brown.shade200,
+              child: const Text(
+                'D',
+                style: TextStyle(fontSize: 34, fontWeight: FontWeight.w800, color: Colors.brown),
+              ),
+            ),
+          ),
+          const SizedBox(height: 18),
+
+          // Clickable prompt
+          Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(Icons.restaurant_menu_rounded, color: Color(0xFFF25C54)),
+              const SizedBox(width: 8),
+              GestureDetector(
+                onTap: () async {
+                  final List<String>? picked = await Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (_) => const CravingScreen()),
+                  );
+                  if (picked != null && picked.isNotEmpty) {
+                    setState(() {
+                      // merge unique, keep order by adding new at end
+                      for (final p in picked) {
+                        if (!_wants.contains(p)) _wants.add(p);
+                      }
+                    });
+                  }
+                },
+                child: Text(
+                  _prompt,
+                  style: const TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w900,
+                    color: Color(0xFFF25C54),
+                  ),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 18),
+          const _SectionTitle('Dishes you want to try'),
+          const SizedBox(height: 8),
+
+          // Chips list (from selections)
+          if (_wants.isEmpty)
+            Opacity(
+              opacity: .6,
+              child: Row(
+                children: [
+                  _ghostChip(width: 96),
+                  const SizedBox(width: 12),
+                  _ghostChip(width: 160),
+                ],
+              ),
+            )
+          else
+            Wrap(
+              spacing: 10,
+              runSpacing: 10,
+              children: _wants
+                  .map(
+                    (w) => InputChip(
+                      label: Text(w),
+                      backgroundColor: Colors.white,
+                      onDeleted: () {
+                        setState(() => _wants.remove(w));
+                      },
+                    ),
+                  )
+                  .toList(),
+            ),
+
+          const SizedBox(height: 22),
+          const _SectionTitle('Suggested matches'),
+          const SizedBox(height: 8),
+          for (final r in _restaurants) _RestaurantCard(r),
+          const SizedBox(height: 24),
+          Center(
+            child: Text('Mock data • offline',
+                style: TextStyle(color: cs.outline)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _SectionTitle extends StatelessWidget {
+  final String text;
+  const _SectionTitle(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      text,
+      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+    );
+  }
+}
+
+class _RestaurantCard extends StatelessWidget {
+  final Restaurant r;
+  const _RestaurantCard(this.r);
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 0,
+      color: const Color(0xFFFFEAE3),
+      margin: const EdgeInsets.symmetric(vertical: 10),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 64,
+                height: 64,
+                decoration: BoxDecoration(
+                  color: r.color,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              const SizedBox(width: 14),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(r.name,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w800)),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Text('${r.category} • ',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                        const Icon(Icons.star_rounded,
+                            size: 18, color: Colors.amber),
+                        Text(' ${r.rating.toStringAsFixed(1)}',
+                            style: TextStyle(
+                                color: Theme.of(context).colorScheme.onSurfaceVariant)),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: r.tags
+                          .map((t) => Chip(
+                                label: Text(t),
+                                backgroundColor: Colors.white,
+                                padding:
+                                    const EdgeInsets.symmetric(horizontal: 6),
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.chevron_right_rounded),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+Widget _ghostChip({required double width}) => Container(
+      height: 40,
+      width: width,
+      decoration: BoxDecoration(
+        color: Colors.white.withOpacity(.8),
+        borderRadius: BorderRadius.circular(20),
+      ),
+    );
+
+/// --------------------------- CRAVING SCREEN ---------------------------
+
+class CravingScreen extends StatefulWidget {
+  const CravingScreen({super.key});
+
+  @override
+  State<CravingScreen> createState() => _CravingScreenState();
+}
+
+class _CravingScreenState extends State<CravingScreen> {
+  final List<_Cat> _categories = const [
+    _Cat('🍗', 'Chicken'),
+    _Cat('🍕', 'Pizza'),
+    _Cat('🍔', 'Burgers'),
+    _Cat('🍣', 'Sushi'),
+    _Cat('🌮', 'Tacos'),
+    _Cat('🥗', 'Salad'),
+    _Cat('🍝', 'Pasta'),
+    _Cat('🍜', 'Ramen'),
+    _Cat('🍰', 'Dessert'),
+    _Cat('☕', 'Coffee'),
+  ];
+
+  final Set<String> _selected = <String>{};
+  final TextEditingController _custom = TextEditingController();
+
+  void _toggle(String label) {
+    setState(() {
+      if (_selected.contains(label)) {
+        _selected.remove(label);
+      } else {
+        _selected.add(label);
+      }
+    });
+  }
+
+  void _submit() {
+    final List<String> result = _selected.toList();
+    final custom = _custom.text.trim();
+    if (custom.isNotEmpty) {
+      result.add(custom);
+    }
+    Navigator.pop(context, result);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final chips = _categories
+        .map((c) => ChoiceChip(
+              label: Text('${c.emoji} ${c.label}'),
+              selected: _selected.contains('${c.emoji} ${c.label}'),
+              onSelected: (_) => _toggle('${c.emoji} ${c.label}'),
+            ))
+        .toList();
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text(
+          'What are you craving?',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 20),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Wrap(spacing: 10, runSpacing: 10, children: chips),
+            const SizedBox(height: 18),
+            TextField(
+              controller: _custom,
+              textInputAction: TextInputAction.done,
+              onSubmitted: (_) => _submit(),
+              decoration: const InputDecoration(
+                labelText: 'Write in your own...',
+                hintText: 'e.g., Johnny’s Wings',
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton.icon(
+                icon: const Icon(Icons.check_rounded),
+                onPressed: _submit,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor: const Color(0xFFF25C54),
+                ),
+                label: const Text(
+                  'Done',
+                  style: TextStyle(fontWeight: FontWeight.w700),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _Cat {
+  final String emoji;
+  final String label;
+  const _Cat(this.emoji, this.label);
+}
