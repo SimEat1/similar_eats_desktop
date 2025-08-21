@@ -1,3 +1,4 @@
+// lib/main.dart
 import 'dart:math';
 import 'package:flutter/material.dart';
 
@@ -21,81 +22,118 @@ class SimilarEatsApp extends StatelessWidget {
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
           foregroundColor: Colors.black,
-          elevation: 0,
           centerTitle: false,
-          titleTextStyle: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w800,
-            color: Colors.black,
-          ),
+          elevation: 0,
         ),
         chipTheme: const ChipThemeData(
           side: BorderSide(color: Colors.transparent),
           shape: StadiumBorder(),
           labelStyle: TextStyle(fontWeight: FontWeight.w600),
-          backgroundColor: Colors.white,
         ),
       ),
-      home: const HomeScreen(),
+      home: const _RootNav(),
     );
   }
 }
 
-/// ------------------------------------------------------------
-/// Simple models & sample data
-/// ------------------------------------------------------------
+/* =============================== ROOT NAV =============================== */
+
+class _RootNav extends StatefulWidget {
+  const _RootNav({super.key});
+  @override
+  State<_RootNav> createState() => _RootNavState();
+}
+
+class _RootNavState extends State<_RootNav> {
+  int _index = 0;
+
+  // We keep Home as a single instance to preserve its state (chips, etc.)
+  final _home = const HomeScreen();
+
+  List<Widget> get _pages => [
+        _home,
+        const CompareScreen(),
+        const HeatmapScreen(),
+        const PremiumScreen(),
+      ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: SafeArea(
+        child: AnimatedSwitcher(
+          duration: const Duration(milliseconds: 220),
+          child: _pages[_index],
+        ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _index,
+        onDestinationSelected: (i) => setState(() => _index = i),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
+          NavigationDestination(icon: Icon(Icons.tune_rounded), label: 'Compare'),
+          NavigationDestination(
+              icon: Icon(Icons.local_fire_department_rounded), label: 'Heatmap'),
+          NavigationDestination(
+              icon: Icon(Icons.workspace_premium_rounded), label: 'Premium'),
+        ],
+      ),
+    );
+  }
+}
+
+/* =============================== DATA =============================== */
 
 class Restaurant {
   final String name;
-  final String cuisine;
+  final String category;
   final double rating;
-  final Color color;
   final List<String> tags;
+  final Color color;
 
   const Restaurant({
     required this.name,
-    required this.cuisine,
+    required this.category,
     required this.rating,
+    required this.tags,
     required this.color,
-    this.tags = const [],
   });
 }
 
 const _restaurants = <Restaurant>[
   Restaurant(
     name: 'Spicy Palace',
-    cuisine: 'Thai',
+    category: 'Thai',
     rating: 4.5,
+    tags: ['🌶️ spicy', '🍗 crispy', '🌿 cilantro', '🍋 lime'],
     color: Color(0xFFF25C54),
-    tags: ['🌶️ spicy', '🍋 lime', '🌿 cilantro'],
   ),
   Restaurant(
     name: 'Crispy Corner',
-    cuisine: 'Fried Chicken',
+    category: 'Fried Chicken',
     rating: 4.2,
-    color: Color(0xFF2FB879),
     tags: ['🧀 cheesy', '🍗 crispy'],
+    color: Color(0xFF41B883),
   ),
   Restaurant(
     name: 'Cheesy Bites',
-    cuisine: 'Pizza',
+    category: 'Pizza',
     rating: 4.8,
-    color: Color(0xFFFFC107),
     tags: ['🧀 cheesy', '🍕 pizza'],
+    color: Color(0xFFFFC107),
   ),
   Restaurant(
     name: 'Umami House Ramen',
-    cuisine: 'Ramen',
+    category: 'Ramen',
     rating: 4.6,
+    tags: ['🍜 umami', '🥩 pork', '🥚 egg'],
     color: Color(0xFF2F6BFF),
-    tags: ['🍜 noodles', '🥚 egg'],
   ),
 ];
 
-/// ------------------------------------------------------------
-/// Home
-/// ------------------------------------------------------------
+/* =============================== HOME =============================== */
 
+/// We store the last dinner choice here so the chips can show it.
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -104,126 +142,174 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  // Randomized prompt each launch
-  late final String _prompt = _randomPrompt();
-  // Example “dishes you want to try”
-  final List<String> _toTry = ["🍗 Wings", "🍗 Johnny's Wings"];
-  // Categories selected on the craving screen
-  List<String> _selectedCravings = const [];
-
-  String _randomPrompt() {
-    const options = [
-      "What’s for dinner tonight?",
-      "Where do you want to eat?",
-      "What are you craving?",
-      "What sounds good right now?",
-      "Pick something delicious!",
-      "What should we try today?",
-    ];
-    final r = Random();
-    return options[r.nextInt(options.length)];
-  }
-
-  Future<void> _openCravings() async {
-    final result = await Navigator.push<List<String>>(
-      context,
-      MaterialPageRoute(
-        builder: (_) => CategorySelectionScreen(
-          initiallySelected: _selectedCravings,
-        ),
-      ),
-    );
-    if (result != null) {
-      setState(() => _selectedCravings = result);
-    }
-  }
+  DinnerChoice? _lastChoice;
 
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Similar Eats')),
+      appBar: AppBar(
+        title: const Text(
+          'Similar Eats',
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22),
+        ),
+      ),
       body: ListView(
         padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
         children: [
-          // Avatar
-          const SizedBox(height: 8),
-          Center(
-            child: CircleAvatar(
-              radius: 56,
-              backgroundColor: Colors.brown.shade200,
-              child: const Text(
-                'D',
-                style: TextStyle(fontSize: 32, fontWeight: FontWeight.w800),
-              ),
-            ),
+          _HomeHeader(
+            lastChoice: _lastChoice,
+            onTapPrompt: () async {
+              final result = await Navigator.of(context).push<DinnerChoice>(
+                MaterialPageRoute(builder: (_) => const DinnerPickerScreen()),
+              );
+              if (!mounted) return;
+              if (result != null) {
+                setState(() => _lastChoice = result);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text(
+                      result.summary.isEmpty
+                          ? "Choice saved."
+                          : "Saved: ${result.summary}",
+                    ),
+                  ),
+                );
+              }
+            },
           ),
           const SizedBox(height: 16),
-
-          // Clickable prompt
+          const _SectionTitle('Recommended Restaurants'),
+          const SizedBox(height: 8),
+          for (final r in _restaurants) _RestaurantRow(r),
+          const SizedBox(height: 24),
           Center(
-            child: InkWell(
+            child: Text('Mock data • offline', style: TextStyle(color: cs.outline)),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _HomeHeader extends StatelessWidget {
+  final DinnerChoice? lastChoice;
+  final VoidCallback onTapPrompt;
+  const _HomeHeader({required this.lastChoice, required this.onTapPrompt});
+
+  static const _prompts = [
+    "What’s for dinner tonight?",
+    "Where do you want to eat?",
+    "What are you craving?",
+    "What sounds good right now?",
+    "Pick a vibe for tonight’s meal",
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    final prompt = _prompts[Random().nextInt(_prompts.length)];
+
+    // Build the chip list: from last choice, otherwise nice defaults.
+    final chips = <String>[];
+    if (lastChoice != null) {
+      chips.addAll(lastChoice!.categories);
+      if ((lastChoice!.custom ?? '').isNotEmpty) chips.add(lastChoice!.custom!);
+    } else {
+      chips.addAll(const ['Wings', "Johnny's Wings"]);
+    }
+
+    return Card(
+      elevation: 0,
+      color: const Color(0xFFFFEAE3),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
+        child: Column(
+          children: [
+            // Big avatar back in action
+            CircleAvatar(
+              radius: 48,
+              backgroundColor: cs.primary.withOpacity(.15),
+              child: Text(
+                'D',
+                style: TextStyle(
+                  fontWeight: FontWeight.w800,
+                  fontSize: 32,
+                  color: cs.primary,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+
+            // Clickable prompt row
+            InkWell(
               borderRadius: BorderRadius.circular(12),
-              onTap: _openCravings,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+              onTap: onTapPrompt,
+              child: Container(
+                width: double.infinity,
+                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                ),
                 child: Row(
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Text('🍽️ ',
-                        style: TextStyle(fontSize: 20, height: 1.1)),
-                    Text(
-                      _prompt,
-                      style: const TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w800,
-                        color: Color(0xFFE45748),
+                    const Icon(Icons.chat_bubble_rounded, color: Color(0xFFF25C54)),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: Text(
+                        prompt,
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w800,
+                          fontSize: 18,
+                          color: Color(0xFF222222),
+                        ),
                       ),
                     ),
+                    const Icon(Icons.chevron_right_rounded, color: Colors.black54),
                   ],
                 ),
               ),
             ),
-          ),
-          const SizedBox(height: 16),
 
-          // Dishes to try
-          const _SectionTitle('Dishes you want to try'),
-          const SizedBox(height: 8),
-          Wrap(
-            spacing: 10,
-            runSpacing: 10,
-            children: _toTry.map((t) => Chip(label: Text(t))).toList(),
-          ),
-
-          // If user picked cravings, show them as chips
-          if (_selectedCravings.isNotEmpty) ...[
             const SizedBox(height: 18),
-            const _SectionTitle('Your cravings'),
-            const SizedBox(height: 8),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Dishes you want to try',
+                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
+              ),
+            ),
+            const SizedBox(height: 10),
             Wrap(
-              spacing: 10,
-              runSpacing: 10,
-              children:
-                  _selectedCravings.map((t) => Chip(label: Text(t))).toList(),
+              spacing: 12,
+              runSpacing: 12,
+              children: [
+                for (final t in chips) _Pill(t),
+              ],
             ),
           ],
-
-          const SizedBox(height: 18),
-          const _SectionTitle('Suggested matches'),
-          const SizedBox(height: 8),
-          for (final r in _restaurants) _RestaurantTile(r),
-
-          const SizedBox(height: 22),
-          Center(
-            child: Text(
-              'Mock data · offline',
-              style: TextStyle(color: cs.outline),
-            ),
-          ),
-        ],
+        ),
       ),
+    );
+  }
+}
+
+class _Pill extends StatelessWidget {
+  final String text;
+  const _Pill(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(22),
+      ),
+      child: Text(text, style: const TextStyle(fontWeight: FontWeight.w600)),
     );
   }
 }
@@ -241,85 +327,121 @@ class _SectionTitle extends StatelessWidget {
   }
 }
 
-class _RestaurantTile extends StatelessWidget {
+class _RestaurantRow extends StatelessWidget {
   final Restaurant r;
-  const _RestaurantTile(this.r);
+  const _RestaurantRow(this.r);
 
   @override
   Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+
     return Card(
       elevation: 0,
       color: const Color(0xFFFFEAE3),
       margin: const EdgeInsets.symmetric(vertical: 10),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-      child: ListTile(
-        contentPadding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-        leading: Container(
-          width: 60,
-          height: 60,
-          decoration: BoxDecoration(
-            color: r.color,
-            borderRadius: BorderRadius.circular(12),
-          ),
-        ),
-        title: Text(
-          r.name,
-          style: const TextStyle(fontWeight: FontWeight.w800),
-        ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 4),
-          child: Column(
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () {},
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Row(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // Use “·” so we don’t hit weird bullet encodings
-              Text("${r.cuisine} · ⭐ ${r.rating.toStringAsFixed(1)}"),
-              const SizedBox(height: 6),
-              if (r.tags.isNotEmpty)
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: r.tags.map((t) => Chip(label: Text(t))).toList(),
+              Container(
+                width: 84,
+                height: 84,
+                decoration: BoxDecoration(
+                  color: r.color,
+                  borderRadius: BorderRadius.circular(10),
                 ),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(r.name,
+                        style: const TextStyle(
+                            fontSize: 18, fontWeight: FontWeight.w800)),
+                    const SizedBox(height: 6),
+                    Row(
+                      children: [
+                        Text('${r.category} • ',
+                            style: TextStyle(color: cs.onSurfaceVariant)),
+                        const Icon(Icons.star_rounded,
+                            size: 18, color: Colors.amber),
+                        Text(' ${r.rating.toStringAsFixed(1)}',
+                            style: TextStyle(color: cs.onSurfaceVariant)),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
+                    Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: r.tags
+                          .map((t) => Chip(
+                                label: Text(t),
+                                backgroundColor: Colors.white,
+                                padding: const EdgeInsets.symmetric(horizontal: 6),
+                              ))
+                          .toList(),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              const Icon(Icons.chevron_right_rounded),
             ],
           ),
         ),
-        trailing: const Icon(Icons.chevron_right_rounded),
-        onTap: () {},
       ),
     );
   }
 }
 
-/// ------------------------------------------------------------
-/// Category selection (multi‑select + write‑in)
-/// ------------------------------------------------------------
+/* =============================== DINNER PICKER =============================== */
 
-class CategorySelectionScreen extends StatefulWidget {
-  final List<String> initiallySelected;
-  const CategorySelectionScreen({super.key, this.initiallySelected = const []});
+class DinnerChoice {
+  final Set<String> categories;
+  final String? custom;
+  const DinnerChoice({required this.categories, this.custom});
 
-  @override
-  State<CategorySelectionScreen> createState() =>
-      _CategorySelectionScreenState();
+  String get summary {
+    final parts = <String>[];
+    if (categories.isNotEmpty) parts.add(categories.join(', '));
+    if (custom != null && custom!.trim().isNotEmpty) parts.add(custom!.trim());
+    return parts.join(' • ');
+  }
 }
 
-class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
-  final List<_Cat> _cats = const [
-    _Cat('🍗', 'Chicken'),
-    _Cat('🍔', 'Burgers'),
-    _Cat('🍕', 'Pizza'),
-    _Cat('🥗', 'Salad'),
-    _Cat('🍣', 'Sushi'),
-    _Cat('🌮', 'Tacos'),
-    _Cat('🍜', 'Ramen'),
-    _Cat('🍝', 'Pasta'),
-    _Cat('🍰', 'Dessert'),
-    _Cat('☕', 'Cafe'),
+class DinnerPickerScreen extends StatefulWidget {
+  const DinnerPickerScreen({super.key});
+
+  @override
+  State<DinnerPickerScreen> createState() => _DinnerPickerScreenState();
+}
+
+class _DinnerPickerScreenState extends State<DinnerPickerScreen> {
+  final _selected = <String>{};
+  final _controller = TextEditingController();
+
+  final _items = const [
+    ('🍗', 'Chicken'),
+    ('🍕', 'Pizza'),
+    ('🍔', 'Burgers'),
+    ('🌯', 'Mexican'),
+    ('🍣', 'Sushi'),
+    ('🥗', 'Salads'),
+    ('🍜', 'Noodles'),
+    ('🍰', 'Dessert'),
   ];
 
-  late final Set<String> _selected =
-      widget.initiallySelected.toSet(); // keeps state on return
-  final TextEditingController _writeIn = TextEditingController();
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   void _toggle(String label) {
     setState(() {
@@ -331,145 +453,129 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
     });
   }
 
-  void _addCustom() {
-    final text = _writeIn.text.trim();
-    if (text.isEmpty) return;
-    setState(() {
-      _selected.add(text);
-      _writeIn.clear();
-    });
-  }
-
-  void _finish() {
-    Navigator.pop(context, _selected.toList()..sort());
-  }
-
   @override
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
+    final canSubmit =
+        _selected.isNotEmpty || _controller.text.trim().isNotEmpty;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pick cravings')),
-      body: ListView(
-        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
-        children: [
-          Text(
-            'Pick one or more:',
-            style: TextStyle(
-              color: cs.onSurface.withOpacity(.8),
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 12),
-
-          // Grid of categories
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final w = constraints.maxWidth;
-              final cross = w > 720
-                  ? 5
-                  : w > 520
-                      ? 4
-                      : 3;
-              return GridView.count(
-                crossAxisCount: cross,
-                mainAxisSpacing: 12,
-                crossAxisSpacing: 12,
-                childAspectRatio: 1.1,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: _cats.map((c) {
-                  final label = "${c.emoji} ${c.label}";
-                  final on = _selected.contains(label);
-                  return _CategoryCard(
-                    emoji: c.emoji,
-                    label: c.label,
-                    selected: on,
+      appBar: AppBar(
+        leading: BackButton(onPressed: () => Navigator.of(context).pop()),
+        title: const Text(
+          "What's for dinner?",
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22),
+        ),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text('Pick one or more categories',
+                style: TextStyle(fontWeight: FontWeight.w700)),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 14,
+              runSpacing: 14,
+              children: [
+                for (final (emoji, label) in _items)
+                  _CategoryChip(
+                    emoji: emoji,
+                    label: label,
+                    selected: _selected.contains(label),
                     onTap: () => _toggle(label),
-                  );
-                }).toList(),
-              );
-            },
-          ),
+                  ),
+              ],
+            ),
+            const SizedBox(height: 16),
 
-          const SizedBox(height: 16),
-          const Divider(height: 1),
-          const SizedBox(height: 16),
-
-          // Write‑in option
-          const Text(
-            'Can’t find it? Write it in:',
-            style: TextStyle(fontWeight: FontWeight.w600),
-          ),
-          const SizedBox(height: 8),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _writeIn,
-                  decoration: InputDecoration(
-                    hintText: 'e.g., Ethiopian, BBQ, Bubble tea…',
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 14),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
+            // === Map preview section (static, no keys needed) ===
+            SizedBox(
+              height: 170,
+              width: double.infinity,
+              child: ClipRRect(
+                borderRadius: BorderRadius.circular(14),
+                child: CustomPaint(
+                  painter: _MapPreviewPainter(),
+                  child: Container(
+                    alignment: Alignment.bottomLeft,
+                    padding: const EdgeInsets.all(8),
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: Colors.black.withOpacity(.55),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        child: Text(
+                          'Nearby area (mock map)',
+                          style: TextStyle(color: Colors.white, fontSize: 12),
+                        ),
+                      ),
                     ),
                   ),
-                  onSubmitted: (_) => _addCustom(),
                 ),
               ),
-              const SizedBox(width: 10),
-              FilledButton(
-                onPressed: _addCustom,
-                child: const Text('Add'),
-              ),
-            ],
-          ),
+            ),
 
-          if (_selected.isNotEmpty) ...[
-            const SizedBox(height: 16),
-            Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children:
-                  _selected.map((s) => Chip(label: Text(s))).toList(),
+            const Spacer(),
+            TextField(
+              controller: _controller,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: Colors.white,
+                hintText: "Can't find it? Write it in (e.g., 'Pad See Ew')",
+                prefixIcon: const Icon(Icons.edit_rounded),
+                border:
+                    OutlineInputBorder(borderRadius: BorderRadius.circular(14)),
+              ),
+              onChanged: (_) => setState(() {}),
+            ),
+            const SizedBox(height: 10),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: canSubmit
+                    ? () {
+                        Navigator.of(context).pop(
+                          DinnerChoice(
+                            categories: _selected,
+                            custom: _controller.text.trim().isEmpty
+                                ? null
+                                : _controller.text.trim(),
+                          ),
+                        );
+                      }
+                    : null,
+                style: FilledButton.styleFrom(
+                  padding: const EdgeInsets.symmetric(vertical: 14),
+                  backgroundColor:
+                      canSubmit ? const Color(0xFFF25C54) : cs.surfaceVariant,
+                ),
+                child: Text(
+                  'Find options',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w700,
+                    color: canSubmit ? Colors.white : cs.onSurfaceVariant,
+                  ),
+                ),
+              ),
             ),
           ],
-
-          const SizedBox(height: 20),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              style: FilledButton.styleFrom(
-                padding: const EdgeInsets.symmetric(vertical: 14),
-              ),
-              onPressed: _finish,
-              child: const Text('Done'),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
 }
 
-class _Cat {
-  final String emoji;
-  final String label;
-  const _Cat(this.emoji, this.label);
-}
-
-class _CategoryCard extends StatelessWidget {
+class _CategoryChip extends StatelessWidget {
   final String emoji;
   final String label;
   final bool selected;
   final VoidCallback onTap;
 
-  const _CategoryCard({
-    super.key,
+  const _CategoryChip({
     required this.emoji,
     required this.label,
     required this.selected,
@@ -478,35 +584,123 @@ class _CategoryCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bg = selected ? const Color(0xFFFDE4E1) : Colors.white;
-    final border = selected ? const Color(0xFFF25C54) : const Color(0xFFE6E2DF);
+    final bg = selected ? const Color(0xFFFDE2DE) : Colors.white;
+    final border = selected ? const Color(0xFFF25C54) : Colors.transparent;
 
     return InkWell(
+      borderRadius: BorderRadius.circular(12),
       onTap: onTap,
-      borderRadius: BorderRadius.circular(16),
       child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: bg,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: border),
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: border, width: 2),
         ),
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
           children: [
-            Text(emoji, style: const TextStyle(fontSize: 28)),
-            const SizedBox(height: 6),
-            Text(
-              label,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontWeight: FontWeight.w700,
-                color: selected ? const Color(0xFFE45748) : Colors.black87,
-              ),
-            ),
+            Text(emoji, style: const TextStyle(fontSize: 18)),
+            const SizedBox(width: 8),
+            Text(label, style: const TextStyle(fontWeight: FontWeight.w700)),
           ],
         ),
+      ),
+    );
+  }
+}
+
+/// Simple “map” painter: light grid + a few orange hotspots and pins.
+/// This keeps the app offline and key‑free but gives a real sense of place.
+class _MapPreviewPainter extends CustomPainter {
+  @override
+  void paint(Canvas canvas, Size size) {
+    // background
+    final bg = Paint()..color = const Color(0xFFEDE7E3);
+    canvas.drawRect(Offset.zero & size, bg);
+
+    // grid
+    final grid = Paint()
+      ..color = const Color(0xFFD8D2CE)
+      ..strokeWidth = 1;
+    const gap = 20.0;
+    for (double x = 0; x <= size.width; x += gap) {
+      canvas.drawLine(Offset(x, 0), Offset(x, size.height), grid);
+    }
+    for (double y = 0; y <= size.height; y += gap) {
+      canvas.drawLine(Offset(0, y), Offset(size.width, y), grid);
+    }
+
+    // hotspots (soft glows)
+    final rnd = Random(7);
+    final centers = List.generate(
+      6,
+      (_) => Offset(rnd.nextDouble() * size.width, rnd.nextDouble() * size.height),
+    );
+    for (final c in centers) {
+      for (var i = 3; i >= 1; i--) {
+        final paint = Paint()
+          ..color = Colors.orange.withOpacity(0.07 * i)
+          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 25);
+        canvas.drawCircle(c, 35.0 * i, paint);
+      }
+      final core = Paint()..color = Colors.orange.shade700;
+      canvas.drawCircle(c, 6, core);
+    }
+
+    // a couple of “pins”
+    final pin = Paint()..color = const Color(0xFFEF5350);
+    for (final c in centers.take(3)) {
+      canvas.drawCircle(c.translate(8, -8), 4, pin);
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
+}
+
+/* =============================== STUB PAGES =============================== */
+
+class CompareScreen extends StatelessWidget {
+  const CompareScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const _StubScaffold(title: 'Compare Menu Items');
+  }
+}
+
+class HeatmapScreen extends StatelessWidget {
+  const HeatmapScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const _StubScaffold(title: 'Nightlife Heatmap');
+  }
+}
+
+class PremiumScreen extends StatelessWidget {
+  const PremiumScreen({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return const _StubScaffold(title: 'Similar Eats Premium');
+  }
+}
+
+class _StubScaffold extends StatelessWidget {
+  final String title;
+  const _StubScaffold({required this.title});
+
+  @override
+  Widget build(BuildContext context) {
+    final cs = Theme.of(context).colorScheme;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(
+          title,
+          style: const TextStyle(fontWeight: FontWeight.w800, fontSize: 22),
+        ),
+      ),
+      body: Center(
+        child: Text('Mock screen', style: TextStyle(color: cs.onSurfaceVariant)),
       ),
     );
   }

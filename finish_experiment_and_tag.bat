@@ -1,23 +1,24 @@
 @echo off
 echo === Finish experiment and tag ===
 
-:: Check branch
-for /f "tokens=*" %%i in ('git rev-parse --abbrev-ref HEAD') do set branch=%%i
-echo Current branch: %branch%
+for /f %%i in ('git rev-parse --abbrev-ref HEAD') do set CURR=%%i
+echo Current branch: %CURR%
 
-if "%branch%"=="master" (
+if /I "%CURR%"=="master" (
   echo [X] You are on master, not an experiment branch. Aborting.
   exit /b 1
 )
 
-:: Commit staged changes if any
 echo [.] Committing any staged changes...
-git commit -m "wip: experiment snapshot" || echo [.] Nothing to commit.
+git commit -m "chore: finish experiment" 1>nul 2>nul
+if errorlevel 1 (
+  echo [.] Nothing to commit.
+) else (
+  echo [OK] Committed.
+)
 
-:: Get date as YYYYMMDD using PowerShell
-for /f %%i in ('powershell -NoProfile -Command "Get-Date -Format yyyyMMdd"') do set yyyymmdd=%%i
+for /f %%i in ('powershell -NoLogo -NoProfile -Command "Get-Date -Format yyyyMMdd"') do set TODAY=%%i
+set "TAG=exp_done_%TODAY%"
 
-set tag=exp_done_%yyyymmdd%
-git tag %tag% -m "Experiment finished on %yyyymmdd%"
-
-echo [OK] Tagged as %tag%
+git tag "%TAG%" -m "Experiment finished on %TODAY%"
+echo [OK] Tagged as %TAG%
