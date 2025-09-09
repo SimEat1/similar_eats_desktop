@@ -5,10 +5,9 @@ class TryListScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: Load actual try list; placeholder UI for now
     return Scaffold(
-      appBar: AppBar(title: const Text('My Try List')),
-      body: const Center(child: Text('Your saved places will appear here.')),
+      appBar: AppBar(title: const Text('Try List')),
+      body: const Center(child: Text('Places I want to try')),
     );
   }
 }

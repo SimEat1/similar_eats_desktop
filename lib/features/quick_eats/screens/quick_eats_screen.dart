@@ -7,6 +7,8 @@ import '../../../core/auth/anon_auth.dart';
 import '../repo/quick_eats_repo.dart';
 import '../models/restaurant.dart';
 import '../widgets/restaurant_card.dart';
+import '../../onboarding/screens/taste_quiz_screen.dart';
+import '../../try_list/screens/try_list_screen.dart';
 
 class QuickEatsScreen extends StatefulWidget {
   const QuickEatsScreen({super.key});
@@ -74,6 +76,23 @@ return list;
       appBar: AppBar(
         title: const Text('Quick Eats'),
         actions: [
+          PopupMenuButton<String>(
+            onSelected: (v) {
+              if (v == 'try') {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const TryListScreen()),
+                );
+              } else if (v == 'quiz') {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const TasteQuizScreen()),
+                );
+              }
+            },
+            itemBuilder: (_) => const [
+              PopupMenuItem(value: 'try',  child: Text('Open Try List')),
+              PopupMenuItem(value: 'quiz', child: Text('Open Taste Quiz')),
+            ],
+          ),
           const SizedBox(width: 8),
           ToggleButtons(
             isSelected: [_quickMode, !_quickMode],
@@ -171,3 +190,4 @@ class QuickEatsDebugFab extends StatelessWidget {
     );
   }
 }
+
