@@ -1,3 +1,3 @@
-﻿class Favorites&TryListModel {
-  const Favorites&TryListModel();
+﻿class FavoritesModel {
+  const FavoritesModel();
 }

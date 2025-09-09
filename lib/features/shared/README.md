@@ -1,9 +1,16 @@
 ﻿# Shared Utilities
 
-**Purpose:** Common code for the app.
+**Purpose:** Common services: Remote Config, Auth, Themes, Permissions.
 
 ## Modules
-- remote_config.dart → Remote Config service wrapper
-- app_theme_provider.dart → Theme (dark/light)
-- auth_user_service.dart → Firebase Auth wrapper
-- PermissionService → Permissions (camera/location/notifications)
+- models/ → data models
+- epo/ → data access, services
+- widgets/ → reusable UI
+- screens/ → screens / tabs
+
+## Data
+
+
+## Notes
+- Add unit tests in 	est/shared_test.dart as the module grows.
+- Keep public APIs small and documented in this README.

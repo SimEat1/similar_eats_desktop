@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/material.dart';
 
-class Favorites&TryListScreen extends StatelessWidget {
-  const Favorites&TryListScreen({super.key});
+class FavoritesScreen extends StatelessWidget {
+  const FavoritesScreen({super.key});
   @override
-  Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Favorites & Try List')));
+  Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Favorites')));
 }

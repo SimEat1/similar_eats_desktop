@@ -1,0 +1,3 @@
+﻿class TryListRepo {
+  const TryListRepo();
+}

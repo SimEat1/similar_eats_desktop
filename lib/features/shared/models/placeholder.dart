@@ -1,0 +1,3 @@
+﻿class SharedUtilitiesModel {
+  const SharedUtilitiesModel();
+}

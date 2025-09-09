@@ -1,6 +1,6 @@
 ﻿# Monetization
 
-**Purpose:** Ads + IAP gating for premium features.
+**Purpose:** AdMob + In-App Purchases. PremiumGateWrapper toggles premium features.
 
 ## Modules
 - models/ → data models

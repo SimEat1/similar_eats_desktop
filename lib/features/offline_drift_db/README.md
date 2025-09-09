@@ -1,6 +1,6 @@
 ﻿# Offline Drift DB
 
-**Purpose:** Drift + SQLCipher local cache for offline-first.
+**Purpose:** Local offline database with Drift + SQLCipher encryption. Syncs with Firebase when online.
 
 ## Modules
 - models/ → data models

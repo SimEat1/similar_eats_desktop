@@ -1,6 +1,6 @@
-﻿# Favorites & Try List
+﻿# Favorites
 
-**Purpose:** Save places and dishes for later.
+**Purpose:** Save restaurants and dishes for later. Powered by Firestore: users/{uid}/favorites.
 
 ## Modules
 - models/ → data models

@@ -1,6 +1,6 @@
 ﻿# Review Tagging
 
-**Purpose:** User tags/reviews on restaurants.
+**Purpose:** Users can tag and review restaurants (e.g., 'crispy fries', 'family friendly'), with optional photos.
 
 ## Modules
 - models/ → data models

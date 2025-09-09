@@ -1,7 +1,7 @@
 ﻿import 'package:flutter/widgets.dart';
 
-class FavoritesPlaceholder extends StatelessWidget {
-  const FavoritesPlaceholder({super.key});
+class Onboarding/TasteQuizPlaceholder extends StatelessWidget {
+  const Onboarding/TasteQuizPlaceholder({super.key});
   @override
   Widget build(BuildContext context) => const SizedBox.shrink();
 }

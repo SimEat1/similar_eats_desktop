@@ -1,6 +1,6 @@
 ﻿# Taste Profiles
 
-**Purpose:** User taste vectors + similarity matching.
+**Purpose:** Build and compare user taste profiles for similarity-based recommendations.
 
 ## Modules
 - models/ → data models

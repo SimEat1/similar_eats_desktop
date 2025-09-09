@@ -1,3 +1,3 @@
-﻿class Favorites&TryListRepo {
-  const Favorites&TryListRepo();
+﻿class FavoritesRepo {
+  const FavoritesRepo();
 }

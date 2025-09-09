@@ -1,9 +1,16 @@
 ﻿# Try List
 
-**Purpose:** user can bookmark restaurants/dishes → retention + reminders.
+**Purpose:** Lightweight list of places the user wants to try next.
+
+## Modules
+- models/ → data models
+- epo/ → data access, services
+- widgets/ → reusable UI
+- screens/ → screens / tabs
 
 ## Data
-- RTDB: userTryList/{uid}/{restaurantId}: true
 
-## UI
-- TryListButton to toggle; TryListScreen to review.
+
+## Notes
+- Add unit tests in 	est/try_list_test.dart as the module grows.
+- Keep public APIs small and documented in this README.
