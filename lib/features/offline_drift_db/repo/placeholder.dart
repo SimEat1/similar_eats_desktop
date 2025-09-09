@@ -1,0 +1,3 @@
+﻿class OfflineDriftDBRepo {
+  const OfflineDriftDBRepo();
+}

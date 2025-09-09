@@ -1,0 +1,3 @@
+﻿class ReviewTaggingRepo {
+  const ReviewTaggingRepo();
+}

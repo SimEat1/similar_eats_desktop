@@ -1,0 +1,3 @@
+﻿class QuickEatsModel {
+  const QuickEatsModel();
+}

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "970307574487",
+    "firebase_url": "https://similar-eats-default-rtdb.firebaseio.com",
+    "project_id": "similar-eats",
+    "storage_bucket": "similar-eats.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:970307574487:android:568d38b5042a6d3b0bee92",
+        "android_client_info": {
+          "package_name": "com.example.similar_eats_desktop"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB6dRUpYS5gtp-16sEjhbVYxmGLjlKVNok"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,3 @@
+﻿class ReviewTaggingModel {
+  const ReviewTaggingModel();
+}

@@ -1,0 +1,3 @@
+﻿class MonetizationRepo {
+  const MonetizationRepo();
+}

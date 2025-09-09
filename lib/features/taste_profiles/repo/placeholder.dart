@@ -1,0 +1,3 @@
+﻿class TasteProfilesRepo {
+  const TasteProfilesRepo();
+}
