@@ -1,113 +1,170 @@
 ﻿import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import '../../../firebase_options.dart';
-import '../../../shared/remote_config.dart';
+import '../../shared/remote_config.dart';
 import '../models/restaurant.dart';
 
-/// Repository that loads + ranks Quick/Late restaurants from RTDB,
-/// while obeying Remote Config flags.
 class QuickEatsRepo {
-  QuickEatsRepo({RemoteConfigService? rc})
-      : _rc = rc ?? RemoteConfigService.instance;
+  QuickEatsRepo({
+    FirebaseDatabase? db,
+    RemoteConfigService? rc,
+  })  : _db = db ?? _dbForOptions(),
+        _rc = rc ?? RemoteConfigService.instance;
 
+  final FirebaseDatabase _db;
   final RemoteConfigService _rc;
 
-  static const _quickTagSet = <String>{
-    'fast_service',
-    'grab_and_go',
-    'drive_thru',
-    'counter',
-  };
-
-  /// Ensure Firebase is initialized and return a Database instance that
-  /// explicitly targets our RTDB URL (works on Web/Desktop too).
-  Future<FirebaseDatabase> _db() async {
-    // init app if needed
-    if (Firebase.apps.isEmpty) {
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    }
-    final app = Firebase.app();
-    final url = DefaultFirebaseOptions.currentPlatform.databaseURL ??
-        'https://similar-eats-default-rtdb.firebaseio.com';
-    return FirebaseDatabase.instanceFor(app: app, databaseURL: url);
-  }
-
-  /// Loads and ranks restaurants for either Quick or Late mode.
+  /// MAIN: fetch + filter + score + sort
   Future<List<Restaurant>> loadRanked({required bool quickMode}) async {
-    // Remote Config first
+    // 1) Guard with Remote Config
     await _rc.ensureReady();
     final enabled = _rc.getBool('quick_eats_enabled', fallback: true);
-    if (!enabled) {
-      // Disabled by RC -> empty list
-      return <Restaurant>[];
-    }
-    final minQuickTags =
-        _rc.getInt('quick_eats_min_quick_tags', fallback: 0);
-    // kept for future: late cutoff hour
-    // final lateCutoff = _rc.getInt('quick_eats_late_cutoff_hour', fallback: 23);
+    if (!enabled) return const <Restaurant>[];
 
-    // RTDB fetch
-    final db = await _db();
-    final snap = await db.ref('restaurants').get();
-    if (!snap.exists || snap.value is! Map) return <Restaurant>[];
+    // 2) Fetch restaurants
+    final items = await _fetchRestaurants();
 
-    final raw = Map<String, dynamic>.from(snap.value as Map);
-    final items = <Restaurant>[];
-    raw.forEach((id, v) {
-      if (v is Map) {
-        final m = Map<String, dynamic>.from(v);
-        m['id'] = id;
-        items.add(Restaurant.fromJson(m));
-      }
-    });
+    // 3) Fetch taste prefs (non-fatal if missing)
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final prefs = (uid == null) ? TastePrefs.empty() : await _fetchTaste(uid);
 
-    // Filter by mode
-    List<Restaurant> filtered;
-    if (quickMode) {
-      filtered = items.where((r) {
-        final quickTags =
-            r.serviceTags.where((t) => _quickTagSet.contains(t)).length;
-        return (r.quickServiceFlag == true) || quickTags >= minQuickTags;
-      }).toList();
-    } else {
-      filtered = items.where((r) => r.openLateFlag == true).toList();
-    }
-
-    // Rank
-    filtered.sort((a, b) {
-      final as = _score(a, quickMode);
-      final bs = _score(b, quickMode);
-      if (bs != as) return bs.compareTo(as);
-
+    // 4) Filter by mode
+    final filtered = items.where((r) {
       if (quickMode) {
-        final at = a.serviceTags.where((t) => _quickTagSet.contains(t)).length;
-        final bt = b.serviceTags.where((t) => _quickTagSet.contains(t)).length;
-        if (bt != at) return bt.compareTo(at);
+        // Quick means explicit flag OR quick-ish tags
+        final isQuick = r.quickServiceFlag == true ||
+            r.serviceTags.any((t) => _quickTagSet.contains(t));
+        return isQuick;
+      } else {
+        // Late night means openLateFlag
+        return r.openLateFlag == true;
       }
-      return a.name.toLowerCase().compareTo(b.name.toLowerCase());
+    }).toList();
+
+    // 5) Score with taste prefs (keep scores in a local map)
+    final Map<Restaurant, int> scores = {};
+    for (final r in filtered) {
+      scores[r] = _scoreRestaurant(r, prefs, quickMode);
+    }
+
+    // 6) Sort: score desc, then name
+    filtered.sort((a, b) {
+      final byScore = (scores[b] ?? 0).compareTo(scores[a] ?? 0);
+      if (byScore != 0) return byScore;
+      return (a.name).compareTo(b.name);
     });
 
     return filtered;
   }
 
-  double _score(Restaurant r, bool quickMode) {
-    if (quickMode) {
-      final quickTags =
-          r.serviceTags.where((t) => _quickTagSet.contains(t)).length;
-      return (r.quickServiceFlag ? 2.0 : 0.0) + quickTags * 0.5;
-    } else {
-      var s = r.openLateFlag ? 2.0 : 0.0;
-      final n = r.name.toLowerCase();
-      if (n.contains('late') || n.contains('24/7') || n.contains('night')) {
-        s += 0.25;
-      }
-      return s;
+  // ---- internals -----------------------------------------------------------
+
+  Future<List<Restaurant>> _fetchRestaurants() async {
+    final snap = await _db.ref('restaurants').get();
+    final list = <Restaurant>[];
+    if (snap.value is Map) {
+      final map = (snap.value as Map).cast<String, dynamic>();
+      map.forEach((_, v) {
+        if (v is Map) {
+          list.add(Restaurant.fromJson(Map<String, dynamic>.from(v)));
+        }
+      });
     }
+    return list;
+  }
+
+  Future<TastePrefs> _fetchTaste(String uid) async {
+    try {
+      final snap = await _db.ref('userTaste/').get();
+      if (snap.value is Map) {
+        final m = (snap.value as Map).cast<String, dynamic>();
+        return TastePrefs.fromJson(m);
+      }
+    } catch (_) {}
+    return TastePrefs.empty();
+  }
+
+  static const Set<String> _quickTagSet = {
+    'drive_thru',
+    'grab_and_go',
+    'counter',
+    'fast_service',
+  };
+
+  /// Simple linear score you can tweak freely.
+  int _scoreRestaurant(Restaurant r, TastePrefs prefs, bool quickMode) {
+    // Likes: +2 per matching tag
+    final likeHits =
+        r.serviceTags.where((t) => prefs.likes.contains(t)).length;
+    final likeScore = likeHits * 2;
+
+    // Avoids: −3 per matching tag
+    final avoidHits =
+        r.serviceTags.where((t) => prefs.avoids.contains(t)).length;
+    final avoidScore = avoidHits * -3;
+
+    // Mode bonus
+    final modeBonus = quickMode
+        ? (r.quickServiceFlag == true ? 2 : 0)
+        : (r.openLateFlag == true ? 2 : 0);
+
+    // Quick-ish bonus (helps sort ties in Quick)
+    final quickishBonus =
+        r.serviceTags.any((t) => _quickTagSet.contains(t)) ? 1 : 0;
+
+    // (Optional) spice could be used later if we add a restaurant “spiceLevel” tag
+    // final spiceAdj = _spiceAdjust(r, prefs.spiceTolerance);
+
+    return likeScore + avoidScore + modeBonus + quickishBonus;
+  }
+
+  // If you later add per-restaurant spice tags, you can use this:
+  // int _spiceAdjust(Restaurant r, int tolerance01to100) { ... }
+
+  // -- Firebase DB instance with proper URL (web needs explicit URL)
+  static FirebaseDatabase _dbForOptions() {
+    final url = DefaultFirebaseOptions.currentPlatform.databaseURL ??
+        'https://similar-eats-default-rtdb.firebaseio.com';
+    return FirebaseDatabase.instanceFor(
+      app: Firebase.app(),
+      databaseURL: url,
+    );
   }
 }
 
+/// Minimal taste prefs model for RTDB /userTaste/{uid}
+class TastePrefs {
+  TastePrefs({
+    required this.likes,
+    required this.avoids,
+    required this.spiceTolerance,
+  });
+
+  final Set<String> likes;
+  final Set<String> avoids;
+  final int spiceTolerance; // 0..100
+
+  factory TastePrefs.empty() =>
+      TastePrefs(likes: const {}, avoids: const {}, spiceTolerance: 50);
+
+  factory TastePrefs.fromJson(Map<String, dynamic> json) {
+    final likes = <String>{
+      ...(json['likedCuisines'] is List
+          ? List.from(json['likedCuisines']).whereType<String>()
+          : const Iterable<String>.empty())
+    };
+    final avoids = <String>{
+      ...(json['avoidTags'] is List
+          ? List.from(json['avoidTags']).whereType<String>()
+          : const Iterable<String>.empty())
+    };
+    final spice = (json['spiceTolerance'] is num)
+        ? (json['spiceTolerance'] as num).toInt()
+        : 50;
+    return TastePrefs(likes: likes, avoids: avoids, spiceTolerance: spice);
+  }
+}

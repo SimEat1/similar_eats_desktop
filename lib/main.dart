@@ -1,22 +1,40 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
-import 'features/quick_eats/screens/quick_eats_screen.dart';
+import 'features/home/home_screen.dart';
+import 'features/shared/remote_config.dart';
 
-void main() async {
+Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
+  try {
+    Firebase.app();
+  } catch (_) {
+    await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  }
+  // Warm up Remote Config so feature flags are ready
+  await RemoteConfigService.instance.ensureReady();
+
+  runApp(const SimilarEatsApp());
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class SimilarEatsApp extends StatelessWidget {
+  const SimilarEatsApp({super.key});
+
   @override
   Widget build(BuildContext context) {
+    final color = const Color(0xFF1BA39C);
     return MaterialApp(
       title: 'Similar Eats',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.teal),
-      home: const QuickEatsScreen(), // ← test entry
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: color, brightness: Brightness.light),
+        useMaterial3: true,
+      ),
+      darkTheme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: color, brightness: Brightness.dark),
+        useMaterial3: true,
+      ),
+      home: const HomeScreen(),
     );
   }
 }
