@@ -1,0 +1,108 @@
+import "package:flutter/material.dart";
+import "package:similar_eats_desktop/features/visits/data/visit_log_repository.dart";
+import "package:similar_eats_desktop/shared/portion.dart";
+import "package:similar_eats_desktop/shared/portion_size.dart";
+import "package:similar_eats_desktop/shared/widgets/portion_size_picker.dart";
+
+class QuickVisitScreen extends StatefulWidget {
+  const QuickVisitScreen({super.key});
+
+  @override
+  State<QuickVisitScreen> createState() => _QuickVisitScreenState();
+}
+
+class _QuickVisitScreenState extends State<QuickVisitScreen> {
+  final VisitLogRepository _repo = const VisitLogRepository();
+
+  Portion _portion = const Portion(size: PortionSize.m);
+  int _tasteRating = 3; // 1..5
+  int _portionRating = 3; // 1..5
+  bool _dirty = false;
+
+  Future<void> _saveVisit(Map<String, dynamic> payload) async {
+    try {
+      await _repo.addQuickVisit(payload);
+    } catch (e) {
+      // ignore: avoid_print
+      print('addQuickVisit error: $e');
+    }
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  List<Widget> _quickVisitExtras(BuildContext context) {
+    return [
+      const SizedBox(height: 12),
+      Text('Portion size', style: Theme.of(context).textTheme.titleMedium),
+      PortionSizePicker(
+        initialValue: _portion,
+        onChanged: (p) => setState(() {
+          _portion = p;
+          _dirty = true;
+        }),
+      ),
+      const SizedBox(height: 12),
+      Text('Taste rating: $_tasteRating',
+          style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1,
+        max: 5,
+        divisions: 4,
+        label: '$_tasteRating',
+        value: _tasteRating.toDouble(),
+        onChanged: (v) => setState(() {
+          _tasteRating = v.round();
+          _dirty = true;
+        }),
+      ),
+      const SizedBox(height: 12),
+      Text('Portion satisfaction: $_portionRating',
+          style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1,
+        max: 5,
+        divisions: 4,
+        label: '$_portionRating',
+        value: _portionRating.toDouble(),
+        onChanged: (v) => setState(() {
+          _portionRating = v.round();
+          _dirty = true;
+        }),
+      ),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Quick Visit')),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          ..._quickVisitExtras(context),
+          const SizedBox(height: 24),
+          FilledButton(
+            onPressed: () {
+              if (!_dirty) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                      content: Text('Pick a portion or adjust a rating first')),
+                );
+                return;
+              }
+              final payload = <String, dynamic>{
+                'created_at': DateTime.now().toIso8601String(),
+                'portion': _portion.toJson(),
+                'taste_rating': _tasteRating.clamp(1, 5),
+                'portion_rating': _portionRating.clamp(1, 5),
+              };
+              // ignore: avoid_print
+              print("QuickVisit payload => $payload");
+              _saveVisit(payload);
+            },
+            child: const Text('Save'),
+          ),
+        ],
+      ),
+    );
+  }
+}
