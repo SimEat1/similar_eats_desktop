@@ -1,4 +1,4 @@
-﻿import '../models/restaurant.dart';
+import 'package:similar_eats_desktop/models/restaurant.dart';
 
 class QuickEatsLogic {
   List<Restaurant> filterQuick(List<Restaurant> all) =>

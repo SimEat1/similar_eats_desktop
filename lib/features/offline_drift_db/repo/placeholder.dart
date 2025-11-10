@@ -1,3 +1,3 @@
-﻿class OfflineDriftDBRepo {
+class OfflineDriftDBRepo {
   const OfflineDriftDBRepo();
 }

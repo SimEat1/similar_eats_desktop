@@ -1,3 +1,3 @@
-﻿class QuickEatsRepo {
+class QuickEatsRepo {
   const QuickEatsRepo();
 }

@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import '../../firebase_options.dart' as fo; // lib/firebase_options.dart
+import 'package:similar_eats_desktop/firebase_options.dart' as fo; // lib/firebase_options.dart
 
 /// Simple model for a Try List entry.
 class TryItem {
@@ -55,8 +55,7 @@ class TryListRepo {
     return FirebaseDatabase.instanceFor(app: app, databaseURL: url);
   }
 
-  DatabaseReference _userRoot(String uid) =>
-      _db.ref('userTryList').child(uid);
+  DatabaseReference _userRoot(String uid) => _db.ref('userTryList').child(uid);
 
   /// Live stream of items for a user.
   Stream<List<TryItem>> watchItems(String uid) {
@@ -70,8 +69,8 @@ class TryListRepo {
       final list = <TryItem>[];
       map.forEach((key, value) {
         if (value is Map) {
-          list.add(TryItem.fromMap(key.toString(),
-              Map<dynamic, dynamic>.from(value)));
+          list.add(TryItem.fromMap(
+              key.toString(), Map<dynamic, dynamic>.from(value)));
         }
       });
       // already ordered by createdAt; keep
@@ -82,8 +81,8 @@ class TryListRepo {
   /// Add a new item.
   Future<void> addItem({required String uid, required String name}) async {
     final ref = _userRoot(uid).push();
-    await ref.set(TryItem(id: ref.key!, name: name, createdAt: DateTime.now())
-        .toMap());
+    await ref.set(
+        TryItem(id: ref.key!, name: name, createdAt: DateTime.now()).toMap());
   }
 
   /// Delete an item by its generated id.
@@ -91,11 +90,3 @@ class TryListRepo {
     await _userRoot(uid).child(id).remove();
   }
 }
-
-
-
-
-
-
-
-

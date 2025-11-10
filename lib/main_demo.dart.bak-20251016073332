@@ -1,0 +1,55 @@
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+import "package:flutter/material.dart";
+import "package:firebase_core/firebase_core.dart";
+import "features/quiz/taste_quiz_screen.dart";
+// Keep your other demo imports if you have them:
+// import "features/visits/screens/quick_visit_screen.dart";
+// import "features/visits/screens/recent_visits_screen.dart";
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  runApp(const DemoApp());
+}
+
+class DemoApp extends StatelessWidget {
+  const DemoApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: "Similar Eats — Demo",
+      theme: ThemeData(colorSchemeSeed: Colors.green, useMaterial3: true),
+      routes: {
+        "/": (_) => const DemoHome(),
+        TasteQuizScreen.route: (_) => const TasteQuizScreen(),
+      },
+    );
+  }
+}
+
+class DemoHome extends StatelessWidget {
+  const DemoHome({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Demo Home")),
+      body: Center(
+        child: Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            FilledButton(
+              onPressed: () =>
+                  Navigator.pushNamed(context, TasteQuizScreen.route),
+              child: const Text("Taste Quiz"),
+            ),
+            // Keep or add other demo entry points as needed:
+            // FilledButton(onPressed: () => Navigator.pushNamed(context, "/quick_visit"), child: const Text("Quick Visit")),
+            // FilledButton(onPressed: () => Navigator.pushNamed(context, "/recent_visits"), child: const Text("Recent Visits")),
+          ],
+        ),
+      ),
+    );
+  }
+}

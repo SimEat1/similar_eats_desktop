@@ -1,0 +1,268 @@
+﻿import 'package:flutter/material.dart';
+import 'package:similar_eats_desktop/features/taste_quiz/actions/finish_quiz.dart';
+import '../../profile/allergies/diet_allergy_step.dart';
+import '../../profile/allergies/diet_allergy_section.dart';
+
+/// Taste quiz with 5 steps:
+/// 0 Flavors, 1 Cuisines, 2 Budget, 3 Diet & Allergies, 4 Summary
+class TasteQuizScreen extends StatefulWidget {
+  static const String routeName = '/taste-quiz';
+  const TasteQuizScreen({super.key});
+
+  @override
+  State<TasteQuizScreen> createState() => _TasteQuizScreenState();
+}
+
+class _TasteQuizScreenState extends State<TasteQuizScreen> {
+  int _step = 0;
+
+  final Set<String> _selectedFlavors = <String>{};
+  final Set<String> _selectedCuisines = <String>{};
+  String? _selectedBudget; // 'cheap' | 'moderate' | 'pricey'
+
+  Set<DietType> _selectedDiets = <DietType>{};
+  Set<Allergy> _selectedAllergies = <Allergy>{};
+
+  static const List<String> _flavorOptions = <String>[
+    'Savory', 'Spicy', 'Sweet', 'Smoky', 'Tangy', 'Umami'
+  ];
+
+  static const List<String> _cuisineOptions = <String>[
+    'Italian','Mexican','Chinese','Indian','Thai','Japanese','Mediterranean'
+  ];
+
+  // key, label, description
+  static const List<(String key, String label, String desc)> _budgetOptions = <
+      (String, String, String)>[
+    ('cheap', 'Budget', r'$ · Casual, inexpensive'),
+    ('moderate', 'Moderate', r'$$ · Mid-range'),
+    ('pricey', 'Premium', r'$$$ · Special occasions'),
+  ];
+
+  void _next() => setState(() => _step = (_step + 1).clamp(0, 4));
+  void _back() => setState(() => _step = (_step - 1).clamp(0, 4));
+
+  Future<void> _finish() async {
+    final result = TasteQuizResult(
+      flavors: _selectedFlavors.toList(),
+      cuisines: _selectedCuisines.toList(),
+      budget: _selectedBudget,
+      diets: _selectedDiets.map((e) => e.name).toList(),
+      allergies: _selectedAllergies.map((e) => e.name).toList(),
+    );
+    await finishTasteQuizFromJson(context, result);
+  }
+
+  Widget _buildChips({
+    required Iterable<String> options,
+    required Set<String> selected,
+    required void Function(String, bool) onToggle,
+  }) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: options.map((opt) {
+        final isSel = selected.contains(opt);
+        return FilterChip(
+          label: Text(opt),
+          selected: isSel,
+          onSelected: (v) => onToggle(opt, v),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildFlavorsStep() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Which flavors do you prefer?',
+            style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        _buildChips(
+          options: _flavorOptions,
+          selected: _selectedFlavors,
+          onToggle: (opt, v) {
+            setState(() =>
+                v ? _selectedFlavors.add(opt) : _selectedFlavors.remove(opt));
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCuisinesStep() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Pick cuisines you like',
+            style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        _buildChips(
+          options: _cuisineOptions,
+          selected: _selectedCuisines,
+          onToggle: (opt, v) {
+            setState(() =>
+                v ? _selectedCuisines.add(opt) : _selectedCuisines.remove(opt));
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBudgetStep() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text("What's your usual budget?",
+            style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        ..._budgetOptions.map((tuple) {
+          final key = tuple.$1;
+          final label = tuple.$2;
+          final desc = tuple.$3;
+          return RadioListTile<String>(
+            value: key,
+            groupValue: _selectedBudget,
+            onChanged: (v) => setState(() => _selectedBudget = v),
+            title: Text(label),
+            subtitle: Text(desc),
+            contentPadding: EdgeInsets.zero,
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildDietAllergyStep() {
+    return DietAllergyStep(
+      initialDiets: _selectedDiets,
+      initialAllergies: _selectedAllergies,
+      onChanged: (diets, allergies) {
+        setState(() {
+          _selectedDiets = {...diets};
+          _selectedAllergies = {...allergies};
+        });
+      },
+    );
+  }
+
+  Widget _buildSummary() {
+    final theme = Theme.of(context);
+    TextStyle chipStyle = theme.textTheme.bodyMedium ?? const TextStyle();
+
+    Widget chipWrap(Iterable<String> items) => Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: items.isEmpty
+              ? [Chip(label: Text('None', style: chipStyle))]
+              : items.map((e) => Chip(label: Text(e, style: chipStyle))).toList(),
+        );
+
+    String budgetLabel = switch (_selectedBudget) {
+      'cheap' => 'Budget',
+      'moderate' => 'Moderate',
+      'pricey' => 'Premium',
+      _ => 'Not set',
+    };
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Summary', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 16),
+          Text('Flavors', style: theme.textTheme.titleSmall),
+          const SizedBox(height: 6),
+          chipWrap(_selectedFlavors),
+          const SizedBox(height: 16),
+          Text('Cuisines', style: theme.textTheme.titleSmall),
+          const SizedBox(height: 6),
+          chipWrap(_selectedCuisines),
+          const SizedBox(height: 16),
+          Text('Budget', style: theme.textTheme.titleSmall),
+          const SizedBox(height: 6),
+          Chip(label: Text(budgetLabel, style: chipStyle)),
+          const SizedBox(height: 16),
+          DietAllergySection(
+            diets: _selectedDiets,
+            allergies: _selectedAllergies,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepBody(int step) {
+    switch (step) {
+      case 0:
+        return _buildFlavorsStep();
+      case 1:
+        return _buildCuisinesStep();
+      case 2:
+        return _buildBudgetStep();
+      case 3:
+        return _buildDietAllergyStep();
+      case 4:
+        return _buildSummary();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  List<String> get _titles => const [
+        'Flavors',
+        'Cuisines',
+        'Budget',
+        'Diet & Allergies',
+        'Summary',
+      ];
+
+  @override
+  Widget build(BuildContext context) {
+    final isLast = _step == 4;
+
+    return Scaffold(
+      appBar: AppBar(title: Text('Taste Quiz - ${_titles[_step]}')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: _buildStepBody(_step),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: Row(
+            children: [
+              if (_step > 0)
+                OutlinedButton(onPressed: _back, child: const Text('Back')),
+              if (_step > 0) const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: isLast ? () => _finish() : _next,
+                  child: Text(isLast ? 'Finish' : 'Next'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+  void _finishSaveToFirestore() async {
+    final result = TasteQuizResult(
+      flavors: _selectedFlavors,
+      cuisines: _selectedCuisines,
+      budget: _selectedBudget,
+      diets: _selectedDiets,
+      allergies: _selectedAllergies,
+    );
+    try {
+      await finishTasteQuizFromJson(context, result.toJson(), nextRoute: '/group-match');
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Failed to save: \')),
+      );
+    }
+  }
+}
+

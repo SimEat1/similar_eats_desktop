@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 
 class MonetizationPlaceholder extends StatelessWidget {
   const MonetizationPlaceholder({super.key});

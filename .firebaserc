@@ -1,0 +1,8 @@
+{
+  "projects": {
+    "staging": "similar-eats",
+    "default": "similar-eats"
+  },
+  "targets": {},
+  "etags": {}
+}

@@ -1,0 +1,121 @@
+import 'package:flutter/material.dart';
+
+class DinnerScreen extends StatelessWidget {
+  static const routeName = '/dinner';
+  const DinnerScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('What’s for dinner?')),
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          final width = constraints.maxWidth;
+
+          // Simple breakpoints for desktop/tablet/phone
+          final cols = width >= 1200
+              ? 4
+              : width >= 900
+                  ? 3
+                  : width >= 600
+                      ? 2
+                      : 1;
+
+          // Tile width we expect each child to get (minus grid spacing)
+          final tileW = (width - (16 * (cols + 1))) / cols;
+
+          // Icon size scales with tile width, but stays within [28..72]
+          final iconSize = _clamp(tileW * 0.22, 28, 72);
+
+          // Title text scales a bit, too
+          final titleStyle = Theme.of(context)
+              .textTheme
+              .titleMedium
+              ?.copyWith(fontSize: _clamp(tileW * 0.06, 14, 20));
+
+          final cards = const [
+            _DinnerCardData(label: 'Steak', icon: Icons.restaurant),
+            _DinnerCardData(label: 'Burgers', icon: Icons.lunch_dining),
+            // add more here as you grow
+          ];
+
+          return GridView.builder(
+            padding: const EdgeInsets.all(16),
+            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: cols,
+              mainAxisSpacing: 16,
+              crossAxisSpacing: 16,
+              // Keep tiles roughly card-shaped on desktop
+              childAspectRatio: 1.2,
+            ),
+            itemCount: cards.length,
+            itemBuilder: (_, i) {
+              final c = cards[i];
+              return _DinnerCard(
+                data: c,
+                iconSize: iconSize,
+                titleStyle: titleStyle,
+                onTap: () {
+                  // TODO: hook into your flow for this category
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text('Selected ${c.label}')),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+class _DinnerCardData {
+  final String label;
+  final IconData icon;
+  const _DinnerCardData({required this.label, required this.icon});
+}
+
+class _DinnerCard extends StatelessWidget {
+  final _DinnerCardData data;
+  final double iconSize;
+  final TextStyle? titleStyle;
+  final VoidCallback onTap;
+  const _DinnerCard({
+    required this.data,
+    required this.iconSize,
+    required this.titleStyle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    // Normalize text scale on desktop so it doesn't explode tiles
+    final tsf = MediaQuery.textScaleFactorOf(context);
+    final clampedTsf = tsf.clamp(0.9, 1.2);
+
+    return MediaQuery(
+      data: MediaQuery.of(context).copyWith(textScaleFactor: clampedTsf),
+      child: Card(
+        clipBehavior: Clip.antiAlias,
+        child: InkWell(
+          onTap: onTap,
+          child: Center(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(data.icon, size: iconSize),
+                const SizedBox(height: 12),
+                Text(data.label, style: titleStyle),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+double _clamp(double v, double min, double max) =>
+    v < min ? min : (v > max ? max : v);
+

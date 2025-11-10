@@ -1,4 +1,4 @@
-﻿import 'package:flutter_test/flutter_test.dart';
+import 'package:flutter_test/flutter_test.dart';
 import 'package:similar_eats_desktop/features/quick_eats/models/restaurant.dart';
 
 /// Pure scoring helper that mirrors the repo’s logic:
@@ -6,7 +6,10 @@ import 'package:similar_eats_desktop/features/quick_eats/models/restaurant.dart'
 /// +10 for openLate (when !quickMode)
 /// +3 per tag in loves
 /// -3 per tag in avoids
-int _score(Restaurant r, {required bool quickMode, required Set<String> loves, required Set<String> avoids}) {
+int _score(Restaurant r,
+    {required bool quickMode,
+    required Set<String> loves,
+    required Set<String> avoids}) {
   int s = 0;
   if (quickMode && r.quickServiceFlag) s += 10;
   if (!quickMode && r.openLateFlag) s += 10;
@@ -18,51 +21,53 @@ int _score(Restaurant r, {required bool quickMode, required Set<String> loves, r
 }
 
 List<Restaurant> _rank(List<Restaurant> items,
-    {required bool quickMode, required Set<String> loves, required Set<String> avoids}) {
+    {required bool quickMode,
+    required Set<String> loves,
+    required Set<String> avoids}) {
   final copy = [...items];
   copy.sort((a, b) =>
-      _score(b, quickMode: quickMode, loves: loves, avoids: avoids)
-          .compareTo(_score(a, quickMode: quickMode, loves: loves, avoids: avoids)));
+      _score(b, quickMode: quickMode, loves: loves, avoids: avoids).compareTo(
+          _score(a, quickMode: quickMode, loves: loves, avoids: avoids)));
   return copy;
 }
 
 void main() {
   group('QuickEats ranking (smoke test)', () {
     final restaurants = <Restaurant>[
-      Restaurant(
+      const Restaurant(
         id: '1',
         name: 'Drive Thru Burgers',
         quickServiceFlag: true,
         openLateFlag: false,
-        serviceTags: const ['burgers'],
+        serviceTags: ['burgers'],
       ),
-      Restaurant(
+      const Restaurant(
         id: '2',
         name: 'Salad & Go',
         quickServiceFlag: true,
         openLateFlag: false,
-        serviceTags: const ['salad'],
+        serviceTags: ['salad'],
       ),
-      Restaurant(
+      const Restaurant(
         id: '3',
         name: 'Taco Express',
         quickServiceFlag: true,
         openLateFlag: true,
-        serviceTags: const ['tacos'],
+        serviceTags: ['tacos'],
       ),
-      Restaurant(
+      const Restaurant(
         id: '4',
         name: 'Bento Box Co.',
         quickServiceFlag: false,
         openLateFlag: false,
-        serviceTags: const ['sushi'],
+        serviceTags: ['sushi'],
       ),
-      Restaurant(
+      const Restaurant(
         id: '5',
         name: 'Night Owl Pizza',
         quickServiceFlag: false,
         openLateFlag: true,
-        serviceTags: const ['pizza'],
+        serviceTags: ['pizza'],
       ),
     ];
 
@@ -70,8 +75,8 @@ void main() {
       final loves = {'tacos', 'burgers'};
       final avoids = <String>{};
 
-      final ranked = _rank(restaurants,
-          quickMode: true, loves: loves, avoids: avoids);
+      final ranked =
+          _rank(restaurants, quickMode: true, loves: loves, avoids: avoids);
 
       // Taco Express: quick (+10) + loves tacos (+3) = 13
       // Drive Thru Burgers: quick (+10) + loves burgers (+3) = 13
@@ -88,16 +93,18 @@ void main() {
       final loves = {'pizza'};
       final avoids = {'burgers'};
 
-      final ranked = _rank(restaurants,
-          quickMode: false, loves: loves, avoids: avoids);
+      final ranked =
+          _rank(restaurants, quickMode: false, loves: loves, avoids: avoids);
 
       // Night Owl Pizza: late (+10) + loves pizza (+3) = 13  -> should be #1
       expect(ranked.first.name, 'Night Owl Pizza');
 
       // Drive Thru Burgers gets -3 for avoid "burgers" and no late bonus -> should sink.
-      final idxBurgers = ranked.indexWhere((r) => r.name == 'Drive Thru Burgers');
+      final idxBurgers =
+          ranked.indexWhere((r) => r.name == 'Drive Thru Burgers');
       final idxSalad = ranked.indexWhere((r) => r.name == 'Salad & Go');
-      expect(idxBurgers, greaterThan(idxSalad)); // burgers should rank below salad
+      expect(
+          idxBurgers, greaterThan(idxSalad)); // burgers should rank below salad
     });
   });
 }

@@ -1,0 +1,24 @@
+﻿import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_auth/firebase_auth.dart";
+import "package:flutter/foundation.dart";
+import "../models/visit_log.dart";
+
+class VisitLogRepository {
+  Future<void> save(VisitLog log) async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      if (uid == null) {
+        debugPrint("[VisitLogRepository] No user; skipping remote save.");
+        return;
+      }
+      await FirebaseFirestore.instance
+          .collection("users")
+          .doc(uid)
+          .collection("visits")
+          .add(log.toJson());
+    } catch (e, st) {
+      debugPrint("[VisitLogRepository] save error: $e\n$st");
+      rethrow;
+    }
+  }
+}

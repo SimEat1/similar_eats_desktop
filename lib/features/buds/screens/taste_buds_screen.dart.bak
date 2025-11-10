@@ -1,0 +1,145 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/material.dart';
+
+import 'package:similar_eats_desktop/shared/geo/map_open.dart';
+
+class TasteBudsScreen extends StatefulWidget {
+  static const route = '/taste_buds';
+  const TasteBudsScreen({super.key});
+
+  @override
+  State<TasteBudsScreen> createState() => _TasteBudsScreenState();
+}
+
+class _TasteBudsScreenState extends State<TasteBudsScreen> {
+  final _addCtrl = TextEditingController();
+
+  String get _uid => FirebaseAuth.instance.currentUser!.uid;
+
+  @override
+  void dispose() {
+    _addCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _addBud() async {
+    final friend = _addCtrl.text.trim();
+    if (friend.isEmpty) return;
+
+    try {
+      final db = FirebaseFirestore.instance;
+      await db
+          .collection('users')
+          .doc(_uid)
+          .collection('buds')
+          .doc(friend)
+          .set({'since': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+
+      if (!mounted) return;
+      _addCtrl.clear();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Added bud')),
+      );
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Add failed: $e')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final db = FirebaseFirestore.instance;
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Taste Buds'),
+        actions: [
+          IconButton(
+            tooltip: 'Restaurants near me',
+            icon: const Icon(Icons.map_outlined),
+            onPressed: () => openMapSearch('restaurants near me'),
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 16, 8),
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    controller: _addCtrl,
+                    decoration: const InputDecoration(
+                      labelText: 'Add by UID',
+                      border: OutlineInputBorder(),
+                    ),
+                    onSubmitted: (_) => _addBud(),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                FilledButton(
+                  onPressed: _addBud,
+                  child: const Text('Add'),
+                ),
+              ],
+            ),
+          ),
+          const Divider(height: 0),
+          Expanded(
+            child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: db
+                  .collection('users')
+                  .doc(_uid)
+                  .collection('buds')
+                  .orderBy(FieldPath.documentId)
+                  .snapshots(),
+              builder: (context, snap) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return const Center(child: CircularProgressIndicator());
+                }
+                if (snap.hasError) {
+                  return Center(child: Text('Error: ${snap.error}'));
+                }
+                final buds = snap.data?.docs ?? [];
+                if (buds.isEmpty) {
+                  return const Center(child: Text('No taste buds yet.'));
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.all(12),
+                  itemCount: buds.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 8),
+                  itemBuilder: (context, i) {
+                    final friendUid = buds[i].id;
+
+                    return ListTile(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(14),
+                        side: BorderSide(
+                          color: Colors.black.withOpacity(.04),
+                        ),
+                      ),
+                      leading: const CircleAvatar(child: Icon(Icons.person)),
+                      title: Text(friendUid),
+                      subtitle: const Text('Tap map to explore nearby'),
+                      trailing: IconButton(
+                        tooltip: 'Restaurants near me',
+                        icon: const Icon(Icons.map_outlined),
+                        onPressed: () => openMapSearch('restaurants near me'),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+

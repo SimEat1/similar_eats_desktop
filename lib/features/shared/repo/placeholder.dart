@@ -1,3 +1,3 @@
-﻿class SharedUtilitiesRepo {
+class SharedUtilitiesRepo {
   const SharedUtilitiesRepo();
 }

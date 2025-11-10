@@ -1,4 +1,4 @@
-plugins {
+﻿plugins {
     id("com.android.application")
     // START: FlutterFire Configuration
     id("com.google.gms.google-services")
@@ -8,15 +8,26 @@ plugins {
     id("dev.flutter.flutter-gradle-plugin")
 }
 
-android {
-    namespace = "com.example.similar_eats_desktop"
-    compileSdk = flutter.compileSdkVersion
-    ndkVersion = flutter.ndkVersion
+ param($m)
+        $body = $m.Groups[1].Value
+"android {
+$body
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+    kotlinOptions {
+        jvmTarget = ""17""
+    }
+    packaging {
+        resources {
+            excludes += ""META-INF/AL2.0""
+            excludes += ""META-INF/LGPL2.1""
+        }
+    }
+}"
+      
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_11.toString()
@@ -44,4 +55,9 @@ android {
 
 flutter {
     source = "../.."
+}
+
+repositories {
+    google()
+    mavenCentral()
 }

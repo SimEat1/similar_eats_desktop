@@ -1,13 +1,14 @@
-﻿import 'dart:async';
+import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import '../../../firebase_options.dart';
-import '../../shared/remote_config.dart';
-import '../models/restaurant.dart';
+import 'package:similar_eats_desktop/firebase_options.dart';
+import 'package:similar_eats_desktop/features/shared/remote_config.dart';
+import 'package:similar_eats_desktop/features/quick_eats/models/restaurant.dart';
 
+import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
 class QuickEatsRepo {
   QuickEatsRepo({
     FirebaseDatabase? db,
@@ -29,7 +30,7 @@ class QuickEatsRepo {
     final items = await _fetchRestaurants();
 
     // 3) Fetch taste prefs (non-fatal if missing)
-    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final uid = PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
     final prefs = (uid == null) ? TastePrefs.empty() : await _fetchTaste(uid);
 
     // 4) Filter by mode
@@ -98,8 +99,7 @@ class QuickEatsRepo {
   /// Simple linear score you can tweak freely.
   int _scoreRestaurant(Restaurant r, TastePrefs prefs, bool quickMode) {
     // Likes: +2 per matching tag
-    final likeHits =
-        r.serviceTags.where((t) => prefs.likes.contains(t)).length;
+    final likeHits = r.serviceTags.where((t) => prefs.likes.contains(t)).length;
     final likeScore = likeHits * 2;
 
     // Avoids: −3 per matching tag
@@ -168,3 +168,6 @@ class TastePrefs {
     return TastePrefs(likes: likes, avoids: avoids, spiceTolerance: spice);
   }
 }
+
+
+

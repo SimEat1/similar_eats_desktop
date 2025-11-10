@@ -1,0 +1,302 @@
+import "package:flutter/material.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:similar_eats_desktop/features/visits/data/visit_log_repository.dart";
+import "package:similar_eats_desktop/shared/portion.dart";
+import "package:similar_eats_desktop/shared/portion_size.dart";
+import "package:similar_eats_desktop/shared/widgets/portion_size_picker.dart";
+
+import 'package:firebase_auth/firebase_auth.dart';
+
+class QuickVisitScreen extends StatefulWidget {
+  const QuickVisitScreen({super.key});
+
+  @override
+  State<QuickVisitScreen> createState() => _QuickVisitScreenState();
+}
+
+class _QuickVisitScreenState extends State<QuickVisitScreen> {
+  // Validator-friendly wrapper so onPressed is a direct reference
+// Validator-friendly wrapper so onPressed is a direct reference
+  Future<void> _onSavePressed() async {
+    debugPrint(
+        "[quick_visit] onSavePressed tapped; dirty=$_dirty"); // Build payload with real selections     final payload = <String, dynamic>{       "created_at": DateTime.now().toIso8601String(),       "place_id": _placeId,       "item_id": _itemId,       "place_name": _placeName,       "item_name": _itemName,       "portion": {"size": _portion?.toString()}, // _saveVisit trims "Portion(L)" -> "L"       "taste_rating": _tasteRating,       "portion_rating": _portionRating,     };     debugPrint("[quick_visit] built payload: $payload");     await _saveVisit(payload);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // DEV: if no places yet, create some so pickers have data
+    Future.microtask(() async {
+      try {
+        final snap = await FirebaseFirestore.instance
+            .collection('places')
+            .limit(1)
+            .get();
+        if (snap.size == 0) {
+          await _seedDemoData();
+        }
+      } catch (_) {
+        // ignore
+      }
+    });
+  }
+
+  /// DEV ONLY: create a few sample documents so the pickers have data.
+  Future<void> _seedDemoData() async {
+    try {
+      final db = FirebaseFirestore.instance;
+
+      // places
+      final places = [
+        {'id': 'p_bobs', 'name': 'Bob' 's Burgers'},
+        {'id': 'p_sushispot', 'name': 'Sushi Spot'},
+        {'id': 'p_greenbowl', 'name': 'Green Bowl'},
+      ];
+      for (final p in places) {
+        await db.collection('places').doc(p['id'] as String).set({
+          'name': p['name'],
+          'created_at': DateTime.now().toIso8601String(),
+        }, SetOptions(merge: true));
+      }
+
+      // menu_items
+      final items = [
+        {'id': 'm_bobs_burger', 'place_id': 'p_bobs', 'name': 'Classic Burger'},
+        {'id': 'm_bobs_fries', 'place_id': 'p_bobs', 'name': 'Fries'},
+        {
+          'id': 'm_sushi_roll',
+          'place_id': 'p_sushispot',
+          'name': 'Salmon Roll'
+        },
+        {'id': 'm_sushi_udon', 'place_id': 'p_sushispot', 'name': 'Udon'},
+        {
+          'id': 'm_green_bowl',
+          'place_id': 'p_greenbowl',
+          'name': 'Protein Bowl'
+        },
+      ];
+      for (final it in items) {
+        await db.collection('menu_items').doc(it['id'] as String).set({
+          'place_id': it['place_id'],
+          'name': it['name'],
+          'created_at': DateTime.now().toIso8601String(),
+        }, SetOptions(merge: true));
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Seeded demo data')));
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Seed failed: $e')));
+    }
+  }
+
+  final VisitLogRepository _repo = const VisitLogRepository();
+
+  // Picked entities
+  String? _placeId;
+  String? _placeName;
+  String? _itemId;
+  String? _itemName;
+
+  // Portion & ratings
+  Portion _portion = const Portion(size: PortionSize.m);
+  int _tasteRating = 3; // 1..5
+  int _portionRating = 3; // 1..5
+  bool _dirty = false;
+
+  Future<void> _saveVisit(Map<String, dynamic> payload) async {
+    try {
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+      debugPrint("[quick_visit] _saveVisit entered. uid=$uid");
+
+      // Sanitize portion size to a plain string (e.g., "L")
+      String? portionSizeStr;
+      final p = payload["portion"];
+      if (p is Map && p["size"] != null) {
+        portionSizeStr = p["size"].toString();
+        final m = RegExp(r"\(([^)]+)\)$").firstMatch(portionSizeStr);
+        if (m != null) portionSizeStr = m.group(1);
+      }
+
+      final data = {
+        "created_at": payload["created_at"],
+        "place_id": payload["place_id"],
+        "item_id": payload["item_id"],
+        "place_name": payload["place_name"],
+        "item_name": payload["item_name"],
+        "portion": {"size": portionSizeStr},
+        "taste_rating": payload["taste_rating"],
+        "portion_rating": payload["portion_rating"],
+        "uid": uid,
+        "platform": "windows",
+      };
+      debugPrint("[quick_visit] final data => $data");
+
+      final docRef =
+          await FirebaseFirestore.instance.collection("visits").add(data);
+      debugPrint("[quick_visit] saved doc id: ${docRef.id}");
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text("Visit saved")));
+      }
+      setState(() {
+        _dirty = false;
+      });
+    } catch (e, st) {
+      debugPrint("[quick_visit] save failed: $e");
+      debugPrintStack(label: "[quick_visit] save stack", stackTrace: st);
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Save failed: $e")));
+      }
+    }
+  }
+
+  Future<void> _pickPlace() async {
+    final qs =
+        await FirebaseFirestore.instance.collection('places').limit(100).get();
+
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+        context: context,
+        builder: (ctx) {
+          return SafeArea(
+              child: ListView.builder(
+                  itemCount: qs.docs.length,
+                  itemBuilder: (_, i) {
+                    final d = qs.docs[i];
+                    final name = (d.data()['name'] as String?) ?? d.id;
+                    return ListTile(
+                        title: Text(name),
+                        subtitle: Text(d.id),
+                        onTap: () {
+                          setState(() {
+                            _placeId = d.id;
+                            _placeName = name;
+                            // reset item if place changes
+                            _itemId = null;
+                            _itemName = null;
+                            _dirty = true;
+                          });
+                          Navigator.of(ctx).pop();
+                        });
+                  }));
+        });
+  }
+
+  Future<void> _pickItem() async {
+    if (_placeId == null) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Pick a place first')));
+      return;
+    }
+
+    final qs = await FirebaseFirestore.instance
+        .collection('menu_items')
+        .where('place_id', isEqualTo: _placeId)
+        .limit(1000)
+        .get();
+    if (!mounted) return;
+    await showModalBottomSheet<void>(
+        context: context,
+        builder: (ctx) {
+          return SafeArea(
+              child: ListView.builder(
+                  itemCount: qs.docs.length,
+                  itemBuilder: (_, i) {
+                    final d = qs.docs[i];
+                    final name = (d.data()['name'] as String?) ?? d.id;
+                    return ListTile(
+                        title: Text(name),
+                        subtitle: Text(d.id),
+                        onTap: () {
+                          setState(() {
+                            _itemId = d.id;
+                            _itemName = name;
+                            _dirty = true;
+                          });
+                          Navigator.of(ctx).pop();
+                        });
+                  }));
+        });
+  }
+
+  List<Widget> _quickVisitExtras(BuildContext context) {
+    return [
+      const SizedBox(height: 12),
+      Text('Portion size', style: Theme.of(context).textTheme.titleMedium),
+      PortionSizePicker(
+        initialValue: _portion,
+        onChanged: (p) => setState(() {
+          _portion = p;
+          _dirty = true;
+        }),
+      ),
+      const SizedBox(height: 12),
+      const SizedBox(height: 12),
+      const SizedBox(height: 12),
+      Text('Taste rating: $_tasteRating',
+          style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+          min: 1,
+          max: 5,
+          divisions: 4,
+          label: '$_tasteRating',
+          value: _tasteRating.toDouble(),
+          onChanged: (v) => setState(() {
+                _tasteRating = v.round();
+                _dirty = true;
+              })),
+      const SizedBox(height: 12),
+      Text('Portion satisfaction: $_portionRating',
+          style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+          min: 1,
+          max: 5,
+          divisions: 4,
+          label: '$_portionRating',
+          value: _portionRating.toDouble(),
+          onChanged: (v) => setState(() {
+                _portionRating = v.round();
+                _dirty = true;
+              })),
+    ];
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+        appBar: AppBar(title: const Text('Quick Visit'), actions: [
+          IconButton(
+              icon: const Icon(Icons.bolt),
+              tooltip: 'DEV: Seed',
+              onPressed: _seedDemoData)
+        ]),
+        body: ListView(padding: const EdgeInsets.all(16), children: [
+          // Place picker
+          ListTile(
+              leading: const Icon(Icons.store),
+              title: Text(_placeName ?? 'Select place'),
+              subtitle: _placeId == null ? null : Text(_placeId!),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _pickPlace),
+          const SizedBox(height: 8),
+          // Item picker
+          ListTile(
+              leading: const Icon(Icons.restaurant_menu),
+              title: Text(_itemName ?? 'Select item'),
+              subtitle: _itemId == null ? null : Text(_itemId!),
+              trailing: const Icon(Icons.chevron_right),
+              onTap: _pickItem),
+          const Divider(height: 24),
+          ..._quickVisitExtras(context),
+          const SizedBox(height: 24),
+          FilledButton(
+              onPressed: _dirty ? _onSavePressed : null,
+              child: const Text('Save'))
+        ]));
+  }
+}

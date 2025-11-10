@@ -1,0 +1,18 @@
+# Roadmap (working list)
+
+## Near-term
+- Hook Recommendations button from Taste Type screen ✅
+- Add restaurant detail stub from recs list
+- Prefill sliders with saved values
+- Snackbars + disabled Save during write
+
+## Beta polish
+- Shimmer/empty/error states
+- Map view with tag filters
+- In-app notifications (tag events)
+- Taste Type share badge
+
+## Monetization / Stability
+- Premium gating wrapper
+- Error fallbacks + offline banners
+- Analytics events (quiz complete, rec viewed)

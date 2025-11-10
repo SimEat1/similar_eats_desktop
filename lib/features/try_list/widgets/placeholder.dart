@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 
 class TryListPlaceholder extends StatelessWidget {
   const TryListPlaceholder({super.key});

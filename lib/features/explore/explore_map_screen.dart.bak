@@ -1,0 +1,117 @@
+﻿import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:similar_eats_desktop/shared/geo/map_open.dart';
+
+class ExploreMapScreen extends StatefulWidget {
+  static const routeName = "/explore_map";
+  const ExploreMapScreen({super.key});
+
+  @override
+  State<ExploreMapScreen> createState() => _ExploreMapScreenState();
+}
+
+class _ExploreMapScreenState extends State<ExploreMapScreen> {
+  final _searchCtrl = TextEditingController(text: "restaurants near me");
+
+  final _quick = const [
+    "tacos near me",
+    "ramen near me",
+    "pizza near me",
+    "bbq near me",
+    "coffee near me",
+    "ice cream near me",
+    "sushi near me",
+    "breakfast near me",
+  ];
+
+  @override
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final titleStyle = GoogleFonts.poppins(
+      textStyle: theme.textTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w700,
+      ),
+    );
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Explore"),
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          Text("Open in your maps", style: titleStyle),
+          const SizedBox(height: 8),
+          Text(
+            "Launch Google/Apple Maps with a search that fits what youâ€™re craving.",
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 16),
+
+          // Search box + Go button
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _searchCtrl,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    labelText: "Search",
+                    hintText: "e.g., spicy wings near me",
+                  ),
+                  onSubmitted: (v) => openMapSearch(v.trim()),
+                ),
+              ),
+              const SizedBox(width: 12),
+              FilledButton.icon(
+                onPressed: () => openMapSearch(_searchCtrl.text.trim()),
+                icon: const Icon(Icons.map_outlined),
+                label: const Text("Open"),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 20),
+          Text("Quick picks", style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _quick.map((q) {
+              return ActionChip(
+                label: Text(q),
+                onPressed: () => openMapSearch(q),
+              );
+            }).toList(),
+          ),
+
+          const SizedBox(height: 24),
+          const Divider(),
+          const SizedBox(height: 8),
+
+          // Directions demo
+          Text("Need directions?", style: theme.textTheme.titleMedium),
+          const SizedBox(height: 8),
+          Text(
+            "Try an example to a landmark:",
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 8),
+          OutlinedButton.icon(
+            icon: const Icon(Icons.directions_outlined),
+            label: const Text("Directions to nearest coffee"),
+            onPressed: () => openDirections(to: "coffee near me"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+

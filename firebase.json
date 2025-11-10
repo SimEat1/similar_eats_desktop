@@ -1,1 +1,34 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"similar-eats","appId":"1:970307574487:android:568d38b5042a6d3b0bee92","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"similar-eats","configurations":{"android":"1:970307574487:android:568d38b5042a6d3b0bee92","ios":"1:970307574487:ios:0b7ee013a685a92a0bee92","macos":"1:970307574487:ios:0b7ee013a685a92a0bee92","web":"1:970307574487:web:354b49faa5b215780bee92","windows":"1:970307574487:web:256e1ce39a7c63820bee92"}}}}}}
+﻿{
+    "flutter":  {
+                    "platforms":  {
+                                      "android":  {
+                                                      "default":  {
+                                                                      "projectId":  "similar-eats",
+                                                                      "appId":  "1:970307574487:android:568d38b5042a6d3b0bee92",
+                                                                      "fileOutput":  "android/app/google-services.json"
+                                                                  }
+                                                  },
+                                      "dart":  {
+                                                   "lib/firebase_options.dart":  {
+                                                                                     "projectId":  "similar-eats",
+                                                                                     "configurations":  {
+                                                                                                            "android":  "1:970307574487:android:568d38b5042a6d3b0bee92",
+                                                                                                            "ios":  "1:970307574487:ios:0b7ee013a685a92a0bee92",
+                                                                                                            "macos":  "1:970307574487:ios:0b7ee013a685a92a0bee92",
+                                                                                                            "web":  "1:970307574487:web:354b49faa5b215780bee92",
+                                                                                                            "windows":  "1:970307574487:web:256e1ce39a7c63820bee92"
+                                                                                                        }
+                                                                                 }
+                                               }
+                                  }
+                },
+    "firestore":  {
+                      "database":  "(default)",
+                      "location":  "nam5",
+                      "rules":  "firestore.rules",
+                      "indexes":  "firestore.indexes.json"
+                  },
+    "storage":  {
+                    "rules":  "storage.rules"
+                }
+}

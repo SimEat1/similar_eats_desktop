@@ -1,4 +1,4 @@
-﻿class Restaurant {
+class Restaurant {
   final String id;
   final String name;
   final List<String> serviceTags;

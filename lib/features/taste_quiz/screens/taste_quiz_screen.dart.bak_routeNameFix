@@ -1,0 +1,300 @@
+﻿import 'package:similar_eats_desktop/features/taste_quiz/actions/finish_quiz.dart';
+import 'package:flutter/material.dart';
+import '../../profile/allergies/diet_allergy_step.dart';
+import '../../profile/allergies/diet_allergy_section.dart';
+
+/// Result object you can pop back to the caller or persist.
+class TasteQuizResult {
+  final Set<String> flavors;
+  final Set<String> cuisines;
+  final String? budget; // 'cheap' | 'moderate' | 'pricey'
+  final Set<DietType> diets;
+  final Set<Allergy> allergies;
+
+  const TasteQuizResult({
+    required this.flavors,
+    required this.cuisines,
+    required this.budget,
+    required this.diets,
+    required this.allergies,
+  });
+
+  Map<String, dynamic> toJson() => {
+        'flavors': flavors.toList(),
+        'cuisines': cuisines.toList(),
+        'budget': budget,
+        'diets': diets.map((e) => e.name).toList(),
+        'allergies': allergies.map((e) => e.name).toList(),
+      };
+
+  @override
+  String toString() => 'TasteQuizResult(${toJson()})';
+}
+
+/// A simple, self-contained quiz screen with 5 steps:
+/// 0 Flavors, 1 Cuisines, 2 Budget, 3 Diet & Allergies, 4 Summary
+class TasteQuizScreen extends StatefulWidget {
+  static const routeName = '/taste-quiz';
+  const TasteQuizScreen({super.key});
+
+  /// Added so main.dart can reference TasteQuizScreen.routeName
+  static const String routeName = '/taste-quiz';
+
+  @override
+  State<TasteQuizScreen> createState() => _TasteQuizScreenState();
+}
+
+class _TasteQuizScreenState extends State<TasteQuizScreen> {
+  int _step = 0;
+
+  final Set<String> _selectedFlavors = {};
+  final Set<String> _selectedCuisines = {};
+  String? _selectedBudget; // 'cheap' | 'moderate' | 'pricey'
+
+  Set<DietType> _selectedDiets = {};
+  Set<Allergy> _selectedAllergies = {};
+
+  static const List<String> _flavorOptions = <String>[
+    'Savory',
+    'Spicy',
+    'Sweet',
+    'Smoky',
+    'Tangy',
+    'Umami'
+  ];
+  static const List<String> _cuisineOptions = <String>[
+    'Italian',
+    'Mexican',
+    'Chinese',
+    'Indian',
+    'Thai',
+    'Japanese',
+    'Mediterranean'
+  ];
+  static const List<(String key, String label, String desc)> _budgetOptions =
+      <(String, String, String)>[
+    ('cheap', 'Budget', '\$ Â· Casual, inexpensive'),
+    ('moderate', 'Moderate', '\$\$ Â· Mid-range'),
+    ('pricey', 'Premium', '\$\$\$ Â· Special occasions'),
+  ];
+
+  void _next() => setState(() => _step = (_step + 1).clamp(0, 4));
+  void _back() => setState(() => _step = (_step - 1).clamp(0, 4));
+
+  void _finish() {
+    final result = TasteQuizResult(
+      flavors: _selectedFlavors,
+      cuisines: _selectedCuisines,
+      budget: _selectedBudget,
+      diets: _selectedDiets,
+      allergies: _selectedAllergies,
+    );
+
+    if (Navigator.canPop(context)) {
+      Navigator.pop(context, result);
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Saved: ${result.toJson()}')),
+      );
+    }
+  }
+
+  Widget _buildChips({
+    required Iterable<String> options,
+    required Set<String> selected,
+    required void Function(String, bool) onToggle,
+  }) {
+    return Wrap(
+      spacing: 8,
+      runSpacing: 8,
+      children: options.map((opt) {
+        final isSel = selected.contains(opt);
+        return FilterChip(
+          label: Text(opt),
+          selected: isSel,
+          onSelected: (v) => onToggle(opt, v),
+        );
+      }).toList(),
+    );
+  }
+
+  Widget _buildFlavorsStep() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Which flavors do you prefer?',
+            style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        _buildChips(
+          options: _flavorOptions,
+          selected: _selectedFlavors,
+          onToggle: (opt, v) {
+            setState(() =>
+                v ? _selectedFlavors.add(opt) : _selectedFlavors.remove(opt));
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildCuisinesStep() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('Pick cuisines you like',
+            style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        _buildChips(
+          options: _cuisineOptions,
+          selected: _selectedCuisines,
+          onToggle: (opt, v) {
+            setState(() =>
+                v ? _selectedCuisines.add(opt) : _selectedCuisines.remove(opt));
+          },
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBudgetStep() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('What\'s your usual budget?',
+            style: Theme.of(context).textTheme.titleMedium),
+        const SizedBox(height: 12),
+        ..._budgetOptions.map((tuple) {
+          final key = tuple.$1;
+          final label = tuple.$2;
+          final desc = tuple.$3;
+          return RadioListTile<String>(
+            value: key,
+            groupValue: _selectedBudget,
+            onChanged: (v) => setState(() => _selectedBudget = v),
+            title: Text(label),
+            subtitle: Text(desc),
+            contentPadding: EdgeInsets.zero,
+          );
+        }),
+      ],
+    );
+  }
+
+  Widget _buildDietAllergyStep() {
+    return DietAllergyStep(
+      initialDiets: _selectedDiets,
+      initialAllergies: _selectedAllergies,
+      onChanged: (diets, allergies) {
+        setState(() {
+          _selectedDiets = {...diets};
+          _selectedAllergies = {...allergies};
+        });
+      },
+    );
+  }
+
+  Widget _buildSummary() {
+    final theme = Theme.of(context);
+    TextStyle chipStyle = theme.textTheme.bodyMedium ?? const TextStyle();
+
+    Widget chipWrap(Iterable<String> items) => Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: items.isEmpty
+              ? [Chip(label: Text('None', style: chipStyle))]
+              : items
+                  .map((e) => Chip(label: Text(e, style: chipStyle)))
+                  .toList(),
+        );
+
+    String budgetLabel = switch (_selectedBudget) {
+      'cheap' => 'Budget',
+      'moderate' => 'Moderate',
+      'pricey' => 'Premium',
+      _ => 'Not set',
+    };
+
+    return SingleChildScrollView(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Summary', style: theme.textTheme.titleLarge),
+          const SizedBox(height: 16),
+          Text('Flavors', style: theme.textTheme.titleSmall),
+          const SizedBox(height: 6),
+          chipWrap(_selectedFlavors),
+          const SizedBox(height: 16),
+          Text('Cuisines', style: theme.textTheme.titleSmall),
+          const SizedBox(height: 6),
+          chipWrap(_selectedCuisines),
+          const SizedBox(height: 16),
+          Text('Budget', style: theme.textTheme.titleSmall),
+          const SizedBox(height: 6),
+          Chip(label: Text(budgetLabel, style: chipStyle)),
+          const SizedBox(height: 16),
+          DietAllergySection(
+            diets: _selectedDiets,
+            allergies: _selectedAllergies,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepBody(int step) {
+    switch (step) {
+      case 0:
+        return _buildFlavorsStep();
+      case 1:
+        return _buildCuisinesStep();
+      case 2:
+        return _buildBudgetStep();
+      case 3:
+        return _buildDietAllergyStep();
+      case 4:
+        return _buildSummary();
+      default:
+        return const SizedBox.shrink();
+    }
+  }
+
+  List<String> get _titles => const [
+        'Flavors',
+        'Cuisines',
+        'Budget',
+        'Diet & Allergies',
+        'Summary',
+      ];
+
+  @override
+  Widget build(BuildContext context) {
+    final isLast = _step == 4;
+
+    return Scaffold(
+      appBar: AppBar(title: Text('Taste Quiz â€” ${_titles[_step]}')),
+      body: Padding(
+        padding: const EdgeInsets.all(16),
+        child: _buildStepBody(_step),
+      ),
+      bottomNavigationBar: SafeArea(
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 8, 16, 16),
+          child: Row(
+            children: [
+              if (_step > 0)
+                OutlinedButton(onPressed: _back, child: const Text('Back')),
+              if (_step > 0) const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: isLast ? _finish : _next,
+                  child: Text(isLast ? 'Finish' : 'Next'),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+

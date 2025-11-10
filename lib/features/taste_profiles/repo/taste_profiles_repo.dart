@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import '../../../firebase_options.dart';
-import '../models/taste_profile.dart';
+import 'package:similar_eats_desktop/firebase_options.dart';
+import 'package:similar_eats_desktop/features/taste_profiles/models/taste_profile.dart';
 
 /// RTDB layout used here:
 /// /userTaste/{uid}
@@ -41,14 +41,13 @@ class TasteProfilesRepo {
     return _profileRef(uid).onValue.map((ev) {
       final v = ev.snapshot.value;
       if (v == null || v is! Map) return null;
-      final m = Map<String, dynamic>.from(v as Map);
+      final m = Map<String, dynamic>.from(v);
       return TasteProfile.fromJson(m);
     });
   }
 
   /// Upsert a profile for uid.
-  Future<void> saveProfile(TasteProfile profile) async {
-    await _profileRef(profile.uid).set(profile.toJson());
+  Future<void> saveProfile(TasteProfile profile) async {await _profileRef(profile.uid).set(profile.toJson());
   }
 
   /// Merge cuisines/tags and bump updatedAt.
@@ -70,8 +69,7 @@ class TasteProfilesRepo {
   /// Compute top N similar users to [uid] by Jaccard similarity
   /// over the union of cuisines+tags.
   Future<List<SimilarUser>> topSimilarUsers(
-    String uid, {
-    int limit = 10,
+    String uid, {int limit = 10,
     bool includeZero = false,
   }) async {
     final me = await getProfile(uid);
@@ -116,4 +114,6 @@ class TasteProfilesRepo {
     return union == 0 ? 0.0 : inter / union;
   }
 }
+
+
 

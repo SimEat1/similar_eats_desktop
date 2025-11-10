@@ -1,3 +1,3 @@
-﻿class ReviewTaggingModel {
+class ReviewTaggingModel {
   const ReviewTaggingModel();
 }

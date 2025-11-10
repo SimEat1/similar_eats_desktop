@@ -1,0 +1,187 @@
+import 'package:flutter/material.dart';
+
+import 'package:similar_eats_desktop/features/home/widgets/home_header_prompt.dart';
+import 'package:similar_eats_desktop/features/quick_eats/screens/quick_eats_screen.dart';
+import 'package:similar_eats_desktop/features/try_list/screens/try_list_screen.dart';
+import 'package:similar_eats_desktop/features/taste_quiz/screens/taste_quiz_screen.dart';
+
+/// HomeScreen
+/// - Shows rotating “What do you want to eat?” prompt
+/// - Shows adaptive taste chips (tap logs + adapts profile)
+/// - Quick launch tiles for core features
+class HomeScreen extends StatelessWidget {
+  const HomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Similar Eats'),
+        actions: [
+          IconButton(
+            tooltip: 'Taste Quiz',
+            icon: const Icon(Icons.emoji_food_beverage_outlined),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const TasteQuizScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 4),
+          IconButton(
+            tooltip: 'Try List',
+            icon: const Icon(Icons.push_pin_outlined),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const TryListScreen()),
+              );
+            },
+          ),
+          const SizedBox(width: 6),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.fromLTRB(16, 12, 16, 24),
+        children: [
+          // ---- Prompt + Adaptive Chips --------------------------------------
+          const HomeHeaderPrompt(),
+          const SizedBox(height: 16),
+
+          // ---- Quick Launch --------------------------------------------------
+          Text('Quick launch', style: theme.textTheme.titleMedium),
+          const SizedBox(height: 10),
+          _QuickLaunchGrid(
+            items: [
+              _QuickLaunchItem(
+                icon: Icons.flash_on_outlined,
+                label: 'Quick Eats',
+                onTap: (ctx) => Navigator.of(ctx).push(
+                  MaterialPageRoute(builder: (_) => const QuickEatsScreen()),
+                ),
+              ),
+              _QuickLaunchItem(
+                icon: Icons.nights_stay_outlined,
+                label: 'Late Night',
+                onTap: (ctx) => Navigator.of(ctx).push(
+                  MaterialPageRoute(
+                    builder: (_) => const QuickEatsScreen(),
+                  ),
+                ),
+                // Tip: if you later want a separate late-night route, pass a flag.
+              ),
+              _QuickLaunchItem(
+                icon: Icons.push_pin_outlined,
+                label: 'Try List',
+                onTap: (ctx) => Navigator.of(ctx).push(
+                  MaterialPageRoute(builder: (_) => const TryListScreen()),
+                ),
+              ),
+              _QuickLaunchItem(
+                icon: Icons.emoji_food_beverage_outlined,
+                label: 'Taste Quiz',
+                onTap: (ctx) => Navigator.of(ctx).push(
+                  MaterialPageRoute(builder: (_) => const TasteQuizScreen()),
+                ),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+
+          // ---- You can add more sections below ------------------------------
+          // e.g., “Because you liked BBQ”, “Open now nearby”, etc.
+        ],
+      ),
+    );
+  }
+}
+
+class _QuickLaunchGrid extends StatelessWidget {
+  const _QuickLaunchGrid({required this.items});
+
+  final List<_QuickLaunchItem> items;
+
+  @override
+  Widget build(BuildContext context) {
+    // Responsive 2-column cards that wrap nicely.
+    return LayoutBuilder(
+      builder: (ctx, c) {
+        final isWide = c.maxWidth >= 680;
+        final crossAxisCount = isWide ? 4 : 2;
+        return GridView.builder(
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          itemCount: items.length,
+          gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: crossAxisCount,
+            mainAxisSpacing: 12,
+            crossAxisSpacing: 12,
+            childAspectRatio: 1.35,
+          ),
+          itemBuilder: (_, i) => _QuickLaunchCard(item: items[i]),
+        );
+      },
+    );
+  }
+}
+
+class _QuickLaunchItem {
+  const _QuickLaunchItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final void Function(BuildContext) onTap;
+}
+
+class _QuickLaunchCard extends StatelessWidget {
+  const _QuickLaunchCard({required this.item});
+
+  final _QuickLaunchItem item;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final cardColor = theme.colorScheme.surface;
+    final onSurface = theme.colorScheme.onSurface;
+
+    return Material(
+      color: cardColor,
+      borderRadius: BorderRadius.circular(16),
+      elevation: 1,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(16),
+        onTap: () => item.onTap(context),
+        child: Padding(
+          padding: const EdgeInsets.all(14),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Icon(item.icon, size: 28, color: onSurface.withOpacity(0.85)),
+              const Spacer(),
+              Text(
+                item.label,
+                style: theme.textTheme.titleMedium,
+              ),
+              const SizedBox(height: 2),
+              Text(
+                'Open',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: onSurface.withOpacity(0.6),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+
+

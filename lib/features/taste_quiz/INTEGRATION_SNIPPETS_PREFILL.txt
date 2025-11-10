@@ -1,0 +1,27 @@
+/* ===== Taste Quiz Prefill (paste into your quiz widget) =====
+1) In initState (or after controller.init completes), pull current = context.read<TasteQuizController>().current
+2) If not null, setState your local slider vars from current
+3) For first build when controller is still loading, show a small CircularProgressIndicator or default values
+-------------------------------------------------------------- */
+
+import 'package:provider/provider.dart';
+import '../features/taste_quiz/presentation/taste_quiz_controller.dart';
+
+@override
+void initState() {
+  super.initState();
+  // Delay to ensure Provider is ready; or move into didChangeDependencies.
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    final ctrl = context.read<TasteQuizController>();
+    final p = ctrl.current;
+    if (p != null) {
+      setState(() {
+        sweetValue = p.sweet;
+        saltyValue = p.salty;
+        sourValue  = p.sour;
+        spicyValue = p.spicy;
+        umamiValue = p.umami;
+      });
+    }
+  });
+}

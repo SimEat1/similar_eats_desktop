@@ -1,3 +1,3 @@
-﻿class FavoritesModel {
+class FavoritesModel {
   const FavoritesModel();
 }

@@ -1,0 +1,13 @@
+/* ===== Optional: quick entry points =====
+Add to any AppBar actions or a Drawer to navigate:
+IconButton(
+  icon: const Icon(Icons.favorite),
+  tooltip: 'Favorites',
+  onPressed: () => Navigator.of(context).pushNamed(FavoritesScreen.route),
+),
+IconButton(
+  icon: const Icon(Icons.bookmark_add_outlined),
+  tooltip: 'Try List',
+  onPressed: () => Navigator.of(context).pushNamed(TryListScreen.route),
+),
+*/

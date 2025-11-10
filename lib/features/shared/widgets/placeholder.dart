@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 
 class SharedUtilitiesPlaceholder extends StatelessWidget {
   const SharedUtilitiesPlaceholder({super.key});

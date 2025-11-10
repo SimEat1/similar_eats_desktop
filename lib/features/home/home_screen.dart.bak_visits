@@ -1,0 +1,66 @@
+import 'package:flutter/material.dart';
+import '../tonight/tonight_screen.dart';
+import '../solo_map/solo_map_screen.dart';
+import '../group_match/group_match_screen.dart';
+import '../taste_quiz/screens/taste_quiz_screen.dart';
+
+class HomeScreen extends StatefulWidget {
+  static const routeName = '/home';
+  const HomeScreen({super.key});
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  int _index = 0;
+
+  @override
+  Widget build(BuildContext context) {
+    final pages = <Widget>[
+      const TonightScreen(),
+      const SoloMapScreen(),
+      GroupMatchScreen.sample(),
+      const _ProfileTab(),
+    ];
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Similar Eats')),
+      body: SafeArea(child: pages[_index]),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _index,
+        onDestinationSelected: (i) => setState(() => _index = i),
+        destinations: const [
+          NavigationDestination(icon: Icon(Icons.today), label: 'Tonight'),
+          NavigationDestination(icon: Icon(Icons.map_outlined), label: 'Map'),
+          NavigationDestination(
+              icon: Icon(Icons.groups_2_outlined), label: 'Tastebuds'),
+          NavigationDestination(
+              icon: Icon(Icons.person_outline), label: 'Profile'),
+        ],
+      ),
+    );
+  }
+}
+
+class _ProfileTab extends StatelessWidget {
+  const _ProfileTab();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          const Text('Profile'),
+          const SizedBox(height: 12),
+          FilledButton(
+            onPressed: () =>
+                Navigator.pushNamed(context, TasteQuizScreen.routeName),
+            child: const Text('Edit Taste Profile'),
+          ),
+        ],
+      ),
+    );
+  }
+}

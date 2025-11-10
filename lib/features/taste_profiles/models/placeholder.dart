@@ -1,3 +1,3 @@
-﻿class TasteProfilesModel {
+class TasteProfilesModel {
   const TasteProfilesModel();
 }

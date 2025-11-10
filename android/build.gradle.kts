@@ -1,8 +1,5 @@
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+﻿allprojects {
+     param($m) "repositories {$($m.Groups[1].Value)`n        google()`n        mavenCentral()`n    }" 
 }
 
 val newBuildDir: Directory = rootProject.layout.buildDirectory.dir("../../build").get()

@@ -1,5 +1,5 @@
 import 'dart:math';
-import 'package:flutter/foundation.dart';   // <-- this provides ValueListenable
+import 'package:flutter/foundation.dart'; // <-- this provides ValueListenable
 import 'package:flutter/material.dart';
 
 class HeatmapScreen extends StatelessWidget {
@@ -54,7 +54,8 @@ class _HeatPainter extends CustomPainter {
 
     final centers = List.generate(
       9,
-      (_) => Offset(rnd.nextDouble() * size.width, rnd.nextDouble() * size.height),
+      (_) =>
+          Offset(rnd.nextDouble() * size.width, rnd.nextDouble() * size.height),
     );
 
     for (final c in centers) {
@@ -72,4 +73,3 @@ class _HeatPainter extends CustomPainter {
   bool shouldRepaint(covariant _HeatPainter oldDelegate) =>
       !setEquals(oldDelegate.selected, selected);
 }
-

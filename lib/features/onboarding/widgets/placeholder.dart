@@ -1,7 +1,10 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 
-class Onboarding/TasteQuizPlaceholder extends StatelessWidget {
-  const Onboarding/TasteQuizPlaceholder({super.key});
+class OnboardingTasteQuizPlaceholder extends StatelessWidget {
+  const OnboardingTasteQuizPlaceholder({super.key});
+
   @override
-  Widget build(BuildContext context) => const SizedBox.shrink();
+  Widget build(BuildContext context) {
+    return const SizedBox.shrink();
+  }
 }

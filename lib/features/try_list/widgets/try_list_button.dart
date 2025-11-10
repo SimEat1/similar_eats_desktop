@@ -22,8 +22,12 @@ class TryListButton extends StatelessWidget {
           onSubmitted: (_) => Navigator.of(context).pop(true),
         ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
-          FilledButton(onPressed: () => Navigator.pop(context, true), child: const Text('Add')),
+          TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('Cancel')),
+          FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('Add')),
         ],
       ),
     );
@@ -45,8 +49,3 @@ class TryListButton extends StatelessWidget {
     );
   }
 }
-
-
-
-
-

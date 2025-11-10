@@ -1,0 +1,60 @@
+import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+
+class RecentVisitsScreen extends StatelessWidget {
+  const RecentVisitsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final query = FirebaseFirestore.instance
+        .collection('visits')
+        .orderBy('created_at', descending: true)
+        .limit(20)
+        .withConverter<Map<String, dynamic>>(
+          fromFirestore: (snap, _) => (snap.data() ?? {}),
+          toFirestore: (data, _) => Map<String, Object?>.from(data),
+        );
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Recent Visits')),
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        stream: query.snapshots(),
+        builder: (context, snap) {
+          if (snap.hasError) {
+            return Center(child: Text('Error: ${snap.error}'));
+          }
+          if (!snap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final docs = snap.data!.docs;
+          if (docs.isEmpty) {
+            return const Center(child: Text('No visits yet.'));
+          }
+          return ListView.separated(
+            itemCount: docs.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (context, i) {
+              final d = docs[i].data();
+              final place = (d['place_name'] ?? '') as String? ?? '';
+              final item = (d['item_name'] ?? '') as String? ?? '';
+              final created = (d['created_at'] ?? '') as String? ?? '';
+              // Support either { portion: { size: ... } } or flat 'portion_size'
+              String? portion = (d['portion_size'] as String?) ??
+                  ((d['portion'] is Map)
+                      ? (d['portion']['size'] as String?)
+                      : null);
+              final taste = d['taste_rating']?.toString() ?? '-';
+              final psize = portion?.toString() ?? '-';
+              return ListTile(
+                title: Text(item.isEmpty ? '(unknown item)' : item),
+                subtitle: Text(
+                    '${place.isEmpty ? "(unknown place)" : place} · portion $psize · taste $taste'),
+                trailing: Text(created.split('T').first),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}

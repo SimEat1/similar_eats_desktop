@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
-import '../../firebase_options.dart'; // <- NOTE: this path (two dots) is correct
+import 'package:similar_eats_desktop/firebase_options.dart'; // <- NOTE: this path (two dots) is correct
 
 /// Simple data model for Try List
 class TryItem {

@@ -1,7 +1,12 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
-class Onboarding/TasteQuizScreen extends StatelessWidget {
-  const Onboarding/TasteQuizScreen({super.key});
+class OnboardingTasteQuizScreen extends StatelessWidget {
+  const OnboardingTasteQuizScreen({super.key});
+
   @override
-  Widget build(BuildContext context) => const Scaffold(body: Center(child: Text('Onboarding / Taste Quiz')));
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(child: Text('Onboarding placeholder')),
+    );
+  }
 }

@@ -1,4 +1,4 @@
-﻿class Restaurant {
+class Restaurant {
   final String id;
   final String name;
   final List<String> serviceTags;
@@ -17,10 +17,9 @@
     return Restaurant(
       id: (json['id'] ?? json['key'] ?? '').toString(),
       name: (json['name'] ?? '').toString(),
-      serviceTags: (json['serviceTags'] as List?)
-              ?.map((e) => e.toString())
-              .toList() ??
-          const <String>[],
+      serviceTags:
+          (json['serviceTags'] as List?)?.map((e) => e.toString()).toList() ??
+              const <String>[],
       quickServiceFlag: json['quickServiceFlag'] == true,
       openLateFlag: json['openLateFlag'] == true,
     );

@@ -1,22 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
-import 'firebase_options.dart';
-import 'features/quick_eats/screens/quick_eats_screen.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(const MyApp());
-}
+void main() => runApp(const _BackupApp());
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class _BackupApp extends StatelessWidget {
+  const _BackupApp();
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Similar Eats',
-      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.teal),
-      home: const QuickEatsScreen(), // ← test entry
+    return const MaterialApp(
+      home: Scaffold(
+        body: Center(child: Text('backup main (stub)')),
+      ),
     );
   }
 }

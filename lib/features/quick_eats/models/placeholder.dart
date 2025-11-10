@@ -1,3 +1,3 @@
-﻿class QuickEatsModel {
+class QuickEatsModel {
   const QuickEatsModel();
 }

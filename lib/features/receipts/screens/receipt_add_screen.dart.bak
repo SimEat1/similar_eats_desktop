@@ -1,0 +1,203 @@
+import "dart:typed_data";
+import 'package:similar_eats_desktop/shared/widgets/portion_size_picker.dart';
+import 'package:similar_eats_desktop/shared/portion_size.dart';
+import 'package:similar_eats_desktop/shared/portion.dart';
+import "package:flutter/material.dart";
+import "package:file_picker/file_picker.dart";
+
+import "../data/receipts_repository.dart";
+
+class ReceiptAddScreen extends StatefulWidget {
+  const ReceiptAddScreen({super.key});
+
+  @override
+  State<ReceiptAddScreen> createState() => _ReceiptAddScreenState();
+}
+
+class _ReceiptAddScreenState extends State<ReceiptAddScreen> {
+  Portion _portion = const Portion(size: PortionSize.m);
+  final _repo = ReceiptsRepository();
+  final _amountCtl = TextEditingController();
+  final _nameCtl = TextEditingController();
+  final _notesCtl = TextEditingController();
+  final _tagsCtl = TextEditingController();
+  DateTime _date = DateTime.now();
+
+  PlatformFile? _file;
+  Uint8List? _bytes;
+  bool _saving = false;
+
+  int _toCents(String s) {
+    // robust parse: keep digits and at most one dot
+    final cleaned = s.replaceAll(RegExp(r"[^0-9.]"), "");
+    if (cleaned.isEmpty) return 0;
+    final parts = cleaned.split(".");
+    if (parts.length == 1) return int.parse(parts[0]) * 100;
+    final whole = parts[0].isEmpty ? "0" : parts[0];
+    var frac = (parts[1] + "00").substring(0, 2);
+    return int.parse(whole) * 100 + int.parse(frac);
+  }
+
+  String _guessMime(String name) {
+    final n = name.toLowerCase();
+    if (n.endsWith(".pdf")) return "application/pdf";
+    if (n.endsWith(".png")) return "image/png";
+    if (n.endsWith(".jpg") || n.endsWith(".jpeg")) return "image/jpeg";
+    if (n.endsWith(".heic")) return "image/heic";
+    return "application/octet-stream";
+  }
+
+  Future<void> _pick() async {
+    final res = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ["pdf", "png", "jpg", "jpeg", "heic"],
+      withData: true,
+    );
+    if (res == null) return;
+    final f = res.files.single;
+    if (f.bytes == null) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Couldn’t read file bytes.")));
+      return;
+    }
+    setState(() {
+      _file = f;
+      _bytes = f.bytes;
+    });
+  }
+
+  Future<void> _save() async {
+    if (_bytes == null || _file == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Attach a receipt file first.")));
+      return;
+    }
+    final cents = _toCents(_amountCtl.text);
+    if (cents <= 0) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Enter a valid amount.")));
+      return;
+    }
+    setState(() => _saving = true);
+    try {
+      final id = await _repo.addReceipt(
+        fileName: _file!.name,
+        mimeType: _guessMime(_file!.name),
+        sizeBytes: _file!.size,
+        data: _bytes!,
+        amountCents: cents,
+        restaurantName:
+            _nameCtl.text.trim().isEmpty ? null : _nameCtl.text.trim(),
+        notes: _notesCtl.text.trim().isEmpty ? null : _notesCtl.text.trim(),
+        tags: _tagsCtl.text
+            .split(",")
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList(),
+        purchaseAt: _date,
+      );
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Receipt saved (${id ?? "unknown"})")));
+      Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Failed to save receipt: $e")));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Add receipt")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          PortionSizePicker(
+            initialValue: _portion,
+            onChanged: (p) => setState(() => _portion = p),
+            showGramsField: true,
+          ),
+          TextField(
+            controller: _amountCtl,
+            keyboardType: const TextInputType.numberWithOptions(
+                decimal: true, signed: false),
+            decoration: const InputDecoration(
+              labelText: "Amount",
+              hintText: "e.g. 23.45",
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _nameCtl,
+            decoration: const InputDecoration(
+              labelText: "Restaurant (optional)",
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _tagsCtl,
+            decoration: const InputDecoration(
+              labelText: "Tags (comma separated)",
+              hintText: "e.g. lunch, team, sushi",
+            ),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _notesCtl,
+            maxLines: 3,
+            decoration: const InputDecoration(
+              labelText: "Notes",
+            ),
+          ),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              PortionSizePicker(
+                initialValue: _portion,
+                onChanged: (p) => setState(() => _portion = p),
+                showGramsField: true,
+              ),
+              const Text("Date:"),
+              const SizedBox(width: 8),
+              TextButton(
+                onPressed: () async {
+                  final now = DateTime.now();
+                  final picked = await showDatePicker(
+                    context: context,
+                    firstDate: DateTime(now.year - 5),
+                    lastDate: DateTime(now.year + 1),
+                    initialDate: _date,
+                  );
+                  if (picked != null) setState(() => _date = picked);
+                },
+                child: Text("${_date.toLocal()}".split(" ").first),
+              ),
+            ],
+          ),
+          const Divider(),
+          ListTile(
+            leading: const Icon(Icons.attachment),
+            title: Text(_file?.name ?? "Attach receipt"),
+            subtitle: _file == null ? null : Text("${_file!.size} bytes"),
+            trailing: OutlinedButton.icon(
+              onPressed: _pick,
+              icon: const Icon(Icons.upload),
+              label: const Text("Pick file"),
+            ),
+          ),
+          const SizedBox(height: 16),
+          FilledButton.icon(
+            onPressed: _saving ? null : _save,
+            icon: const Icon(Icons.save),
+            label: Text(_saving ? "Saving..." : "Save"),
+          ),
+        ],
+      ),
+    );
+  }
+}

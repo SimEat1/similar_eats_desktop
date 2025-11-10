@@ -1,0 +1,749 @@
+﻿import "package:flutter/material.dart";
+import 'package:similar_eats_desktop/shared/widgets/portion_size_picker.dart';
+import 'package:similar_eats_desktop/features/visits/data/visit_log_repository.dart';
+import "package:similar_eats_desktop/shared/widgets/rating_slider.dart";
+
+class QuickVisitScreen extends StatefulWidget {
+  const QuickVisitScreen({super.key});
+  static const routeName = "/quick_visit";
+
+  @override
+  State<QuickVisitScreen> createState() => _QuickVisitScreenState();
+}
+
+class _QuickVisitScreenState extends State<QuickVisitScreen> {
+  
+    List<Widget> _quickVisitExtras(BuildContext context) {
+    return [
+      const SizedBox(height: 12),
+      Text('Portion size', style: Theme.of(context).textTheme.titleMedium),
+      PortionSizePicker(
+        initialValue: _portion.size,
+        onChanged: (size) => setState(() {
+          _portion = Portion(size: size);
+        }),
+      ),
+      const SizedBox(height: 12),
+      Text('Taste rating: import "package:flutter/material.dart";
+import 'package:similar_eats_desktop/shared/widgets/portion_size_picker.dart';
+import 'package:similar_eats_desktop/features/visits/data/visit_log_repository.dart';
+import "package:similar_eats_desktop/shared/widgets/rating_slider.dart";
+
+class QuickVisitScreen extends StatefulWidget {
+  const QuickVisitScreen({super.key});
+  static const routeName = "/quick_visit";
+
+  @override
+  State<QuickVisitScreen> createState() => _QuickVisitScreenState();
+}
+
+class _QuickVisitScreenState extends State<QuickVisitScreen> {
+  
+  List<Widget> _quickVisitExtras(BuildContext context) {
+    return [
+      const SizedBox(height: 12),
+      Text('Portion size', style: Theme.of(context).textTheme.titleMedium),
+      PortionSizePicker(initialValue: _portion.size,
+        onChanged: (size) => setState(() {
+          _portion = Portion(size: size);
+        }),
+      ),
+      const SizedBox(height: 12),
+      Text('Taste rating: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _tasteRating.toDouble(),
+        onChanged: (v) => setState(() => _tasteRating = v.round()),
+      ),
+      const SizedBox(height: 12),
+      Text('Portion satisfaction: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _portionRating.toDouble(),
+        onChanged: (v) => setState(() => _portionRating = v.round()),
+      ),
+    ];
+  }
+final VisitLogRepository _repo = const VisitLogRepository();
+
+  Future<void> _saveVisit(Map<String, dynamic> payload) async {
+    try {
+      await _repo.addQuickVisit(payload);
+    } catch (e) {
+      // ignore: avoid_print
+      print('addQuickVisit error: $e');
+    }
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  final _nameCtl = TextEditingController();
+  final _notesCtl = TextEditingController();
+  Portion _portion = const Portion(size: PortionSize.m);
+  int _tasteRating = 3;
+  int _portionRating = 3;
+
+  @override
+  void dispose() {
+    _nameCtl.dispose();
+    _notesCtl.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    final payload = {
+      'name': _nameCtl.text.trim(),
+      'notes': _notesCtl.text.trim(),
+      'portion': _portion.toJson(),
+      'taste_rating': _tasteRating,
+      'portion_rating': _portionRating,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+    // TODO: integrate with your repository once ready.
+    // For now, just log so we can verify end-to-end quickly.
+    // ignore: avoid_print
+    print("QuickVisit payload => $payload");
+    _saveVisit(payload);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Quick Visit"),
+        actions: [
+          TextButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.save),
+            label: const Text("Save"),
+          )
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [ ..._quickVisitExtras(context),
+          TextField(
+            controller: _nameCtl,
+            decoration: const InputDecoration(
+              labelText: "What did you have?",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          PortionSizePicker(
+            initialValue: _portion,
+            onChanged: (p) => setState(() => _portion = p),
+            showGramsField: true,
+            gramsLabel: "Weight in grams (optional)",
+          ),
+          const SizedBox(height: 12),
+          RatingSlider(
+            label: 'Taste rating',
+            icon: Icons.local_dining,
+            initialValue: _tasteRating,
+            onChanged: (v) => setState(() => _tasteRating = v),
+          ),
+          RatingSlider(
+            label: 'Portion satisfaction',
+            icon: Icons.scale,
+            initialValue: _portionRating,
+            onChanged: (v) => setState(() => _portionRating = v),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _notesCtl,
+            decoration: const InputDecoration(
+              labelText: "Notes (optional)",
+              border: OutlineInputBorder(),
+            ),
+            minLines: 2,
+            maxLines: 5,
+          ),
+          const SizedBox(height: 20),
+          FilledButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.check),
+            label: const Text("Save quick visit"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+tasteRating', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: 'import "package:flutter/material.dart";
+import 'package:similar_eats_desktop/shared/widgets/portion_size_picker.dart';
+import 'package:similar_eats_desktop/features/visits/data/visit_log_repository.dart';
+import "package:similar_eats_desktop/shared/widgets/rating_slider.dart";
+
+class QuickVisitScreen extends StatefulWidget {
+  const QuickVisitScreen({super.key});
+  static const routeName = "/quick_visit";
+
+  @override
+  State<QuickVisitScreen> createState() => _QuickVisitScreenState();
+}
+
+class _QuickVisitScreenState extends State<QuickVisitScreen> {
+  
+  List<Widget> _quickVisitExtras(BuildContext context) {
+    return [
+      const SizedBox(height: 12),
+      Text('Portion size', style: Theme.of(context).textTheme.titleMedium),
+      PortionSizePicker(initialValue: _portion.size,
+        onChanged: (size) => setState(() {
+          _portion = Portion(size: size);
+        }),
+      ),
+      const SizedBox(height: 12),
+      Text('Taste rating: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _tasteRating.toDouble(),
+        onChanged: (v) => setState(() => _tasteRating = v.round()),
+      ),
+      const SizedBox(height: 12),
+      Text('Portion satisfaction: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _portionRating.toDouble(),
+        onChanged: (v) => setState(() => _portionRating = v.round()),
+      ),
+    ];
+  }
+final VisitLogRepository _repo = const VisitLogRepository();
+
+  Future<void> _saveVisit(Map<String, dynamic> payload) async {
+    try {
+      await _repo.addQuickVisit(payload);
+    } catch (e) {
+      // ignore: avoid_print
+      print('addQuickVisit error: $e');
+    }
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  final _nameCtl = TextEditingController();
+  final _notesCtl = TextEditingController();
+  Portion _portion = const Portion(size: PortionSize.m);
+  int _tasteRating = 3;
+  int _portionRating = 3;
+
+  @override
+  void dispose() {
+    _nameCtl.dispose();
+    _notesCtl.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    final payload = {
+      'name': _nameCtl.text.trim(),
+      'notes': _notesCtl.text.trim(),
+      'portion': _portion.toJson(),
+      'taste_rating': _tasteRating,
+      'portion_rating': _portionRating,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+    // TODO: integrate with your repository once ready.
+    // For now, just log so we can verify end-to-end quickly.
+    // ignore: avoid_print
+    print("QuickVisit payload => $payload");
+    _saveVisit(payload);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Quick Visit"),
+        actions: [
+          TextButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.save),
+            label: const Text("Save"),
+          )
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [ ..._quickVisitExtras(context),
+          TextField(
+            controller: _nameCtl,
+            decoration: const InputDecoration(
+              labelText: "What did you have?",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          PortionSizePicker(
+            initialValue: _portion,
+            onChanged: (p) => setState(() => _portion = p),
+            showGramsField: true,
+            gramsLabel: "Weight in grams (optional)",
+          ),
+          const SizedBox(height: 12),
+          RatingSlider(
+            label: 'Taste rating',
+            icon: Icons.local_dining,
+            initialValue: _tasteRating,
+            onChanged: (v) => setState(() => _tasteRating = v),
+          ),
+          RatingSlider(
+            label: 'Portion satisfaction',
+            icon: Icons.scale,
+            initialValue: _portionRating,
+            onChanged: (v) => setState(() => _portionRating = v),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _notesCtl,
+            decoration: const InputDecoration(
+              labelText: "Notes (optional)",
+              border: OutlineInputBorder(),
+            ),
+            minLines: 2,
+            maxLines: 5,
+          ),
+          const SizedBox(height: 20),
+          FilledButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.check),
+            label: const Text("Save quick visit"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+tasteRating',
+        value: _tasteRating.toDouble(),
+        onChanged: (v) => setState(() => _tasteRating = v.round()),
+      ),
+      const SizedBox(height: 12),
+      Text('Portion satisfaction: import "package:flutter/material.dart";
+import 'package:similar_eats_desktop/shared/widgets/portion_size_picker.dart';
+import 'package:similar_eats_desktop/features/visits/data/visit_log_repository.dart';
+import "package:similar_eats_desktop/shared/widgets/rating_slider.dart";
+
+class QuickVisitScreen extends StatefulWidget {
+  const QuickVisitScreen({super.key});
+  static const routeName = "/quick_visit";
+
+  @override
+  State<QuickVisitScreen> createState() => _QuickVisitScreenState();
+}
+
+class _QuickVisitScreenState extends State<QuickVisitScreen> {
+  
+  List<Widget> _quickVisitExtras(BuildContext context) {
+    return [
+      const SizedBox(height: 12),
+      Text('Portion size', style: Theme.of(context).textTheme.titleMedium),
+      PortionSizePicker(initialValue: _portion.size,
+        onChanged: (size) => setState(() {
+          _portion = Portion(size: size);
+        }),
+      ),
+      const SizedBox(height: 12),
+      Text('Taste rating: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _tasteRating.toDouble(),
+        onChanged: (v) => setState(() => _tasteRating = v.round()),
+      ),
+      const SizedBox(height: 12),
+      Text('Portion satisfaction: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _portionRating.toDouble(),
+        onChanged: (v) => setState(() => _portionRating = v.round()),
+      ),
+    ];
+  }
+final VisitLogRepository _repo = const VisitLogRepository();
+
+  Future<void> _saveVisit(Map<String, dynamic> payload) async {
+    try {
+      await _repo.addQuickVisit(payload);
+    } catch (e) {
+      // ignore: avoid_print
+      print('addQuickVisit error: $e');
+    }
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  final _nameCtl = TextEditingController();
+  final _notesCtl = TextEditingController();
+  Portion _portion = const Portion(size: PortionSize.m);
+  int _tasteRating = 3;
+  int _portionRating = 3;
+
+  @override
+  void dispose() {
+    _nameCtl.dispose();
+    _notesCtl.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    final payload = {
+      'name': _nameCtl.text.trim(),
+      'notes': _notesCtl.text.trim(),
+      'portion': _portion.toJson(),
+      'taste_rating': _tasteRating,
+      'portion_rating': _portionRating,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+    // TODO: integrate with your repository once ready.
+    // For now, just log so we can verify end-to-end quickly.
+    // ignore: avoid_print
+    print("QuickVisit payload => $payload");
+    _saveVisit(payload);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Quick Visit"),
+        actions: [
+          TextButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.save),
+            label: const Text("Save"),
+          )
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [ ..._quickVisitExtras(context),
+          TextField(
+            controller: _nameCtl,
+            decoration: const InputDecoration(
+              labelText: "What did you have?",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          PortionSizePicker(
+            initialValue: _portion,
+            onChanged: (p) => setState(() => _portion = p),
+            showGramsField: true,
+            gramsLabel: "Weight in grams (optional)",
+          ),
+          const SizedBox(height: 12),
+          RatingSlider(
+            label: 'Taste rating',
+            icon: Icons.local_dining,
+            initialValue: _tasteRating,
+            onChanged: (v) => setState(() => _tasteRating = v),
+          ),
+          RatingSlider(
+            label: 'Portion satisfaction',
+            icon: Icons.scale,
+            initialValue: _portionRating,
+            onChanged: (v) => setState(() => _portionRating = v),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _notesCtl,
+            decoration: const InputDecoration(
+              labelText: "Notes (optional)",
+              border: OutlineInputBorder(),
+            ),
+            minLines: 2,
+            maxLines: 5,
+          ),
+          const SizedBox(height: 20),
+          FilledButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.check),
+            label: const Text("Save quick visit"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+portionRating', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: 'import "package:flutter/material.dart";
+import 'package:similar_eats_desktop/shared/widgets/portion_size_picker.dart';
+import 'package:similar_eats_desktop/features/visits/data/visit_log_repository.dart';
+import "package:similar_eats_desktop/shared/widgets/rating_slider.dart";
+
+class QuickVisitScreen extends StatefulWidget {
+  const QuickVisitScreen({super.key});
+  static const routeName = "/quick_visit";
+
+  @override
+  State<QuickVisitScreen> createState() => _QuickVisitScreenState();
+}
+
+class _QuickVisitScreenState extends State<QuickVisitScreen> {
+  
+  List<Widget> _quickVisitExtras(BuildContext context) {
+    return [
+      const SizedBox(height: 12),
+      Text('Portion size', style: Theme.of(context).textTheme.titleMedium),
+      PortionSizePicker(initialValue: _portion.size,
+        onChanged: (size) => setState(() {
+          _portion = Portion(size: size);
+        }),
+      ),
+      const SizedBox(height: 12),
+      Text('Taste rating: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _tasteRating.toDouble(),
+        onChanged: (v) => setState(() => _tasteRating = v.round()),
+      ),
+      const SizedBox(height: 12),
+      Text('Portion satisfaction: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _portionRating.toDouble(),
+        onChanged: (v) => setState(() => _portionRating = v.round()),
+      ),
+    ];
+  }
+final VisitLogRepository _repo = const VisitLogRepository();
+
+  Future<void> _saveVisit(Map<String, dynamic> payload) async {
+    try {
+      await _repo.addQuickVisit(payload);
+    } catch (e) {
+      // ignore: avoid_print
+      print('addQuickVisit error: $e');
+    }
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  final _nameCtl = TextEditingController();
+  final _notesCtl = TextEditingController();
+  Portion _portion = const Portion(size: PortionSize.m);
+  int _tasteRating = 3;
+  int _portionRating = 3;
+
+  @override
+  void dispose() {
+    _nameCtl.dispose();
+    _notesCtl.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    final payload = {
+      'name': _nameCtl.text.trim(),
+      'notes': _notesCtl.text.trim(),
+      'portion': _portion.toJson(),
+      'taste_rating': _tasteRating,
+      'portion_rating': _portionRating,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+    // TODO: integrate with your repository once ready.
+    // For now, just log so we can verify end-to-end quickly.
+    // ignore: avoid_print
+    print("QuickVisit payload => $payload");
+    _saveVisit(payload);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Quick Visit"),
+        actions: [
+          TextButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.save),
+            label: const Text("Save"),
+          )
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [ ..._quickVisitExtras(context),
+          TextField(
+            controller: _nameCtl,
+            decoration: const InputDecoration(
+              labelText: "What did you have?",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          PortionSizePicker(
+            initialValue: _portion,
+            onChanged: (p) => setState(() => _portion = p),
+            showGramsField: true,
+            gramsLabel: "Weight in grams (optional)",
+          ),
+          const SizedBox(height: 12),
+          RatingSlider(
+            label: 'Taste rating',
+            icon: Icons.local_dining,
+            initialValue: _tasteRating,
+            onChanged: (v) => setState(() => _tasteRating = v),
+          ),
+          RatingSlider(
+            label: 'Portion satisfaction',
+            icon: Icons.scale,
+            initialValue: _portionRating,
+            onChanged: (v) => setState(() => _portionRating = v),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _notesCtl,
+            decoration: const InputDecoration(
+              labelText: "Notes (optional)",
+              border: OutlineInputBorder(),
+            ),
+            minLines: 2,
+            maxLines: 5,
+          ),
+          const SizedBox(height: 20),
+          FilledButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.check),
+            label: const Text("Save quick visit"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+portionRating',
+        value: _portionRating.toDouble(),
+        onChanged: (v) => setState(() => _portionRating = v.round()),
+      ),
+    ];
+  }),
+      ),
+      const SizedBox(height: 12),
+      Text('Taste rating: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _tasteRating.toDouble(),
+        onChanged: (v) => setState(() => _tasteRating = v.round()),
+      ),
+      const SizedBox(height: 12),
+      Text('Portion satisfaction: \', style: Theme.of(context).textTheme.titleMedium),
+      Slider(
+        min: 1, max: 5, divisions: 4, label: '\',
+        value: _portionRating.toDouble(),
+        onChanged: (v) => setState(() => _portionRating = v.round()),
+      ),
+    ];
+  }
+final VisitLogRepository _repo = const VisitLogRepository();
+
+  Future<void> _saveVisit(Map<String, dynamic> payload) async {
+    try {
+      await _repo.addQuickVisit(payload);
+    } catch (e) {
+      // ignore: avoid_print
+      print('addQuickVisit error: $e');
+    }
+    if (mounted) Navigator.of(context).pop();
+  }
+
+  final _nameCtl = TextEditingController();
+  final _notesCtl = TextEditingController();
+  Portion _portion = const Portion(size: PortionSize.m);
+  int _tasteRating = 3;
+  int _portionRating = 3;
+
+  @override
+  void dispose() {
+    _nameCtl.dispose();
+    _notesCtl.dispose();
+    super.dispose();
+  }
+
+  void _save() {
+    final payload = {
+      'name': _nameCtl.text.trim(),
+      'notes': _notesCtl.text.trim(),
+      'portion': _portion.toJson(),
+      'taste_rating': _tasteRating,
+      'portion_rating': _portionRating,
+      'created_at': DateTime.now().toIso8601String(),
+    };
+    // TODO: integrate with your repository once ready.
+    // For now, just log so we can verify end-to-end quickly.
+    // ignore: avoid_print
+    print("QuickVisit payload => $payload");
+    _saveVisit(payload);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Quick Visit"),
+        actions: [
+          TextButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.save),
+            label: const Text("Save"),
+          )
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [ ..._quickVisitExtras(context),
+          TextField(
+            controller: _nameCtl,
+            decoration: const InputDecoration(
+              labelText: "What did you have?",
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          PortionSizePicker(
+            initialValue: _portion,
+            onChanged: (p) => setState(() => _portion = p),
+            showGramsField: true,
+            gramsLabel: "Weight in grams (optional)",
+          ),
+          const SizedBox(height: 12),
+          RatingSlider(
+            label: 'Taste rating',
+            icon: Icons.local_dining,
+            initialValue: _tasteRating,
+            onChanged: (v) => setState(() => _tasteRating = v),
+          ),
+          RatingSlider(
+            label: 'Portion satisfaction',
+            icon: Icons.scale,
+            initialValue: _portionRating,
+            onChanged: (v) => setState(() => _portionRating = v),
+          ),
+          const SizedBox(height: 12),
+          TextField(
+            controller: _notesCtl,
+            decoration: const InputDecoration(
+              labelText: "Notes (optional)",
+              border: OutlineInputBorder(),
+            ),
+            minLines: 2,
+            maxLines: 5,
+          ),
+          const SizedBox(height: 20),
+          FilledButton.icon(
+            onPressed: _save,
+            icon: const Icon(Icons.check),
+            label: const Text("Save quick visit"),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+

@@ -1,0 +1,43 @@
+/* ===== Add these where appropriate ===== */
+
+// 1) Provider setup (e.g., above MaterialApp)
+import 'package:provider/provider.dart';
+import 'features/taste_quiz/data/taste_profile_store.dart';
+import 'features/taste_quiz/presentation/taste_quiz_controller.dart';
+
+MultiProvider(
+  providers: [
+    ChangeNotifierProvider(create: (_) => TasteQuizController(TasteProfileStore())..init()),
+  ],
+  child: MyApp(),
+);
+
+// 2) Route for result screen
+import 'features/taste_quiz/presentation/taste_type_result_screen.dart';
+
+routes: {
+  TasteTypeResultScreen.route: (_) => const TasteTypeResultScreen(),
+  // ...your existing routes
+},
+
+// 3) In your Taste Quiz screen's Save handler:
+import 'features/taste_quiz/domain/taste_profile.dart';
+import 'features/taste_quiz/presentation/taste_quiz_controller.dart';
+import 'package:provider/provider.dart';
+
+final p = TasteProfile(
+  sweet: sweetValue,
+  salty: saltyValue,
+  sour:  sourValue,
+  spicy: spicyValue,
+  umami: umamiValue,
+);
+
+await context.read<TasteQuizController>().save(p);
+
+if (context.mounted) {
+  ScaffoldMessenger.of(context).showSnackBar(
+    const SnackBar(content: Text("Taste profile saved")),
+  );
+  Navigator.of(context).pushNamed(TasteTypeResultScreen.route);
+}

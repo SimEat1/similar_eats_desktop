@@ -9,4 +9,3 @@ class AppState {
   final ValueNotifier<Set<String>> selectedCategories =
       ValueNotifier<Set<String>>({});
 }
-

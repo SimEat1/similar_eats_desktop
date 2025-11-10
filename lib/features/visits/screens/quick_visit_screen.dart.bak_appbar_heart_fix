@@ -1,0 +1,280 @@
+﻿import 'package:flutter/material.dart';
+import 'package:similar_eats_desktop/features/favorites/data/phenom_noms_repository.dart';
+import 'package:similar_eats_desktop/features/favorites/models/phenom_nom.dart';
+import "../data/visit_log_repository.dart";
+import "../models/visit_log.dart";
+import "recent_visits_screen.dart";
+
+class QuickVisitScreen extends StatefulWidget {
+  const QuickVisitScreen({super.key});
+
+  @override
+  State<QuickVisitScreen> createState() => _QuickVisitScreenState();
+}
+
+class _QuickVisitScreenState extends State<QuickVisitScreen> {
+  final _nameCtl = TextEditingController();
+  final _notesCtl = TextEditingController();
+  int? _rating;           // 1..5
+  bool? _hadFries;        // null/true/false
+  String? _burgerStyle;   // optional
+  DateTime _date = DateTime.now();
+  bool _saving = false;
+
+  String _fmt(DateTime d) {
+    String two(int n) => n.toString().padLeft(2, "0");
+    return "${d.year}-${two(d.month)}-${two(d.day)} ${two(d.hour)}:${two(d.minute)}";
+  }
+
+  Future<void> _pickDateTime() async {
+    final pickedDate = await showDatePicker(
+      context: context,
+      initialDate: _date,
+      firstDate: DateTime(2000),
+      lastDate: DateTime.now().add(const Duration(days: 1)),
+    );
+    if (pickedDate == null) return;
+    final pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_date),
+    );
+    if (!mounted) return;
+    final t = pickedTime ?? TimeOfDay.fromDateTime(_date);
+    setState(() {
+      _date = DateTime(pickedDate.year, pickedDate.month, pickedDate.day, t.hour, t.minute);
+    });
+  }
+
+  Future<void> _save() async {
+    final name = _nameCtl.text.trim();
+    if (name.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Enter a restaurant name")),
+      );
+      return;
+    }
+    setState(() => _saving = true);
+    final log = VisitLog(
+      restaurantName: name,
+      visitedAt: _date,
+      rating: _rating,
+      hadFries: _hadFries,
+      burgerStyle: _burgerStyle,
+      notes: _notesCtl.text.trim().isEmpty ? null : _notesCtl.text.trim(),
+    );
+    try {
+      await VisitLogRepository().save(log);
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Visit logged!")),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(
+  SnackBar(
+    content: const Text("Visit logged!"),
+    action: SnackBarAction(
+      label: "Fav it ❤",
+      onPressed: () {
+        final repo = PhenomNomsRepository();
+        final key  = PhenomNomsRepository.keyFor(
+          log.restaurantName,
+          log.restaurantId,
+        );
+        repo.toggleByKey(
+          key,
+          PhenomNom(
+            restaurantName: log.restaurantName,
+            restaurantId:   log.restaurantId,
+            createdAt:      DateTime.now(),
+          ),
+        );
+      },
+    ),
+  ),
+);
+Navigator.of(context).pop();
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Could not save: $e")),
+      );
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  @override
+  void dispose() {
+    _nameCtl.dispose();
+    _notesCtl.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Log a visit"),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history),
+            IconButton(
+  icon: const Icon(Icons.favorite_border),
+  tooltip: "Phenom-noms",
+  onPressed: () async {
+    final name = _nameCtl.text.trim();
+    if (name.isEmpty) return;
+    final key = PhenomNomsRepository.keyFor(name, null);
+    await PhenomNomsRepository().toggleByKey(
+      key,
+      PhenomNom(
+        restaurantName: name,
+        restaurantId: null,
+        createdAt: DateTime.now(),
+      ),
+    );
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Toggled Phenom-noms")),
+      );
+    }
+  },
+),
+      builder: (context, favSnap) {
+        final name = value.text.trim();
+        final key  = PhenomNomsRepository.keyFor(name, null);
+        final isFav = name.isNotEmpty && (favSnap.data ?? const <String>{}).contains(key);
+        return IconButton(
+          icon: Icon(isFav ? Icons.favorite : Icons.favorite_border),
+          tooltip: isFav ? "Remove from Phenom-noms" : "Add to Phenom-noms",
+          onPressed: name.isEmpty ? null : () async {
+            await PhenomNomsRepository().toggleByKey(
+              key,
+              PhenomNom(
+                restaurantName: name,
+                restaurantId: null,
+                createdAt: DateTime.now(),
+              ),
+            );
+            if (context.mounted) {
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(content: Text(isFav ? "Removed from Phenom-noms" : "Added to Phenom-noms")),
+              );
+            }
+          },
+        );
+      },
+    );
+  },
+),tooltip: "Recent",
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute(builder: (_) => const RecentVisitsScreen()),
+            ),
+          ),
+          TextButton(
+            onPressed: _saving ? null : _save,
+            child: const Text("Save"),
+          ),
+        ],
+      ),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            TextField(
+              controller: _nameCtl,
+              decoration: const InputDecoration(
+                labelText: "Restaurant name",
+                border: OutlineInputBorder(),
+              ),
+            ),
+            const SizedBox(height: 12),
+
+            Text("Visited on", style: theme.textTheme.titleSmall),
+            const SizedBox(height: 6),
+            Card(
+              child: ListTile(
+                leading: const Icon(Icons.event),
+                title: Text(_fmt(_date)),
+                trailing: const Icon(Icons.edit_calendar),
+                onTap: _pickDateTime,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+            Text("Rating", style: theme.textTheme.titleSmall),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              children: List.generate(5, (i) {
+                final v = i + 1;
+                return ChoiceChip(
+                  label: Text("$v"),
+                  selected: _rating == v,
+                  onSelected: (_) => setState(() => _rating = v),
+                );
+              }),
+            ),
+
+            const SizedBox(height: 12),
+            Text("Fries?", style: theme.textTheme.titleSmall),
+            const SizedBox(height: 6),
+            Wrap(
+              spacing: 8,
+              children: [
+                ChoiceChip(
+                  label: const Text("Yes"),
+                  selected: _hadFries == true,
+                  onSelected: (_) => setState(() => _hadFries = true),
+                ),
+                ChoiceChip(
+                  label: const Text("No"),
+                  selected: _hadFries == false,
+                  onSelected: (_) => setState(() => _hadFries = false),
+                ),
+                ChoiceChip(
+                  label: const Text("Skip"),
+                  selected: _hadFries == null,
+                  onSelected: (_) => setState(() => _hadFries = null),
+                ),
+              ],
+            ),
+
+            const SizedBox(height: 12),
+            DropdownButtonFormField<String>(
+              value: _burgerStyle,
+              items: const [
+                DropdownMenuItem(value: "smash", child: Text("Smash")),
+                DropdownMenuItem(value: "pub", child: Text("Pub")),
+                DropdownMenuItem(value: "thin", child: Text("Thin")),
+                DropdownMenuItem(value: "thick", child: Text("Thick")),
+                DropdownMenuItem(value: "other", child: Text("Other")),
+              ],
+              decoration: const InputDecoration(
+                labelText: "Burger style (optional)",
+                border: OutlineInputBorder(),
+              ),
+              onChanged: (v) => setState(() => _burgerStyle = v),
+            ),
+
+            const SizedBox(height: 12),
+            TextField(
+              controller: _notesCtl,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: "Notes (optional)",
+                border: OutlineInputBorder(),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+
+

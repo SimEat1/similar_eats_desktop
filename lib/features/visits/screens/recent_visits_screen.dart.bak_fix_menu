@@ -1,0 +1,155 @@
+import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import "../data/visit_log_repository.dart";
+import "../models/visit_log.dart";
+import "quick_visit_screen.dart";
+
+class RecentVisitsScreen extends StatelessWidget {
+  Future<void> _seed(BuildContext context) async {
+    if (!kDebugMode) return;
+    final repo = VisitLogRepository();
+    final now = DateTime.now();
+    final samples = <VisitLog>[
+      VisitLog(
+          restaurantName: "Blue Ox Diner",
+          visitedAt: now.subtract(const Duration(days: 1)),
+          rating: 4,
+          hadFries: true,
+          burgerStyle: "smash",
+          notes: "crispy edges"),
+      VisitLog(
+          restaurantName: "Lena's Pub",
+          visitedAt: now.subtract(const Duration(days: 3)),
+          rating: 5,
+          hadFries: false,
+          burgerStyle: "pub",
+          notes: "juicy"),
+      VisitLog(
+          restaurantName: "Tasty Shack",
+          visitedAt: now.subtract(const Duration(days: 7)),
+          rating: 3,
+          hadFries: null,
+          burgerStyle: null,
+          notes: "ok"),
+    ];
+    for (final v in samples) {
+      await repo.save(v);
+    }
+    if (context.mounted) {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text("Demo visits added")));
+    }
+  }
+
+  const RecentVisitsScreen({super.key});
+
+  String _fmt(DateTime d) {
+    // simple yyyy-MM-dd HH:mm (no extra deps)
+    String two(int n) => n.toString().padLeft(2, "0");
+    return "${d.year}-${two(d.month)}-${two(d.day)} ${two(d.hour)}:${two(d.minute)}";
+  }
+
+  Widget _stars(int? rating) {
+    if (rating == null || rating <= 0) return const SizedBox.shrink();
+    return Row(
+      mainAxisSize: MainAxisSize.min,
+      children: List.generate(rating, (_) => const Icon(Icons.star, size: 16)),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final repo = VisitLogRepository();
+    return Scaffold(
+      appBar: AppBar(
+          title: const Text("Recent visits", actions: [
+        if (kDebugMode)
+          PopupMenuButton<int>(
+            onSelected: (v) {
+              if (v == 1) _seed(context);
+            },
+            itemBuilder: (_) => [
+              const PopupMenuItem(value: 1, child: Text("Add demo visits")),
+            ],
+          ),
+      ])),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const QuickVisitScreen()),
+          );
+        },
+        child: const Icon(Icons.add),
+      ),
+      body: StreamBuilder<List<VisitLog>>(
+        stream: repo.streamRecent(),
+        builder: (context, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final items = snap.data ?? const <VisitLog>[];
+          if (items.isEmpty) {
+            return const Center(
+              child: Text("No visits yet.\nTap + to add one.",
+                  textAlign: TextAlign.center),
+            );
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(8),
+            itemCount: items.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, i) {
+              final v = items[i];
+              final meta = <String>[];
+              meta.add(_fmt(v.visitedAt));
+              if (v.hadFries != null) {
+                meta.add(v.hadFries! ? "Fries âœ…" : "Fries âŒ");
+              }
+              if ((v.burgerStyle ?? "").isNotEmpty)
+                meta.add("Burger: ${v.burgerStyle}");
+              final subtitle = [
+                meta.join(" â€¢ "),
+                if ((v.notes ?? "").isNotEmpty) v.notes!,
+              ].join("\n");
+
+              return InkWell(
+                onLongPress: () async {
+                  final ok = await showDialog<bool>(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text("Delete visit?"),
+                      content:
+                          Text('Remove "${v.restaurantName}" from your log?'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text("Cancel")),
+                        FilledButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text("Delete")),
+                      ],
+                    ),
+                  );
+                  if (ok == true && v.id != null) {
+                    await repo.delete(v.id!);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Deleted")));
+                    }
+                  }
+                },
+                child: Card(
+                  child: ListTile(
+                    title: Text(v.restaurantName),
+                    subtitle: Text(subtitle),
+                    trailing: _stars(v.rating),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}

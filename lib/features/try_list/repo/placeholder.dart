@@ -1,3 +1,3 @@
-﻿class TryListRepo {
+class TryListRepo {
   const TryListRepo();
 }

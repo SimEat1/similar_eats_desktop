@@ -1,6 +1,6 @@
 import "package:flutter/material.dart";
-import "../../shared/portion.dart";
-import "../../shared/portion_size.dart";
+import 'package:similar_eats_desktop/shared/portion.dart';
+import 'package:similar_eats_desktop/shared/portion_size.dart';
 
 class PortionSizePicker extends StatefulWidget {
   final Portion initialValue;

@@ -1,0 +1,80 @@
+import "dart:io";
+import "package:flutter/material.dart";
+import "package:file_picker/file_picker.dart";
+import 'package:similar_eats_desktop/features/receipts/data/receipts_repository.dart';
+import 'package:similar_eats_desktop/features/receipts/models/receipt.dart';
+
+class ReceiptsScreen extends StatelessWidget {
+  const ReceiptsScreen({super.key});
+
+  String _money(int cents) => "\$${(cents / 100).toStringAsFixed(2)}";
+
+  @override
+  Widget build(BuildContext context) {
+    final repo = ReceiptsRepository();
+    return Scaffold(
+      appBar: AppBar(title: const Text("Receipts & Budget")),
+      floatingActionButton: FloatingActionButton.extended(
+        icon: const Icon(Icons.upload),
+        label: const Text("Add Receipt"),
+        onPressed: () async {
+          final res = await FilePicker.platform.pickFiles(type: FileType.image);
+          if (res == null || res.files.single.path == null) return;
+          await repo.uploadImage(File(res.files.single.path!));
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+                const SnackBar(content: Text("Receipt uploaded")));
+          }
+        },
+      ),
+      body: StreamBuilder<List<Receipt>>(
+        stream: repo.streamAll(),
+        builder: (context, snap) {
+          final list = snap.data ?? const <Receipt>[];
+          final month = DateTime.now();
+          final monthKey =
+              "${month.year}-${month.month.toString().padLeft(2, '0')}";
+          final spentCents = list.where((r) {
+            final d = r.purchasedAt;
+            return d.year == month.year && d.month == month.month;
+          }).fold<int>(0, (sum, r) => sum + r.totalCents);
+
+          return Column(
+            children: [
+              Card(
+                margin: const EdgeInsets.all(12),
+                child: ListTile(
+                  leading: const Icon(Icons.attach_money),
+                  title: Text("This month ($monthKey)"),
+                  subtitle: Text("Spent: ${_money(spentCents)}"),
+                ),
+              ),
+              Expanded(
+                child: list.isEmpty
+                    ? const Center(child: Text("No receipts yet"))
+                    : ListView.separated(
+                        itemCount: list.length,
+                        separatorBuilder: (_, __) => const Divider(height: 1),
+                        itemBuilder: (_, i) {
+                          final r = list[i];
+                          return ListTile(
+                            leading: const Icon(Icons.receipt_long),
+                            title: Text(r.merchant.isEmpty
+                                ? "(unknown merchant)"
+                                : r.merchant),
+                            subtitle: Text(
+                                "${r.purchasedAt.toLocal()}  ·  ${_money(r.totalCents)}"),
+                            onTap: () {
+                              // TODO: show details + "Create visit from receipt"
+                            },
+                          );
+                        },
+                      ),
+              ),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}

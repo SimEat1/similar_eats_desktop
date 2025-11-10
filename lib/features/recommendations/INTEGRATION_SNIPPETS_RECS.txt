@@ -1,0 +1,9 @@
+import 'features/recommendations/presentation/recommendations_screen.dart';
+
+routes: {
+  RecommendationsScreen.route: (_) => const RecommendationsScreen(),
+  // ...
+}
+
+// From TasteTypeResultScreen button:
+Navigator.of(context).pushNamed(RecommendationsScreen.route);

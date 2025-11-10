@@ -1,0 +1,67 @@
+// firestore.rules
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{db}/documents {
+
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    // Validate VisitLog fields on write
+    function validVisitData() {
+      return
+        // allowed keys only
+        request.resource.data.keys().hasOnly([
+          'restaurantName','restaurantId','visitedAt',
+          'rating','hadFries','burgerStyle','notes'
+        ])
+        &&
+        // types / constraints
+        (request.resource.data.restaurantName is string
+          && request.resource.data.restaurantName.size() > 0
+          && request.resource.data.restaurantName.size() <= 120)
+        &&
+        (request.resource.data.restaurantId == null
+          || request.resource.data.restaurantId is string)
+        &&
+        (request.resource.data.visitedAt is timestamp)
+        &&
+        (request.resource.data.rating == null
+          || (request.resource.data.rating is int
+              && request.resource.data.rating >= 1
+              && request.resource.data.rating <= 5))
+        &&
+        (request.resource.data.hadFries == null
+          || request.resource.data.hadFries is bool)
+        &&
+        (request.resource.data.burgerStyle == null
+          || (request.resource.data.burgerStyle is string
+              && request.resource.data.burgerStyle in
+                 ['smash','pub','thin','thick','other']))
+        &&
+        (request.resource.data.notes == null
+          || (request.resource.data.notes is string
+              && request.resource.data.notes.size() <= 1000));
+    }
+
+    match /users/{uid} {
+      allow read, write: if false; // default deny
+
+      // Taste profile document (adjust the doc name if different)
+      match /tasteProfile/{docId} {
+        allow read, write: if signedIn() && request.auth.uid == uid;
+      }
+
+      // Per-user visit logs
+      match /visits/{visitId} {
+        allow list, get: if signedIn() && request.auth.uid == uid;
+        allow create: if signedIn() && request.auth.uid == uid && validVisitData();
+        allow update: if signedIn() && request.auth.uid == uid && validVisitData();
+        allow delete: if signedIn() && request.auth.uid == uid;
+      }
+    }
+
+    // (Optional) Public restaurants catalog, if you have one:
+    // match /restaurants/{id} { allow read: if true; allow write: if false; }
+  }
+}

@@ -4,7 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 // Screens we split out earlier
-import 'features/heatmap/heatmap_screen.dart';
+import 'package:similar_eats_desktop/features/heatmap/heatmap_screen.dart';
 
 void main() => runApp(const SimilarEatsApp());
 
@@ -45,7 +45,7 @@ class SimilarEatsApp extends StatelessWidget {
 /// ========================= ROOT NAV =========================
 
 class _RootNav extends StatefulWidget {
-  const _RootNav({super.key});
+  const _RootNav();
   @override
   State<_RootNav> createState() => _RootNavState();
 }
@@ -62,7 +62,8 @@ class _RootNavState extends State<_RootNav> {
       HomeScreen(
         onAskDinner: () async {
           await Navigator.of(context).push(MaterialPageRoute(
-            builder: (_) => ChooseCategoriesScreen(selection: selectedCategories),
+            builder: (_) =>
+                ChooseCategoriesScreen(selection: selectedCategories),
           ));
         },
         selectedCategories: selectedCategories,
@@ -85,9 +86,13 @@ class _RootNavState extends State<_RootNav> {
         onDestinationSelected: (i) => setState(() => _index = i),
         destinations: const [
           NavigationDestination(icon: Icon(Icons.home_rounded), label: 'Home'),
-          NavigationDestination(icon: Icon(Icons.tune_rounded), label: 'Compare'),
-          NavigationDestination(icon: Icon(Icons.local_fire_department_rounded), label: 'Heatmap'),
-          NavigationDestination(icon: Icon(Icons.workspace_premium_rounded), label: 'Premium'),
+          NavigationDestination(
+              icon: Icon(Icons.tune_rounded), label: 'Compare'),
+          NavigationDestination(
+              icon: Icon(Icons.local_fire_department_rounded),
+              label: 'Heatmap'),
+          NavigationDestination(
+              icon: Icon(Icons.workspace_premium_rounded), label: 'Premium'),
         ],
       ),
     );
@@ -249,13 +254,15 @@ class _HeroCard extends StatelessWidget {
               style: ElevatedButton.styleFrom(
                 elevation: 0,
                 backgroundColor: Colors.white,
-                padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
+                padding:
+                    const EdgeInsets.symmetric(vertical: 14, horizontal: 16),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(12),
                 ),
               ),
               onPressed: onAskDinner,
-              icon: const Icon(Icons.chat_bubble_rounded, color: Colors.black87),
+              icon:
+                  const Icon(Icons.chat_bubble_rounded, color: Colors.black87),
               label: Text(
                 _promptText(),
                 style: const TextStyle(
@@ -292,10 +299,10 @@ class _SelectedChips extends StatelessWidget {
       valueListenable: listenable,
       builder: (context, set, _) {
         if (set.isEmpty) {
-          return Wrap(
+          return const Wrap(
             spacing: 10,
             runSpacing: 10,
-            children: const [
+            children: [
               _GhostPill(width: 110),
               _GhostPill(width: 140),
               _GhostPill(width: 120),
@@ -313,7 +320,8 @@ class _SelectedChips extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.circular(28),
                 // ✅ Border.all instead of Border(side: …)
-                border: Border.all(color: cs.outlineVariant.withOpacity(.4), width: 1),
+                border: Border.all(
+                    color: cs.outlineVariant.withOpacity(.4), width: 1),
               ),
               child: Text('$emoji  ${_titleCase(key)}',
                   style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -461,7 +469,8 @@ class _UserTile extends StatelessWidget {
             style: const TextStyle(fontWeight: FontWeight.w800),
           ),
         ),
-        title: Text(u.name, style: const TextStyle(fontWeight: FontWeight.w700)),
+        title:
+            Text(u.name, style: const TextStyle(fontWeight: FontWeight.w700)),
         subtitle: Text('Taste match: ${u.match}%',
             style: TextStyle(color: cs.onSurfaceVariant)),
         trailing: const Icon(Icons.person_add_alt_1_rounded),
@@ -588,7 +597,8 @@ class _CompareScreen extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Text('Compare mock coming soon', style: TextStyle(color: cs.outline)),
+        child: Text('Compare mock coming soon',
+            style: TextStyle(color: cs.outline)),
       ),
     );
   }
@@ -610,7 +620,8 @@ class _PremiumScreen extends StatelessWidget {
         ),
       ),
       body: Center(
-        child: Text('Marketing mock • no billing', style: TextStyle(color: cs.outline)),
+        child: Text('Marketing mock • no billing',
+            style: TextStyle(color: cs.outline)),
       ),
     );
   }
@@ -633,7 +644,8 @@ class SimpleGlowPainter extends CustomPainter {
     final rnd = Random(42);
     final centers = List.generate(
       9,
-      (_) => Offset(rnd.nextDouble() * size.width, rnd.nextDouble() * size.height),
+      (_) =>
+          Offset(rnd.nextDouble() * size.width, rnd.nextDouble() * size.height),
     );
 
     // draw glows

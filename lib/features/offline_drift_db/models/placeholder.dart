@@ -1,3 +1,3 @@
-﻿class OfflineDriftDBModel {
+class OfflineDriftDBModel {
   const OfflineDriftDBModel();
 }

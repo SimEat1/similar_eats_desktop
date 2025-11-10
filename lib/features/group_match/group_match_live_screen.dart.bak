@@ -1,0 +1,310 @@
+﻿import 'package:flutter/material.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+
+import 'group_service.dart';
+import 'match_engine.dart'; // UserPrefs, Restaurant, GroupMatcher
+
+class GroupMatchLiveScreen extends StatefulWidget {
+  final String groupId;
+  final String meId;
+  final String meName;
+
+  // For now we keep sample preferences & restaurants local
+  final List<UserPrefs> users;
+  final List<Restaurant> candidates;
+
+  final LatLng start;
+  final double initialRadiusMeters;
+
+  const GroupMatchLiveScreen({
+    super.key,
+    required this.groupId,
+    required this.meId,
+    required this.meName,
+    required this.users,
+    required this.candidates,
+    required this.start,
+    this.initialRadiusMeters = 3000,
+  });
+
+  const GroupMatchLiveScreen.sample({super.key})
+      : groupId = 'demo-group',
+        meId = 'me-1',
+        meName = 'You',
+        start = const LatLng(37.7793, -122.4193),
+        initialRadiusMeters = 3000,
+        users = const [
+          UserPrefs(
+            cuisines: {'japanese', 'thai'},
+            flavors: {'savory', 'umami'},
+            diets: {'vegetarian'},
+            allergies: {'peanut'},
+          ),
+          UserPrefs(
+            cuisines: {'japanese'},
+            flavors: {'savory'},
+            diets: {},
+            allergies: {'shellfish'},
+          ),
+          UserPrefs(
+            cuisines: {'japanese', 'chinese'},
+            flavors: {'spicy'},
+            diets: {},
+            allergies: {},
+          ),
+        ],
+        candidates = const [
+          Restaurant(
+            id: 'r1',
+            name: 'Golden Gate Ramen',
+            lat: 37.7799,
+            lng: -122.4194,
+            cuisines: {'japanese'},
+            flavors: {'savory'},
+            supportsDiets: {'vegetarian'},
+            unsafeAllergens: {'gluten', 'egg'},
+          ),
+          Restaurant(
+            id: 'r2',
+            name: 'Sushi Garden',
+            lat: 37.7665,
+            lng: -122.4320,
+            cuisines: {'japanese'},
+            flavors: {'umami'},
+            supportsDiets: {'vegetarian'},
+            unsafeAllergens: {'fish', 'shellfish'},
+          ),
+        ];
+
+  @override
+  State<GroupMatchLiveScreen> createState() => _GroupMatchLiveScreenState();
+}
+
+class _GroupMatchLiveScreenState extends State<GroupMatchLiveScreen> {
+  final _svc = GroupService();
+  static final _dist = const Distance();
+
+  late LatLng _center;
+  late double _radius;
+  bool _showMembers = true;
+  bool _shareMine = true;
+  List<Restaurant> _matches = const [];
+
+  @override
+  void initState() {
+    super.initState();
+    _center = widget.start;
+    _radius = widget.initialRadiusMeters;
+    _recompute();
+
+    // Start listening to members
+    _membersStream = _svc.membersStream(widget.groupId);
+    // Seed my own row so others can see me (desktop: use center as my location)
+    _svc.upsertMember(
+      widget.groupId,
+      id: widget.meId,
+      name: widget.meName,
+      lat: _center.latitude,
+      lng: _center.longitude,
+      share: _shareMine,
+    );
+  }
+
+  late final Stream<List<Member>> _membersStream;
+
+  void _recompute() {
+    _matches = GroupMatcher.recommend(
+      users: widget.users,
+      candidates: widget.candidates,
+      centerLat: _center.latitude,
+      centerLng: _center.longitude,
+      radiusMeters: _radius,
+      limit: 10,
+    );
+    setState(() {});
+  }
+
+  Future<void> _pushMyLocationToCenter() async {
+    await _svc.upsertMember(
+      widget.groupId,
+      id: widget.meId,
+      name: widget.meName,
+      lat: _center.latitude,
+      lng: _center.longitude,
+      share: _shareMine,
+    );
+    if (mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Updated your location to map center')),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Scaffold(
+      appBar: AppBar(title: const Text('Group Match')),
+      body: ListView(
+        padding: const EdgeInsets.all(12),
+        children: [
+          AspectRatio(
+            aspectRatio: 1,
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(12),
+              child: StreamBuilder<List<Member>>(
+                stream: _membersStream,
+                builder: (context, snap) {
+                  final members = snap.data ?? const <Member>[];
+                  return FlutterMap(
+                    options: MapOptions(
+                      initialCenter: _center,
+                      initialZoom: 12,
+                      onTap: (tap, latLng) {
+                        setState(() => _center = latLng);
+                        _recompute();
+                      },
+                      interactionOptions: const InteractionOptions(
+                        flags: InteractiveFlag.pinchZoom | InteractiveFlag.drag,
+                      ),
+                    ),
+                    children: [
+                      TileLayer(
+                        urlTemplate:
+                            'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                        userAgentPackageName: 'dev.similareats.app',
+                      ),
+                      CircleLayer(
+                        circles: [
+                          CircleMarker(
+                            point: _center,
+                            useRadiusInMeter: true,
+                            radius: _radius,
+                            color: Colors.blue.withOpacity(0.14),
+                            borderColor: Colors.blue,
+                            borderStrokeWidth: 2,
+                          )
+                        ],
+                      ),
+                      // Restaurants
+                      MarkerLayer(
+                        markers: _matches.map((r) {
+                          final d = _dist(LatLng(r.lat, r.lng), _center).round();
+                          return Marker(
+                            point: LatLng(r.lat, r.lng),
+                            width: 42,
+                            height: 42,
+                            child: Tooltip(
+                              message: '${r.name} • ~${d} m',
+                              child: const Icon(Icons.location_on, size: 36),
+                            ),
+                          );
+                        }).toList(),
+                      ),
+                      // Members
+                      if (_showMembers)
+                        MarkerLayer(
+                          markers: members.map((m) {
+                            final d = _dist(LatLng(m.lat, m.lng), _center).round();
+                            return Marker(
+                              point: LatLng(m.lat, m.lng),
+                              width: 40,
+                              height: 40,
+                              child: Tooltip(
+                                message: '${m.name} • ~${d} m',
+                                child: const Icon(Icons.person_pin_circle, size: 34),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                      // Center star
+                      MarkerLayer(
+                        markers: [
+                          Marker(
+                            point: _center,
+                            width: 44,
+                            height: 44,
+                            child: const Icon(Icons.star, size: 38),
+                          ),
+                        ],
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text('Radius: ${_radius.round()} m', style: theme.textTheme.bodyMedium),
+          Slider(
+            min: 500,
+            max: 8000,
+            divisions: 30,
+            value: _radius,
+            label: '${_radius.round()} m',
+            onChanged: (v) => setState(() => _radius = v),
+            onChangeEnd: (_) => _recompute(),
+          ),
+          SwitchListTile.adaptive(
+            title: const Text('Show group on map'),
+            value: _showMembers,
+            onChanged: (v) => setState(() => _showMembers = v),
+            contentPadding: EdgeInsets.zero,
+          ),
+          SwitchListTile.adaptive(
+            title: const Text('Share my location with group'),
+            value: _shareMine,
+            onChanged: (v) async {
+              setState(() => _shareMine = v);
+              await _svc.setShare(widget.groupId, widget.meId, v);
+            },
+            contentPadding: EdgeInsets.zero,
+          ),
+          Row(
+            children: [
+              Expanded(
+                child: OutlinedButton.icon(
+                  onPressed: _pushMyLocationToCenter,
+                  icon: const Icon(Icons.my_location),
+                  label: const Text('Set my location = center'),
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: FilledButton(
+                  onPressed: _recompute,
+                  child: const Text('Recompute for Group'),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          for (int i = 0; i < _matches.length; i++)
+            _ResultTile(index: i + 1, r: _matches[i], center: _center),
+        ],
+      ),
+    );
+  }
+}
+
+class _ResultTile extends StatelessWidget {
+  final int index;
+  final Restaurant r;
+  final LatLng center;
+
+  const _ResultTile({required this.index, required this.r, required this.center});
+
+  @override
+  Widget build(BuildContext context) {
+    final meters = _GroupMatchLiveScreenState._dist(LatLng(r.lat, r.lng), center).round();
+    return ListTile(
+      leading: CircleAvatar(child: Text('$index')),
+      title: Text(r.name),
+      subtitle: Text('${r.cuisines.join(', ')} • ~${meters} m'),
+    );
+  }
+}
+
+

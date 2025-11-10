@@ -1,0 +1,570 @@
+﻿import "package:flutter/material.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_auth/firebase_auth.dart";
+
+class ReceiptScanScreen extends StatefulWidget {
+  static const route = "/receipt_scan";
+  const ReceiptScanScreen({super.key});
+
+  @override
+  State<ReceiptScanScreen> createState() => _ReceiptScanScreenState();
+}
+
+class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
+  final TextEditingController _textCtrl = TextEditingController();
+
+  String? _merchant;
+  DateTime? _date;
+  double? _subtotal, _tax, _total;
+  List<_ParsedItem> _items = [];
+  bool _saving = false;
+
+  @override
+  void dispose() {
+    _textCtrl.dispose();
+    super.dispose();
+  }
+
+  // ---- Parsing (MVP) ----
+  void _parse() {
+    final t = _textCtrl.text;
+    if (t.trim().isEmpty) return;
+
+    final lines = t
+        .split(RegExp(r'\r?\n'))
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+
+    // merchant = first textish line
+    _merchant = lines.isNotEmpty
+        ? lines.first.replaceAll(RegExp(r"[^A-Za-z0-9 &'-]"), "").trim()
+        : null;
+
+    double? toDouble(String s) =>
+        double.tryParse(s.replaceAll(RegExp(r"[^0-9.\-]"), ""));
+
+    for (final l in lines) {
+      final low = l.toLowerCase();
+
+      if (_total == null && low.contains('total')) {
+        final m = RegExp(r'([-]?\d+\.\d{2})').firstMatch(l);
+        if (m != null) _total = toDouble(m.group(1)!);
+      } else if (_subtotal == null &&
+          (low.contains('subtotal') || low.contains('sub total'))) {
+        final m = RegExp(r'([-]?\d+\.\d{2})').firstMatch(l);
+        if (m != null) _subtotal = toDouble(m.group(1)!);
+      } else if (_tax == null && low.contains('tax')) {
+        final m = RegExp(r'([-]?\d+\.\d{2})').firstMatch(l);
+        if (m != null) _tax = toDouble(m.group(1)!);
+      }
+
+      if (_date == null) {
+        // accept 1/2/2025 or 01-02-25
+        final d = RegExp(r'(\d{1,2}[/-]\d{1,2}[/-]\d{2,4})').firstMatch(l);
+        if (d != null) {
+          final s = d.group(1)!;
+          try {
+            _date = DateTime.tryParse(s.replaceAll('/', '-'));
+          } catch (_) {/* ignore */}
+        }
+      }
+    }
+
+    // items = lines that end with price
+    final items = <_ParsedItem>[];
+    for (final l in lines) {
+      final match = RegExp(r'(.+?)\s+([-]?\d+\.\d{2})$').firstMatch(l);
+      if (match != null) {
+        final name = match.group(1)!.trim();
+        final price = double.tryParse(match.group(2)!) ?? 0.0;
+
+        final low = name.toLowerCase();
+        if (low.contains('total') ||
+            low.contains('tax') ||
+            low.contains('change') ||
+            low.contains('subtotal')) {
+          continue;
+        }
+
+        items.add(_ParsedItem(
+          raw: l,
+          name: name,
+          qty: 1,
+          price: price,
+        ));
+      }
+    }
+
+    setState(() => _items = items);
+  }
+
+  // ---- Save + rate prompt → visits ----
+  Future<void> _save() async {
+    if (_items.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Parse a receipt first')),
+      );
+      return;
+    }
+
+    setState(() => _saving = true);
+    try {
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+      final db = FirebaseFirestore.instance;
+      final rid = db.collection('tmp').doc().id;
+      final receiptRef =
+          db.collection('users').doc(uid).collection('receipts').doc(rid);
+
+      // Save header
+      await receiptRef.set({
+        'created_at': DateTime.now().toIso8601String(),
+        'merchant': _merchant,
+        'date': _date?.toIso8601String(),
+        'subtotal': _subtotal,
+        'tax': _tax,
+        'total': _total,
+      }, SetOptions(merge: true));
+
+      // Save items and keep their new docIds (now includes owner_uid)
+      final saved = <_SavedReceiptItem>[];
+      for (final it in _items) {
+        final iid = db.collection('tmp').doc().id;
+        await receiptRef.collection('items').doc(iid).set({
+          'raw': it.raw,
+          'name': it.name,
+          'qty': it.qty,
+          'price': it.price,
+          'place_id': it.placeId,
+          'menu_item_id': it.menuItemId,
+          'owner_uid': uid, // <-- added so collectionGroup('items') can filter by user
+        });
+        saved.add(_SavedReceiptItem(itemDocId: iid, parsed: it));
+      }
+
+      if (!mounted) return;
+
+      // Prompt to rate → then create visits
+      final result = await showModalBottomSheet<_RatingResult>(
+        context: context,
+        isScrollControlled: true,
+        builder: (ctx) => _RateItemsSheet(items: saved),
+      );
+
+      if (result != null && result.selected.isNotEmpty) {
+        // Create visits for chosen items and link back to receipt items
+        for (final pick in result.selected) {
+          final visitRef =
+              db.collection('users').doc(uid).collection('visits').doc();
+          await visitRef.set({
+            'created_at': DateTime.now().toIso8601String(),
+            'merchant': _merchant,
+            'item_name': pick.parsed.name,
+            'price': pick.parsed.price,
+            'taste_rating': pick.tasteRating,
+            'portion_rating': pick.portionRating,
+            'place_id': pick.parsed.placeId,
+            'menu_item_id': pick.parsed.menuItemId,
+            'from_receipt': rid,
+          });
+
+          await receiptRef
+              .collection('items')
+              .doc(pick.itemDocId)
+              .update({'visit_id': visitRef.id});
+        }
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Saved ${result.selected.length} visit(s)'),
+          ),
+        );
+      } else {
+        if (!mounted) return;
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text('Receipt saved')),
+        );
+      }
+
+      if (mounted) Navigator.pop(context); // back to home
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Save failed: $e')));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  // ---- Stub for future OCR image pick ----
+  Future<void> _pickImageStub() async {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Image OCR coming next. Paste text for now.'),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text('Scan Receipt'),
+        actions: [
+          IconButton(
+            tooltip: 'Pick image (OCR soon)',
+            icon: const Icon(Icons.photo),
+            onPressed: _pickImageStub,
+          ),
+          IconButton(
+            tooltip: 'Parse',
+            icon: const Icon(Icons.play_arrow),
+            onPressed: _parse,
+          ),
+          IconButton(
+            tooltip: 'Save',
+            icon: const Icon(Icons.save),
+            onPressed: _saving ? null : _save,
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          TextField(
+            controller: _textCtrl,
+            maxLines: 6,
+            decoration: const InputDecoration(
+              labelText: 'Paste receipt text (temporary MVP)',
+              hintText: 'Paste full receipt text here, then tap Parse ▶',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 12,
+            runSpacing: 12,
+            children: [
+              _kv('Merchant', _merchant),
+              _kv('Date', _date?.toString()),
+              _kv('Subtotal', _subtotal?.toStringAsFixed(2)),
+              _kv('Tax', _tax?.toStringAsFixed(2)),
+              _kv('Total', _total?.toStringAsFixed(2)),
+            ],
+          ),
+          const Divider(height: 32),
+          Text('Items (${_items.length})',
+              style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          ..._items.map(
+            (it) => _ItemRow(
+              item: it,
+              onChanged: (updated) {
+                final idx = _items.indexOf(it);
+                setState(() {
+                  _items[idx] = updated;
+                });
+              },
+            ),
+          ),
+          const SizedBox(height: 80),
+        ],
+      ),
+    );
+  }
+
+  Widget _kv(String k, String? v) {
+    return Chip(label: Text('$k: ${v ?? "—"}'));
+  }
+}
+
+// ---------- Bottom sheet to rate items ----------
+class _RateItemsSheet extends StatefulWidget {
+  final List<_SavedReceiptItem> items;
+  const _RateItemsSheet({required this.items});
+
+  @override
+  State<_RateItemsSheet> createState() => _RateItemsSheetState();
+}
+
+class _RateItemsSheetState extends State<_RateItemsSheet> {
+  late List<_Pick> picks;
+
+  @override
+  void initState() {
+    super.initState();
+    picks = widget.items
+        .map((e) => _Pick(
+              base: e,
+              include: true,
+              tasteRating: 3,
+              portionRating: 3,
+            ))
+        .toList();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final bottom = MediaQuery.of(context).viewInsets.bottom;
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: bottom,
+        left: 16,
+        right: 16,
+        top: 12,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              width: 42,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey.shade400,
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            Text('Create visits & rate',
+                style: Theme.of(context).textTheme.titleMedium),
+            const SizedBox(height: 8),
+            Flexible(
+              child: ListView.separated(
+                shrinkWrap: true,
+                itemCount: picks.length,
+                separatorBuilder: (_, __) => const Divider(height: 16),
+                itemBuilder: (_, i) {
+                  final p = picks[i];
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Checkbox(
+                            value: p.include,
+                            onChanged: (v) =>
+                                setState(() => p.include = v ?? true),
+                          ),
+                          Expanded(
+                            child: Text(
+                              '${p.base.parsed.name}  •  \$${p.base.parsed.price.toStringAsFixed(2)}',
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600),
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 4),
+                      Text('Taste: ${p.tasteRating}'),
+                      Slider(
+                        min: 1,
+                        max: 5,
+                        divisions: 4,
+                        label: '${p.tasteRating}',
+                        value: p.tasteRating.toDouble(),
+                        onChanged: (v) =>
+                            setState(() => p.tasteRating = v.round()),
+                      ),
+                      Text('Portion: ${p.portionRating}'),
+                      Slider(
+                        min: 1,
+                        max: 5,
+                        divisions: 4,
+                        label: '${p.portionRating}',
+                        value: p.portionRating.toDouble(),
+                        onChanged: (v) =>
+                            setState(() => p.portionRating = v.round()),
+                      ),
+                    ],
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: OutlinedButton(
+                    onPressed: () => Navigator.pop(context, null),
+                    child: const Text('Skip'),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: FilledButton(
+                    onPressed: () {
+                      final sel = picks.where((p) => p.include).map((p) {
+                        return _RatedSelection(
+                          itemDocId: p.base.itemDocId,
+                          parsed: p.base.parsed,
+                          tasteRating: p.tasteRating,
+                          portionRating: p.portionRating,
+                        );
+                      }).toList();
+                      Navigator.pop(context, _RatingResult(selected: sel));
+                    },
+                    child: const Text('Create visits'),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---- Data passed back from sheet ----
+class _RatingResult {
+  final List<_RatedSelection> selected;
+  _RatingResult({required this.selected});
+}
+
+class _RatedSelection {
+  final String itemDocId;
+  final _ParsedItem parsed;
+  final int tasteRating;
+  final int portionRating;
+  _RatedSelection({
+    required this.itemDocId,
+    required this.parsed,
+    required this.tasteRating,
+    required this.portionRating,
+  });
+}
+
+class _Pick {
+  final _SavedReceiptItem base;
+  bool include;
+  int tasteRating;
+  int portionRating;
+  _Pick({
+    required this.base,
+    required this.include,
+    required this.tasteRating,
+    required this.portionRating,
+  });
+}
+
+class _SavedReceiptItem {
+  final String itemDocId;
+  final _ParsedItem parsed;
+  _SavedReceiptItem({required this.itemDocId, required this.parsed});
+}
+
+// ---- UI row for each parsed item (pre-save) ----
+class _ItemRow extends StatelessWidget {
+  final _ParsedItem item;
+  final ValueChanged<_ParsedItem> onChanged;
+  const _ItemRow({required this.item, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              item.raw,
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
+            ),
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: item.name,
+                    decoration: const InputDecoration(labelText: 'Name'),
+                    onChanged: (v) => onChanged(item.copyWith(name: v)),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                SizedBox(
+                  width: 90,
+                  child: TextFormField(
+                    initialValue: item.price.toStringAsFixed(2),
+                    decoration: const InputDecoration(labelText: 'Price'),
+                    onChanged: (v) => onChanged(
+                      item.copyWith(price: double.tryParse(v) ?? item.price),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    initialValue: item.placeId ?? '',
+                    decoration:
+                        const InputDecoration(labelText: 'Place ID (optional)'),
+                    onChanged: (v) => onChanged(
+                      item.copyWith(placeId: v.isEmpty ? null : v),
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Expanded(
+                  child: TextFormField(
+                    initialValue: item.menuItemId ?? '',
+                    decoration: const InputDecoration(
+                        labelText: 'Menu Item ID (optional)'),
+                    onChanged: (v) => onChanged(
+                      item.copyWith(menuItemId: v.isEmpty ? null : v),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// ---- Data model for parsed items ----
+class _ParsedItem {
+  final String raw;
+  final String name;
+  final int qty;
+  final double price;
+  final String? placeId;
+  final String? menuItemId;
+
+  _ParsedItem({
+    required this.raw,
+    required this.name,
+    required this.qty,
+    required this.price,
+    this.placeId,
+    this.menuItemId,
+  });
+
+  _ParsedItem copyWith({
+    String? raw,
+    String? name,
+    int? qty,
+    double? price,
+    String? placeId,
+    String? menuItemId,
+  }) {
+    return _ParsedItem(
+      raw: raw ?? this.raw,
+      name: name ?? this.name,
+      qty: qty ?? this.qty,
+      price: price ?? this.price,
+      placeId: placeId ?? this.placeId,
+      menuItemId: menuItemId ?? this.menuItemId,
+    );
+  }
+}
+

@@ -1,0 +1,2 @@
+/// Manual paste inside the 'Find spots that match me' widget:
+onTap: () => Navigator.of(context).pushNamed(RecommendationsScreen.route),

@@ -1,3 +1,3 @@
-﻿class Onboarding/TasteQuizRepo {
-  const Onboarding/TasteQuizRepo();
+class OnboardingTasteQuizRepo {
+  const OnboardingTasteQuizRepo();
 }

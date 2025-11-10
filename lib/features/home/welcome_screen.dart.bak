@@ -1,0 +1,184 @@
+﻿import "package:flutter/material.dart";
+import "../dinner/dinner_screen.dart";
+import "../explore/explore_map_screen.dart";
+import "../group_match/group_match_screen.dart";
+import "../taste_quiz/screens/taste_quiz_screen.dart";
+import 'package:similar_eats_desktop/features/buds/screens/taste_buds_screen.dart';
+import 'package:similar_eats_desktop/features/receipts/receipt_scan_screen.dart';
+import 'package:similar_eats_desktop/features/receipts/receipts_home_screen.dart';
+
+class WelcomeScreen extends StatelessWidget {
+  static const routeName = "/welcome";
+  const WelcomeScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    Widget bigButton(
+      String title,
+      String subtitle,
+      IconData icon,
+      VoidCallback onTap,
+    ) {
+      return Card(
+        child: ListTile(
+          leading: Icon(icon, size: 28),
+          title: Text(title, style: theme.textTheme.titleMedium),
+          subtitle: Text(subtitle),
+          trailing: const Icon(Icons.chevron_right),
+          onTap: onTap,
+        ),
+      );
+    }
+
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        tooltip: 'Taste Buds',
+        child: const Icon(Icons.group_outlined),
+        onPressed: () => Navigator.pushNamed(context, TasteBudsScreen.route),
+      ),
+      appBar: AppBar(title: const Text("Similar Eats")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          // Headline + subhead: ASCII only to avoid mojibake on mis-encoded files
+          Text(
+            "Find your next crave-worthy meal",
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            "Personalized by your taste - scan receipts, rate dishes, match with buds.",
+            style: theme.textTheme.bodyMedium,
+          ),
+          const SizedBox(height: 16),
+
+          // Primary actions
+          Wrap(
+            spacing: 16,
+            runSpacing: 16,
+            children: [
+              _PrimaryCard(
+                icon: Icons.restaurant,
+                title: "Find spots that match me",
+                subtitle: "Uses your taste profile",
+                onTap: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (_) => const DinnerScreen()),
+                ),
+              ),
+              _PrimaryCard(
+                icon: Icons.document_scanner_outlined,
+                title: "Scan receipt",
+                subtitle: "Paste text now; OCR image import too",
+                onTap: () => Navigator.pushNamed(context, ReceiptScanScreen.route),
+              ),
+              _PrimaryCard(
+                icon: Icons.groups_outlined,
+                title: "Taste Buds",
+                subtitle: "See who eats like you",
+                onTap: () => Navigator.pushNamed(context, TasteBudsScreen.route),
+              ),
+            ],
+          ),
+
+          const SizedBox(height: 24),
+          Text("More", style: theme.textTheme.titleLarge),
+          const SizedBox(height: 8),
+
+          bigButton(
+            "Explore map",
+            "Browse by map near you",
+            Icons.map,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const ExploreMapScreen()),
+            ),
+          ),
+          bigButton(
+            "Group match (demo)",
+            "Pick a restaurant everyone can enjoy",
+            Icons.groups,
+            () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const GroupMatchScreen()),
+            ),
+          ),
+          bigButton(
+            "Retake taste quiz",
+            "Update flavors, cuisines, budget & dietary info",
+            Icons.quiz,
+            () => Navigator.pushNamed(context, TasteQuizScreen.routeName),
+          ),
+          bigButton(
+            "Receipts",
+            "See saved receipts & items",
+            Icons.receipt_long,
+            () => Navigator.pushNamed(context, ReceiptsHomeScreen.route),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PrimaryCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final String subtitle;
+  final VoidCallback onTap;
+
+  const _PrimaryCard({
+    required this.icon,
+    required this.title,
+    required this.subtitle,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final width = MediaQuery.of(context).size.width;
+    final w = width >= 900
+        ? (width - 16 * 4) / 3 // three-up with spacing
+        : width >= 600
+            ? (width - 16 * 3) / 2 // two-up
+            : double.infinity; // one-up
+
+    return SizedBox(
+      width: w,
+      child: Card(
+        elevation: 0,
+        child: InkWell(
+          onTap: onTap,
+          borderRadius: BorderRadius.circular(12),
+          child: Padding(
+            padding: const EdgeInsets.all(16),
+            child: Row(
+              children: [
+                Icon(icon, size: 26),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(title,
+                          style: theme.textTheme.titleMedium
+                              ?.copyWith(fontWeight: FontWeight.w600)),
+                      const SizedBox(height: 4),
+                      Text(subtitle, style: theme.textTheme.bodySmall),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.chevron_right),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}

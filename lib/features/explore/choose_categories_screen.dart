@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../../core/app_state.dart';
+import 'package:similar_eats_desktop/core/app_state.dart';
 
 class ChooseCategoriesScreen extends StatefulWidget {
   static const route = '/choose';
@@ -12,9 +12,18 @@ class ChooseCategoriesScreen extends StatefulWidget {
 class _ChooseCategoriesScreenState extends State<ChooseCategoriesScreen> {
   // Base options (you can tweak anytime)
   static const _options = <String>[
-    'Chicken', 'Pizza', 'Burgers', 'Salad',
-    'BBQ', 'Tacos', 'Wings', 'Dessert',
-    'Sushi', 'Pasta', 'Ramen', 'Seafood',
+    'Chicken',
+    'Pizza',
+    'Burgers',
+    'Salad',
+    'BBQ',
+    'Tacos',
+    'Wings',
+    'Dessert',
+    'Sushi',
+    'Pasta',
+    'Ramen',
+    'Seafood',
   ];
 
   final Set<String> _temp = {...AppState.instance.selectedCategories.value};
@@ -79,7 +88,8 @@ class _ChooseCategoriesScreenState extends State<ChooseCategoriesScreen> {
             decoration: const InputDecoration(
               prefixIcon: Icon(Icons.edit_note_rounded),
               hintText: "Can't find it? Write it in (e.g., Pad See Ew)",
-              border: OutlineInputBorder(borderRadius: BorderRadius.all(Radius.circular(12))),
+              border: OutlineInputBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(12))),
             ),
             onSubmitted: (v) {
               final t = v.trim();

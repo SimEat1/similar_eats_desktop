@@ -1,0 +1,645 @@
+ 
+    if (import 'package:flutter/material.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'package:flutter/material.dart'; }
+    if (import 'package:flutter/material.dart'; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nimport 'package:flutter/material.dart';" }
+    return import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+ 
+    if (import 'package:firebase_core/firebase_core.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'package:firebase_core/firebase_core.dart'; }
+    if (import 'package:firebase_core/firebase_core.dart'; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nimport 'package:firebase_core/firebase_core.dart';" }
+    return import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart';
+ 
+    if (import 'package:firebase_auth/firebase_auth.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'package:firebase_auth/firebase_auth.dart'; }
+    if (import 'package:firebase_auth/firebase_auth.dart'; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nimport 'package:firebase_auth/firebase_auth.dart';" }
+    return import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+ 
+    if (import 'package:firebase_database/firebase_database.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'package:firebase_database/firebase_database.dart'; }
+    if (import 'package:firebase_database/firebase_database.dart'; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nimport 'package:firebase_database/firebase_database.dart';" }
+    return import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/firebase_database.dart';
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (import 'firebase_options.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'firebase_options.dart'; }
+    if (import 'firebase_options.dart'; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nimport 'firebase_options.dart';" }
+    return import 'firebase_options.dart';
+import 'firebase_options.dart';
+ 
+    if (import 'features/home/home_screen.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'features/home/home_screen.dart'; }
+    if (import 'features/home/home_screen.dart'; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nimport 'features/home/home_screen.dart';" }
+    return import 'features/home/home_screen.dart';
+import 'features/home/home_screen.dart';
+ 
+    if (import 'features/taste_quiz/screens/taste_quiz_screen.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'features/taste_quiz/screens/taste_quiz_screen.dart'; }
+    if (import 'features/taste_quiz/screens/taste_quiz_screen.dart'; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nimport 'features/taste_quiz/screens/taste_quiz_screen.dart';" }
+    return import 'features/taste_quiz/screens/taste_quiz_screen.dart';
+import 'features/taste_quiz/screens/taste_quiz_screen.dart';
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (enum _StartDest { quiz, home } -match 'import.*/diet_allergy_step.dart') { return enum _StartDest { quiz, home } }
+    if (enum _StartDest { quiz, home } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nenum _StartDest { quiz, home }" }
+    return enum _StartDest { quiz, home }
+enum _StartDest { quiz, home }
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (Future<void> main() async { -match 'import.*/diet_allergy_step.dart') { return Future<void> main() async { }
+    if (Future<void> main() async { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nFuture<void> main() async {" }
+    return Future<void> main() async {
+Future<void> main() async {
+ 
+    if (  WidgetsFlutterBinding.ensureInitialized(); -match 'import.*/diet_allergy_step.dart') { return   WidgetsFlutterBinding.ensureInitialized(); }
+    if (  WidgetsFlutterBinding.ensureInitialized(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  WidgetsFlutterBinding.ensureInitialized();" }
+    return   WidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
+ 
+    if (  await _initFirebase(); -match 'import.*/diet_allergy_step.dart') { return   await _initFirebase(); }
+    if (  await _initFirebase(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  await _initFirebase();" }
+    return   await _initFirebase();
+  await _initFirebase();
+ 
+    if (  await _ensureAnonAuth(); -match 'import.*/diet_allergy_step.dart') { return   await _ensureAnonAuth(); }
+    if (  await _ensureAnonAuth(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  await _ensureAnonAuth();" }
+    return   await _ensureAnonAuth();
+  await _ensureAnonAuth();
+ 
+    if (  _setupDb(); -match 'import.*/diet_allergy_step.dart') { return   _setupDb(); }
+    if (  _setupDb(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  _setupDb();" }
+    return   _setupDb();
+  _setupDb();
+ 
+    if (  runApp(const SimilarEatsApp()); -match 'import.*/diet_allergy_step.dart') { return   runApp(const SimilarEatsApp()); }
+    if (  runApp(const SimilarEatsApp()); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  runApp(const SimilarEatsApp());" }
+    return   runApp(const SimilarEatsApp());
+  runApp(const SimilarEatsApp());
+ 
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n}" }
+    return }
+}
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (Future<void> _initFirebase() async { -match 'import.*/diet_allergy_step.dart') { return Future<void> _initFirebase() async { }
+    if (Future<void> _initFirebase() async { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nFuture<void> _initFirebase() async {" }
+    return Future<void> _initFirebase() async {
+Future<void> _initFirebase() async {
+ 
+    if (  try { -match 'import.*/diet_allergy_step.dart') { return   try { }
+    if (  try { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  try {" }
+    return   try {
+  try {
+ 
+    if (    if (Firebase.apps.isEmpty) { -match 'import.*/diet_allergy_step.dart') { return     if (Firebase.apps.isEmpty) { }
+    if (    if (Firebase.apps.isEmpty) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    if (Firebase.apps.isEmpty) {" }
+    return     if (Firebase.apps.isEmpty) {
+    if (Firebase.apps.isEmpty) {
+ 
+    if (      await Firebase.initializeApp( -match 'import.*/diet_allergy_step.dart') { return       await Firebase.initializeApp( }
+    if (      await Firebase.initializeApp( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      await Firebase.initializeApp(" }
+    return       await Firebase.initializeApp(
+      await Firebase.initializeApp(
+ 
+    if (        options: DefaultFirebaseOptions.currentPlatform, -match 'import.*/diet_allergy_step.dart') { return         options: DefaultFirebaseOptions.currentPlatform, }
+    if (        options: DefaultFirebaseOptions.currentPlatform, -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        options: DefaultFirebaseOptions.currentPlatform," }
+    return         options: DefaultFirebaseOptions.currentPlatform,
+        options: DefaultFirebaseOptions.currentPlatform,
+ 
+    if (      ); -match 'import.*/diet_allergy_step.dart') { return       ); }
+    if (      ); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      );" }
+    return       );
+      );
+ 
+    if (    } else { -match 'import.*/diet_allergy_step.dart') { return     } else { }
+    if (    } else { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    } else {" }
+    return     } else {
+    } else {
+ 
+    if (      Firebase.app(); -match 'import.*/diet_allergy_step.dart') { return       Firebase.app(); }
+    if (      Firebase.app(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      Firebase.app();" }
+    return       Firebase.app();
+      Firebase.app();
+ 
+    if (    } -match 'import.*/diet_allergy_step.dart') { return     } }
+    if (    } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    }" }
+    return     }
+    }
+ 
+    if (  } catch (_) { -match 'import.*/diet_allergy_step.dart') { return   } catch (_) { }
+    if (  } catch (_) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  } catch (_) {" }
+    return   } catch (_) {
+  } catch (_) {
+ 
+    if (    // If something odd happens, keep going so the app can at least boot. -match 'import.*/diet_allergy_step.dart') { return     // If something odd happens, keep going so the app can at least boot. }
+    if (    // If something odd happens, keep going so the app can at least boot. -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    // If something odd happens, keep going so the app can at least boot." }
+    return     // If something odd happens, keep going so the app can at least boot.
+    // If something odd happens, keep going so the app can at least boot.
+ 
+    if (  } -match 'import.*/diet_allergy_step.dart') { return   } }
+    if (  } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  }" }
+    return   }
+  }
+ 
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n}" }
+    return }
+}
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (Future<void> _ensureAnonAuth() async { -match 'import.*/diet_allergy_step.dart') { return Future<void> _ensureAnonAuth() async { }
+    if (Future<void> _ensureAnonAuth() async { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nFuture<void> _ensureAnonAuth() async {" }
+    return Future<void> _ensureAnonAuth() async {
+Future<void> _ensureAnonAuth() async {
+ 
+    if (  try { -match 'import.*/diet_allergy_step.dart') { return   try { }
+    if (  try { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  try {" }
+    return   try {
+  try {
+ 
+    if (    final auth = FirebaseAuth.instance; -match 'import.*/diet_allergy_step.dart') { return     final auth = FirebaseAuth.instance; }
+    if (    final auth = FirebaseAuth.instance; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    final auth = FirebaseAuth.instance;" }
+    return     final auth = FirebaseAuth.instance;
+    final auth = FirebaseAuth.instance;
+ 
+    if (    // On web this is a no-op elsewhere, safe to call. -match 'import.*/diet_allergy_step.dart') { return     // On web this is a no-op elsewhere, safe to call. }
+    if (    // On web this is a no-op elsewhere, safe to call. -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    // On web this is a no-op elsewhere, safe to call." }
+    return     // On web this is a no-op elsewhere, safe to call.
+    // On web this is a no-op elsewhere, safe to call.
+ 
+    if (    await auth.setPersistence(Persistence.LOCAL); -match 'import.*/diet_allergy_step.dart') { return     await auth.setPersistence(Persistence.LOCAL); }
+    if (    await auth.setPersistence(Persistence.LOCAL); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    await auth.setPersistence(Persistence.LOCAL);" }
+    return     await auth.setPersistence(Persistence.LOCAL);
+    await auth.setPersistence(Persistence.LOCAL);
+ 
+    if (    if (auth.currentUser == null) { -match 'import.*/diet_allergy_step.dart') { return     if (auth.currentUser == null) { }
+    if (    if (auth.currentUser == null) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    if (auth.currentUser == null) {" }
+    return     if (auth.currentUser == null) {
+    if (auth.currentUser == null) {
+ 
+    if (      await auth.signInAnonymously(); -match 'import.*/diet_allergy_step.dart') { return       await auth.signInAnonymously(); }
+    if (      await auth.signInAnonymously(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      await auth.signInAnonymously();" }
+    return       await auth.signInAnonymously();
+      await auth.signInAnonymously();
+ 
+    if (    } -match 'import.*/diet_allergy_step.dart') { return     } }
+    if (    } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    }" }
+    return     }
+    }
+ 
+    if (  } catch (_) {} -match 'import.*/diet_allergy_step.dart') { return   } catch (_) {} }
+    if (  } catch (_) {} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  } catch (_) {}" }
+    return   } catch (_) {}
+  } catch (_) {}
+ 
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n}" }
+    return }
+}
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (void _setupDb() { -match 'import.*/diet_allergy_step.dart') { return void _setupDb() { }
+    if (void _setupDb() { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nvoid _setupDb() {" }
+    return void _setupDb() {
+void _setupDb() {
+ 
+    if (  try { -match 'import.*/diet_allergy_step.dart') { return   try { }
+    if (  try { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  try {" }
+    return   try {
+  try {
+ 
+    if (    final app = Firebase.app(); -match 'import.*/diet_allergy_step.dart') { return     final app = Firebase.app(); }
+    if (    final app = Firebase.app(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    final app = Firebase.app();" }
+    return     final app = Firebase.app();
+    final app = Firebase.app();
+ 
+    if (    final dbUrl = DefaultFirebaseOptions.currentPlatform.databaseURL ?? ""; -match 'import.*/diet_allergy_step.dart') { return     final dbUrl = DefaultFirebaseOptions.currentPlatform.databaseURL ?? ""; }
+    if (    final dbUrl = DefaultFirebaseOptions.currentPlatform.databaseURL ?? ""; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    final dbUrl = DefaultFirebaseOptions.currentPlatform.databaseURL ?? "";" }
+    return     final dbUrl = DefaultFirebaseOptions.currentPlatform.databaseURL ?? "";
+    final dbUrl = DefaultFirebaseOptions.currentPlatform.databaseURL ?? "";
+ 
+    if (    if (dbUrl.isNotEmpty) { -match 'import.*/diet_allergy_step.dart') { return     if (dbUrl.isNotEmpty) { }
+    if (    if (dbUrl.isNotEmpty) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    if (dbUrl.isNotEmpty) {" }
+    return     if (dbUrl.isNotEmpty) {
+    if (dbUrl.isNotEmpty) {
+ 
+    if (      FirebaseDatabase.instanceFor(app: app, databaseURL: dbUrl) -match 'import.*/diet_allergy_step.dart') { return       FirebaseDatabase.instanceFor(app: app, databaseURL: dbUrl) }
+    if (      FirebaseDatabase.instanceFor(app: app, databaseURL: dbUrl) -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      FirebaseDatabase.instanceFor(app: app, databaseURL: dbUrl)" }
+    return       FirebaseDatabase.instanceFor(app: app, databaseURL: dbUrl)
+      FirebaseDatabase.instanceFor(app: app, databaseURL: dbUrl)
+ 
+    if (          .setLoggingEnabled(false); -match 'import.*/diet_allergy_step.dart') { return           .setLoggingEnabled(false); }
+    if (          .setLoggingEnabled(false); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n          .setLoggingEnabled(false);" }
+    return           .setLoggingEnabled(false);
+          .setLoggingEnabled(false);
+ 
+    if (    } -match 'import.*/diet_allergy_step.dart') { return     } }
+    if (    } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    }" }
+    return     }
+    }
+ 
+    if (  } catch (_) {} -match 'import.*/diet_allergy_step.dart') { return   } catch (_) {} }
+    if (  } catch (_) {} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  } catch (_) {}" }
+    return   } catch (_) {}
+  } catch (_) {}
+ 
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n}" }
+    return }
+}
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (class SimilarEatsApp extends StatelessWidget { -match 'import.*/diet_allergy_step.dart') { return class SimilarEatsApp extends StatelessWidget { }
+    if (class SimilarEatsApp extends StatelessWidget { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nclass SimilarEatsApp extends StatelessWidget {" }
+    return class SimilarEatsApp extends StatelessWidget {
+class SimilarEatsApp extends StatelessWidget {
+ 
+    if (  const SimilarEatsApp({super.key}); -match 'import.*/diet_allergy_step.dart') { return   const SimilarEatsApp({super.key}); }
+    if (  const SimilarEatsApp({super.key}); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  const SimilarEatsApp({super.key});" }
+    return   const SimilarEatsApp({super.key});
+  const SimilarEatsApp({super.key});
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (  @override -match 'import.*/diet_allergy_step.dart') { return   @override }
+    if (  @override -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  @override" }
+    return   @override
+  @override
+ 
+    if (  Widget build(BuildContext context) { -match 'import.*/diet_allergy_step.dart') { return   Widget build(BuildContext context) { }
+    if (  Widget build(BuildContext context) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  Widget build(BuildContext context) {" }
+    return   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
+ 
+    if (    return MaterialApp( -match 'import.*/diet_allergy_step.dart') { return     return MaterialApp( }
+    if (    return MaterialApp( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    return MaterialApp(" }
+    return     return MaterialApp(
+    return MaterialApp(
+ 
+    if (      title: 'Similar Eats', -match 'import.*/diet_allergy_step.dart') { return       title: 'Similar Eats', }
+    if (      title: 'Similar Eats', -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      title: 'Similar Eats'," }
+    return       title: 'Similar Eats',
+      title: 'Similar Eats',
+ 
+    if (      theme: ThemeData( -match 'import.*/diet_allergy_step.dart') { return       theme: ThemeData( }
+    if (      theme: ThemeData( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      theme: ThemeData(" }
+    return       theme: ThemeData(
+      theme: ThemeData(
+ 
+    if (        useMaterial3: true, -match 'import.*/diet_allergy_step.dart') { return         useMaterial3: true, }
+    if (        useMaterial3: true, -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        useMaterial3: true," }
+    return         useMaterial3: true,
+        useMaterial3: true,
+ 
+    if (        colorSchemeSeed: const Color(0xFF00C2A8), -match 'import.*/diet_allergy_step.dart') { return         colorSchemeSeed: const Color(0xFF00C2A8), }
+    if (        colorSchemeSeed: const Color(0xFF00C2A8), -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        colorSchemeSeed: const Color(0xFF00C2A8)," }
+    return         colorSchemeSeed: const Color(0xFF00C2A8),
+        colorSchemeSeed: const Color(0xFF00C2A8),
+ 
+    if (      ), -match 'import.*/diet_allergy_step.dart') { return       ), }
+    if (      ), -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      )," }
+    return       ),
+      ),
+ 
+    if (      routes: <String, WidgetBuilder>{ -match 'import.*/diet_allergy_step.dart') { return       routes: <String, WidgetBuilder>{ }
+    if (      routes: <String, WidgetBuilder>{ -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      routes: <String, WidgetBuilder>{" }
+    return       routes: <String, WidgetBuilder>{
+      routes: <String, WidgetBuilder>{
+ 
+    if (        TasteQuizScreen.routeName: (_) => const TasteQuizScreen(), -match 'import.*/diet_allergy_step.dart') { return         TasteQuizScreen.routeName: (_) => const TasteQuizScreen(), }
+    if (        TasteQuizScreen.routeName: (_) => const TasteQuizScreen(), -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        TasteQuizScreen.routeName: (_) => const TasteQuizScreen()," }
+    return         TasteQuizScreen.routeName: (_) => const TasteQuizScreen(),
+        TasteQuizScreen.routeName: (_) => const TasteQuizScreen(),
+ 
+    if (        HomeScreen.routeName: (_) => const HomeScreen(), -match 'import.*/diet_allergy_step.dart') { return         HomeScreen.routeName: (_) => const HomeScreen(), }
+    if (        HomeScreen.routeName: (_) => const HomeScreen(), -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        HomeScreen.routeName: (_) => const HomeScreen()," }
+    return         HomeScreen.routeName: (_) => const HomeScreen(),
+        HomeScreen.routeName: (_) => const HomeScreen(),
+ 
+    if (      }, -match 'import.*/diet_allergy_step.dart') { return       }, }
+    if (      }, -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      }," }
+    return       },
+      },
+ 
+    if (      home: const _BootstrapGate(), -match 'import.*/diet_allergy_step.dart') { return       home: const _BootstrapGate(), }
+    if (      home: const _BootstrapGate(), -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      home: const _BootstrapGate()," }
+    return       home: const _BootstrapGate(),
+      home: const _BootstrapGate(),
+ 
+    if (    ); -match 'import.*/diet_allergy_step.dart') { return     ); }
+    if (    ); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    );" }
+    return     );
+    );
+ 
+    if (  } -match 'import.*/diet_allergy_step.dart') { return   } }
+    if (  } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  }" }
+    return   }
+  }
+ 
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n}" }
+    return }
+}
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (class _BootstrapGate extends StatefulWidget { -match 'import.*/diet_allergy_step.dart') { return class _BootstrapGate extends StatefulWidget { }
+    if (class _BootstrapGate extends StatefulWidget { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nclass _BootstrapGate extends StatefulWidget {" }
+    return class _BootstrapGate extends StatefulWidget {
+class _BootstrapGate extends StatefulWidget {
+ 
+    if (  const _BootstrapGate({super.key}); -match 'import.*/diet_allergy_step.dart') { return   const _BootstrapGate({super.key}); }
+    if (  const _BootstrapGate({super.key}); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  const _BootstrapGate({super.key});" }
+    return   const _BootstrapGate({super.key});
+  const _BootstrapGate({super.key});
+ 
+    if (  @override -match 'import.*/diet_allergy_step.dart') { return   @override }
+    if (  @override -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  @override" }
+    return   @override
+  @override
+ 
+    if (  State<_BootstrapGate> createState() => _BootstrapGateState(); -match 'import.*/diet_allergy_step.dart') { return   State<_BootstrapGate> createState() => _BootstrapGateState(); }
+    if (  State<_BootstrapGate> createState() => _BootstrapGateState(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  State<_BootstrapGate> createState() => _BootstrapGateState();" }
+    return   State<_BootstrapGate> createState() => _BootstrapGateState();
+  State<_BootstrapGate> createState() => _BootstrapGateState();
+ 
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n}" }
+    return }
+}
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (class _BootstrapGateState extends State<_BootstrapGate> { -match 'import.*/diet_allergy_step.dart') { return class _BootstrapGateState extends State<_BootstrapGate> { }
+    if (class _BootstrapGateState extends State<_BootstrapGate> { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nclass _BootstrapGateState extends State<_BootstrapGate> {" }
+    return class _BootstrapGateState extends State<_BootstrapGate> {
+class _BootstrapGateState extends State<_BootstrapGate> {
+ 
+    if (  late Future<_StartDest> _where; -match 'import.*/diet_allergy_step.dart') { return   late Future<_StartDest> _where; }
+    if (  late Future<_StartDest> _where; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  late Future<_StartDest> _where;" }
+    return   late Future<_StartDest> _where;
+  late Future<_StartDest> _where;
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (  @override -match 'import.*/diet_allergy_step.dart') { return   @override }
+    if (  @override -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  @override" }
+    return   @override
+  @override
+ 
+    if (  void initState() { -match 'import.*/diet_allergy_step.dart') { return   void initState() { }
+    if (  void initState() { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  void initState() {" }
+    return   void initState() {
+  void initState() {
+ 
+    if (    super.initState(); -match 'import.*/diet_allergy_step.dart') { return     super.initState(); }
+    if (    super.initState(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    super.initState();" }
+    return     super.initState();
+    super.initState();
+ 
+    if (    _where = _decide(); -match 'import.*/diet_allergy_step.dart') { return     _where = _decide(); }
+    if (    _where = _decide(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    _where = _decide();" }
+    return     _where = _decide();
+    _where = _decide();
+ 
+    if (  } -match 'import.*/diet_allergy_step.dart') { return   } }
+    if (  } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  }" }
+    return   }
+  }
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (    Future<_StartDest> _decide() async { -match 'import.*/diet_allergy_step.dart') { return     Future<_StartDest> _decide() async { }
+    if (    Future<_StartDest> _decide() async { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    Future<_StartDest> _decide() async {" }
+    return     Future<_StartDest> _decide() async {
+    Future<_StartDest> _decide() async {
+ 
+    if (    final uid = FirebaseAuth.instance.currentUser!.uid; -match 'import.*/diet_allergy_step.dart') { return     final uid = FirebaseAuth.instance.currentUser!.uid; }
+    if (    final uid = FirebaseAuth.instance.currentUser!.uid; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    final uid = FirebaseAuth.instance.currentUser!.uid;" }
+    return     final uid = FirebaseAuth.instance.currentUser!.uid;
+    final uid = FirebaseAuth.instance.currentUser!.uid;
+ 
+    if (    final ref = FirebaseDatabase.instance.ref('userTaste/'); -match 'import.*/diet_allergy_step.dart') { return     final ref = FirebaseDatabase.instance.ref('userTaste/'); }
+    if (    final ref = FirebaseDatabase.instance.ref('userTaste/'); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    final ref = FirebaseDatabase.instance.ref('userTaste/');" }
+    return     final ref = FirebaseDatabase.instance.ref('userTaste/');
+    final ref = FirebaseDatabase.instance.ref('userTaste/');
+ 
+    if (    final got = await ref.get(); -match 'import.*/diet_allergy_step.dart') { return     final got = await ref.get(); }
+    if (    final got = await ref.get(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    final got = await ref.get();" }
+    return     final got = await ref.get();
+    final got = await ref.get();
+ 
+    if (    final firstRun = !got.exists || got.child('hasCompletedQuiz').value != true; -match 'import.*/diet_allergy_step.dart') { return     final firstRun = !got.exists || got.child('hasCompletedQuiz').value != true; }
+    if (    final firstRun = !got.exists || got.child('hasCompletedQuiz').value != true; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    final firstRun = !got.exists || got.child('hasCompletedQuiz').value != true;" }
+    return     final firstRun = !got.exists || got.child('hasCompletedQuiz').value != true;
+    final firstRun = !got.exists || got.child('hasCompletedQuiz').value != true;
+ 
+    if (    return firstRun ? _StartDest.quiz : _StartDest.home; -match 'import.*/diet_allergy_step.dart') { return     return firstRun ? _StartDest.quiz : _StartDest.home; }
+    if (    return firstRun ? _StartDest.quiz : _StartDest.home; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    return firstRun ? _StartDest.quiz : _StartDest.home;" }
+    return     return firstRun ? _StartDest.quiz : _StartDest.home;
+    return firstRun ? _StartDest.quiz : _StartDest.home;
+ 
+    if (  } -match 'import.*/diet_allergy_step.dart') { return   } }
+    if (  } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  }" }
+    return   }
+  }
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (  @override -match 'import.*/diet_allergy_step.dart') { return   @override }
+    if (  @override -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  @override" }
+    return   @override
+  @override
+ 
+    if (  Widget build(BuildContext context) { -match 'import.*/diet_allergy_step.dart') { return   Widget build(BuildContext context) { }
+    if (  Widget build(BuildContext context) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  Widget build(BuildContext context) {" }
+    return   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
+ 
+    if (    return FutureBuilder<_StartDest>( -match 'import.*/diet_allergy_step.dart') { return     return FutureBuilder<_StartDest>( }
+    if (    return FutureBuilder<_StartDest>( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    return FutureBuilder<_StartDest>(" }
+    return     return FutureBuilder<_StartDest>(
+    return FutureBuilder<_StartDest>(
+ 
+    if (      future: _where, -match 'import.*/diet_allergy_step.dart') { return       future: _where, }
+    if (      future: _where, -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      future: _where," }
+    return       future: _where,
+      future: _where,
+ 
+    if (      builder: (context, snap) { -match 'import.*/diet_allergy_step.dart') { return       builder: (context, snap) { }
+    if (      builder: (context, snap) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      builder: (context, snap) {" }
+    return       builder: (context, snap) {
+      builder: (context, snap) {
+ 
+    if (        if (snap.connectionState != ConnectionState.done) { -match 'import.*/diet_allergy_step.dart') { return         if (snap.connectionState != ConnectionState.done) { }
+    if (        if (snap.connectionState != ConnectionState.done) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        if (snap.connectionState != ConnectionState.done) {" }
+    return         if (snap.connectionState != ConnectionState.done) {
+        if (snap.connectionState != ConnectionState.done) {
+ 
+    if (          return const _Splash(); -match 'import.*/diet_allergy_step.dart') { return           return const _Splash(); }
+    if (          return const _Splash(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n          return const _Splash();" }
+    return           return const _Splash();
+          return const _Splash();
+ 
+    if (        } -match 'import.*/diet_allergy_step.dart') { return         } }
+    if (        } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        }" }
+    return         }
+        }
+ 
+    if (        final dest = snap.data ?? _StartDest.home; -match 'import.*/diet_allergy_step.dart') { return         final dest = snap.data ?? _StartDest.home; }
+    if (        final dest = snap.data ?? _StartDest.home; -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        final dest = snap.data ?? _StartDest.home;" }
+    return         final dest = snap.data ?? _StartDest.home;
+        final dest = snap.data ?? _StartDest.home;
+ 
+    if (        return dest == _StartDest.quiz -match 'import.*/diet_allergy_step.dart') { return         return dest == _StartDest.quiz }
+    if (        return dest == _StartDest.quiz -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n        return dest == _StartDest.quiz" }
+    return         return dest == _StartDest.quiz
+        return dest == _StartDest.quiz
+ 
+    if (            ? const TasteQuizScreen() -match 'import.*/diet_allergy_step.dart') { return             ? const TasteQuizScreen() }
+    if (            ? const TasteQuizScreen() -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n            ? const TasteQuizScreen()" }
+    return             ? const TasteQuizScreen()
+            ? const TasteQuizScreen()
+ 
+    if (            : const HomeScreen(); -match 'import.*/diet_allergy_step.dart') { return             : const HomeScreen(); }
+    if (            : const HomeScreen(); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n            : const HomeScreen();" }
+    return             : const HomeScreen();
+            : const HomeScreen();
+ 
+    if (      }, -match 'import.*/diet_allergy_step.dart') { return       }, }
+    if (      }, -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      }," }
+    return       },
+      },
+ 
+    if (    ); -match 'import.*/diet_allergy_step.dart') { return     ); }
+    if (    ); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    );" }
+    return     );
+    );
+ 
+    if (  } -match 'import.*/diet_allergy_step.dart') { return   } }
+    if (  } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  }" }
+    return   }
+  }
+ 
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n}" }
+    return }
+}
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (class _Splash extends StatelessWidget { -match 'import.*/diet_allergy_step.dart') { return class _Splash extends StatelessWidget { }
+    if (class _Splash extends StatelessWidget { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`nclass _Splash extends StatelessWidget {" }
+    return class _Splash extends StatelessWidget {
+class _Splash extends StatelessWidget {
+ 
+    if (  const _Splash({super.key}); -match 'import.*/diet_allergy_step.dart') { return   const _Splash({super.key}); }
+    if (  const _Splash({super.key}); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  const _Splash({super.key});" }
+    return   const _Splash({super.key});
+  const _Splash({super.key});
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if (  @override -match 'import.*/diet_allergy_step.dart') { return   @override }
+    if (  @override -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  @override" }
+    return   @override
+  @override
+ 
+    if (  Widget build(BuildContext context) { -match 'import.*/diet_allergy_step.dart') { return   Widget build(BuildContext context) { }
+    if (  Widget build(BuildContext context) { -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  Widget build(BuildContext context) {" }
+    return   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
+ 
+    if (    return const Scaffold( -match 'import.*/diet_allergy_step.dart') { return     return const Scaffold( }
+    if (    return const Scaffold( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    return const Scaffold(" }
+    return     return const Scaffold(
+    return const Scaffold(
+ 
+    if (      body: Center(child: CircularProgressIndicator()), -match 'import.*/diet_allergy_step.dart') { return       body: Center(child: CircularProgressIndicator()), }
+    if (      body: Center(child: CircularProgressIndicator()), -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n      body: Center(child: CircularProgressIndicator())," }
+    return       body: Center(child: CircularProgressIndicator()),
+      body: Center(child: CircularProgressIndicator()),
+ 
+    if (    ); -match 'import.*/diet_allergy_step.dart') { return     ); }
+    if (    ); -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n    );" }
+    return     );
+    );
+ 
+    if (  } -match 'import.*/diet_allergy_step.dart') { return   } }
+    if (  } -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n  }" }
+    return   }
+  }
+ 
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n}" }
+    return }
+}
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+
+ 
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'MaterialApp') { return "import 'features/taste_quiz/screens/diet_allergy_step.dart';`r`n" }
+    return 
+

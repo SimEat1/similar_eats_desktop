@@ -1,0 +1,58 @@
+﻿import 'package:flutter/material.dart';
+import 'features/solo_map/solo_map_screen.dart';
+import 'features/tonight/tonight_screen.dart';
+import 'features/home/home_screen.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'firebase_options.dart';
+
+import 'features/taste_quiz/screens/taste_quiz_screen.dart';
+import 'features/group_match/group_match_from_profiles_screen.dart';
+import 'features/group_match/group_match_screen.dart';
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    // Anonymous sign-in so presence works in dev without accounts.
+    await FirebaseAuth.instance.signInAnonymously();
+  } catch (e) {
+    // Non-fatal in dev; app can still run.
+    debugPrint('Firebase init/sign-in skipped: $e');
+  }
+  runApp(const MyApp());
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Similar Eats (Dev)',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepOrange),
+        useMaterial3: true,
+      ),
+      // Change to `const TasteQuizScreen()` if you want the quiz first.
+      home: const HomeScreen(),
+      routes: {
+        TasteQuizScreen.routeName: (context) => const TasteQuizScreen(),
+        TonightScreen.routeName: (context) => const TonightScreen(),
+        SoloMapScreen.routeName: (context) => const SoloMapScreen(),
+        '/tastebuds': (context) => GroupMatchScreen.sample(),
+      },
+      routes: {
+        TasteQuizScreen.routeName: (_) => const TasteQuizScreen(),
+        '/group-match': (_) => GroupMatchScreen.sample(),
+      },
+    );
+  }
+}
+
+
+
+

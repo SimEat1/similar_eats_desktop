@@ -1,3 +1,3 @@
-﻿class MonetizationModel {
+class MonetizationModel {
   const MonetizationModel();
 }

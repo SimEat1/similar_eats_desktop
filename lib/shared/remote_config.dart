@@ -1,4 +1,4 @@
-﻿import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class RemoteConfigService {
   RemoteConfigService._(this._rc);
@@ -19,8 +19,8 @@ class RemoteConfigService {
     });
     await _rc.setConfigSettings(
       RemoteConfigSettings(
-        fetchTimeout: Duration(seconds: 10),
-        minimumFetchInterval: Duration(minutes: 15),
+        fetchTimeout: const Duration(seconds: 10),
+        minimumFetchInterval: const Duration(minutes: 15),
       ),
     );
     try {
@@ -31,10 +31,18 @@ class RemoteConfigService {
   }
 
   bool getBool(String key, {required bool fallback}) {
-    try { return _rc.getBool(key); } catch (_) { return fallback; }
+    try {
+      return _rc.getBool(key);
+    } catch (_) {
+      return fallback;
+    }
   }
 
   int getInt(String key, {required int fallback}) {
-    try { return _rc.getInt(key); } catch (_) { return fallback; }
+    try {
+      return _rc.getInt(key);
+    } catch (_) {
+      return fallback;
+    }
   }
 }

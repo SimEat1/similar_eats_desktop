@@ -1,0 +1,130 @@
+﻿import "package:flutter/material.dart";
+import "package:flutter_map/flutter_map.dart";
+import "package:latlong2/latlong.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_auth/firebase_auth.dart";
+
+class FriendMapScreen extends StatefulWidget {
+  final String? initialUid; // center on a specific friend if provided
+  const FriendMapScreen({super.key, this.initialUid});
+
+  @override
+  State<FriendMapScreen> createState() => _FriendMapScreenState();
+}
+
+class _FriendMapScreenState extends State<FriendMapScreen> {
+  final _db = FirebaseFirestore.instance;
+  final _me = FirebaseAuth.instance.currentUser;
+  final _map = MapController();
+
+  LatLng _center = const LatLng(39.5, -98.35); // US-ish default
+  double _zoom = 4;
+
+  Future<void> _setMyPoint(LatLng p) async {
+    final uid = _me?.uid;
+    if (uid == null) return;
+    await _db.collection("publicProfiles").doc(uid).set({
+      "lastLat": p.latitude,
+      "lastLng": p.longitude,
+      "updatedAt": FieldValue.serverTimestamp(),
+    }, SetOptions(merge: true));
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Location updated")),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final myUid = _me?.uid;
+    return Scaffold(
+      appBar: AppBar(title: const Text("Friends map")),
+      body: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+        // Alpha: stream all public profiles; filter client-side.
+        stream: _db.collection("publicProfiles").snapshots(),
+        builder: (context, snap) {
+          final docs = snap.data?.docs ?? const <QueryDocumentSnapshot<Map<String, dynamic>>>[];
+          final items = docs.map((d) {
+            final j = d.data();
+            return ({
+              "uid": d.id,
+              "name": (j["displayName"] ?? "SE user").toString(),
+              "lat": (j["lastLat"] is num) ? (j["lastLat"] as num).toDouble() : null,
+              "lng": (j["lastLng"] is num) ? (j["lastLng"] as num).toDouble() : null,
+            });
+          }).toList();
+
+          // If initialUid provided, center on it once.
+          if (widget.initialUid != null) {
+            final t = items.firstWhere(
+              (e) => e["uid"] == widget.initialUid && e["lat"] != null && e["lng"] != null,
+              orElse: () => {},
+            );
+            if (t.isNotEmpty) {
+              final p = LatLng(t["lat"], t["lng"]);
+              WidgetsBinding.instance.addPostFrameCallback((_) {
+                _center = p;
+                _zoom = 14;
+                _map.move(_center, _zoom);
+              });
+            }
+          }
+
+          final markers = <Marker>[];
+          for (final e in items) {
+            final lat = e["lat"] as double?;
+            final lng = e["lng"] as double?;
+            if (lat == null || lng == null) continue;
+            final isMe = e["uid"] == myUid;
+            markers.add(
+              Marker(
+                point: LatLng(lat, lng),
+                width: 44,
+                height: 44,
+                child: Tooltip(
+                  message: isMe ? "You" : (e["name"] as String),
+                  child: Icon(
+                    isMe ? Icons.my_location : Icons.location_pin,
+                    size: 36,
+                  ),
+                ),
+              ),
+            );
+          }
+
+          return Column(
+            children: [
+              Expanded(
+                child: FlutterMap(
+                  mapController: _map,
+                  options: MapOptions(
+                    initialCenter: _center,
+                    initialZoom: _zoom,
+                    onLongPress: (tapPos, p) => _setMyPoint(p),
+                  ),
+                  children: [
+                    TileLayer(
+                      urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+                      subdomains: const ["a","b","c"],
+                      userAgentPackageName: "com.example.similar_eats_desktop",
+                    ),
+                    MarkerLayer(markers: markers),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 12),
+                child: Text(
+                  "Long-press on the map to set your pin. Friends appear if they’ve set theirs.",
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 8),
+            ],
+          );
+        },
+      ),
+    );
+  }
+}

@@ -1,0 +1,13 @@
+import "package:flutter/material.dart";
+
+class RecentVisitsScreen extends StatelessWidget {
+  const RecentVisitsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Recent visits")),
+      body: const Center(child: Text("No recent visits yet")),
+    );
+  }
+}

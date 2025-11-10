@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import '../repo/taste_profiles_repo.dart';
+import 'package:similar_eats_desktop/features/taste_profiles/repo/taste_profiles_repo.dart';
 
+import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
 class SimilarUsersScreen extends StatefulWidget {
   const SimilarUsersScreen({super.key});
 
@@ -16,7 +17,7 @@ class _SimilarUsersScreenState extends State<SimilarUsersScreen> {
   @override
   void initState() {
     super.initState();
-    final uid = FirebaseAuth.instance.currentUser?.uid;
+    final uid = PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
     _future = _load(uid);
   }
 
@@ -48,7 +49,7 @@ class _SimilarUsersScreenState extends State<SimilarUsersScreen> {
               return ListTile(
                 leading: const Icon(Icons.person_outline),
                 title: Text(e.key),
-                trailing: Text((e.value * 100).toStringAsFixed(0) + '%'),
+                trailing: Text('${(e.value * 100).toStringAsFixed(0)}%'),
               );
             },
           );

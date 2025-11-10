@@ -1,0 +1,65 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:similar_eats_desktop/features/recommendations/presentation/recommendations_screen.dart';
+import 'package:similar_eats_desktop/features/taste_quiz/domain/taste_profile.dart';
+import 'package:similar_eats_desktop/features/taste_quiz/presentation/taste_quiz_controller.dart';
+
+class TasteTypeResultScreen extends StatelessWidget {
+  static const route = "/tasteTypeResult";
+  const TasteTypeResultScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final ctrl = context.watch<TasteQuizController>();
+    final badge = ctrl.badge ?? TasteBadge.balanced;
+    final p = ctrl.current;
+
+    return Scaffold(
+      appBar: AppBar(title: const Text("Your Taste Type")),
+      body: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text("${badge.emoji}  ${badge.label}",
+              style: Theme.of(context).textTheme.headlineMedium),
+            const SizedBox(height: 8),
+            const Text("We’ll tailor suggestions to this profile."),
+            const SizedBox(height: 24),
+            if (p != null) ...[
+              _kv("Sweet",  p.sweet),
+              _kv("Salty",  p.salty),
+              _kv("Sour",   p.sour),
+              _kv("Spicy",  p.spicy),
+              _kv("Umami",  p.umami),
+            ],
+            const Spacer(),
+            SizedBox(
+              width: double.infinity,
+              child: FilledButton(
+                onPressed: () {
+                  // TODO: Navigate to your Recommendations view
+                  Navigator.of(context).pushNamed(RecommendationsScreen.route);
+                },
+                child: const Text("See Recommendations"),
+              ),
+            )
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _kv(String k, double v) => Padding(
+    padding: const EdgeInsets.symmetric(vertical: 6),
+    child: Row(
+      children: [
+        SizedBox(width: 90, child: Text(k)),
+        Expanded(child: LinearProgressIndicator(value: v/5.0)),
+        const SizedBox(width: 12),
+        Text(v.toStringAsFixed(1)),
+      ],
+    ),
+  );
+}
+

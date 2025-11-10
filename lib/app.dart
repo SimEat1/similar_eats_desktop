@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'features/home/home_screen.dart';
-import 'features/explore/choose_categories_screen.dart';
+import 'package:similar_eats_desktop/features/home/home_screen.dart';
+import 'package:similar_eats_desktop/features/explore/choose_categories_screen.dart';
 
 class SimilarEatsApp extends StatelessWidget {
   const SimilarEatsApp({super.key});

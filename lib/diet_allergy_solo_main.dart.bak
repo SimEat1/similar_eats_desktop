@@ -1,0 +1,97 @@
+import "package:flutter/material.dart";
+import 'package:similar_eats_desktop/features/profile/allergies/diet_allergy_step.dart';
+
+void main() {
+  runApp(const DietAllergySoloApp());
+}
+
+class DietAllergySoloApp extends StatelessWidget {
+  const DietAllergySoloApp({super.key});
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: "Diet & Allergies Demo",
+      theme: ThemeData(useMaterial3: true, colorSchemeSeed: Colors.teal),
+      home: const DietAllergyStepDemo(),
+      routes: {
+        DietAllergyStep.routeName: (_) => DietAllergyStep(
+              initialDiets: const <DietType>{},
+              initialAllergies: const <Allergy>{},
+              initialAvoids: const <AvoidFood>{},
+              friesLikes: const <String>{},
+              friesDislikes: const <String>{},
+              onChanged: (d, a, av, fl, fd) {},
+            ),
+      },
+    );
+  }
+}
+
+class DietAllergyStepDemo extends StatefulWidget {
+  const DietAllergyStepDemo({super.key});
+  @override
+  State<DietAllergyStepDemo> createState() => _DietAllergyStepDemoState();
+}
+
+class _DietAllergyStepDemoState extends State<DietAllergyStepDemo> {
+  Set<String> allergies = {};
+  Set<String> diets = {};
+  bool hideMismatches = true;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text("Diet & Allergies Demo")),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          FilledButton.icon(
+            icon: const Icon(Icons.health_and_safety),
+            label: const Text("Open Diet & Allergies"),
+            onPressed: () async {
+              final result =
+                  await Navigator.of(context).push<DietAllergyResult>(
+                MaterialPageRoute(
+                    builder: (_) => DietAllergyStep(
+                          initialDiets: const <DietType>{},
+                          initialAllergies: const <Allergy>{},
+                          initialAvoids: const <AvoidFood>{},
+                          friesLikes: const <String>{},
+                          friesDislikes: const <String>{},
+                          onChanged: (d, a, av, fl, fd) {},
+                        )),
+              );
+              if (result != null) {
+                setState(() {
+                  allergies = result.allergies;
+                  diets = result.diets;
+                  hideMismatches = result.hideMismatches;
+                });
+              }
+            },
+          ),
+          const SizedBox(height: 16),
+          if (allergies.isNotEmpty || diets.isNotEmpty) ...[
+            const Text("Your selections:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                ...allergies.map((a) => Chip(label: Text("Allergy: $a"))),
+                ...diets.map((d) => Chip(label: Text("Diet: $d"))),
+                Chip(
+                    label: Text(hideMismatches
+                        ? "Hiding mismatches"
+                        : "Showing mismatches")),
+              ],
+            ),
+          ] else
+            const Text("No selections yet."),
+        ],
+      ),
+    );
+  }
+}

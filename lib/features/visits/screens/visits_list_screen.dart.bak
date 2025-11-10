@@ -1,0 +1,53 @@
+import "package:flutter/material.dart";
+import 'package:similar_eats_desktop/features/visits/data/visit_log_repository.dart';
+import 'package:similar_eats_desktop/features/visits/models/visit_log.dart';
+
+class VisitsListScreen extends StatelessWidget {
+  const VisitsListScreen({super.key});
+
+  String _fmtDate(DateTime d) {
+    final L = d.toLocal();
+    String two(int n) => n.toString().padLeft(2, "0");
+    return "${L.year}-${two(L.month)}-${two(L.day)}";
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final repo = const VisitLogRepository();
+    return Scaffold(
+      appBar: AppBar(title: const Text("Recent visits")),
+      body: StreamBuilder<List<VisitLog>>(
+        stream: repo.streamRecent(limit: 50),
+        builder: (context, snap) {
+          if (snap.hasError) {
+            return Center(child: Text("Error: ${snap.error}"));
+          }
+          if (!snap.hasData) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final visits = snap.data!;
+          if (visits.isEmpty) {
+            return const Center(child: Text("No visits yet"));
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(12),
+            itemCount: visits.length,
+            separatorBuilder: (_, __) => const Divider(height: 1),
+            itemBuilder: (context, i) {
+              final v = visits[i];
+              final bits = <String>[_fmtDate(v.visitedAt)];
+              if (v.rating != null) bits.add("★ ${v.rating}/5");
+              if (v.hadFries != null) {
+                bits.add(v.hadFries! ? "Fries" : "No fries");
+              }
+              return ListTile(
+                title: Text(v.restaurantName),
+                subtitle: Text(bits.join(" • ")),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}

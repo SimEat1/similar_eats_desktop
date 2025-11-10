@@ -1,0 +1,52 @@
+import 'package:flutter/material.dart';
+import 'package:similar_eats_desktop/features/visits/screens/quick_visit_screen.dart';
+import "package:flutter_map/flutter_map.dart";
+import "package:latlong2/latlong.dart";
+
+class ExploreMapScreen extends StatelessWidget {
+  static const routeName = "/explore";
+  const ExploreMapScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    const center = LatLng(37.7749, -122.4194);
+
+    return Scaffold(
+      floatingActionButton: Builder(
+          builder: (context) => FloatingActionButton(
+              onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const QuickVisitScreen())),
+              child: const Icon(Icons.add))),
+      appBar: AppBar(title: const Text("Explore near me"), actions: [
+        IconButton(
+            icon: const Icon(Icons.add),
+            tooltip: "Log a visit",
+            onPressed: () => Navigator.of(context).push(
+                MaterialPageRoute(builder: (_) => const QuickVisitScreen())))
+      ]),
+      body: FlutterMap(
+        options: MapOptions(
+          initialCenter: center,
+          initialZoom: 12,
+        ),
+        children: [
+          TileLayer(
+            urlTemplate: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            subdomains: ["a", "b", "c"],
+            userAgentPackageName: "com.example.similar_eats_desktop",
+          ),
+          MarkerLayer(
+            markers: [
+              Marker(
+                point: center,
+                width: 36,
+                height: 36,
+                child: const Icon(Icons.my_location, size: 28),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+}

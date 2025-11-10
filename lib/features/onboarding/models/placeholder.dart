@@ -1,3 +1,3 @@
-﻿class Onboarding/TasteQuizModel {
-  const Onboarding/TasteQuizModel();
+class OnboardingTasteQuizModel {
+  const OnboardingTasteQuizModel();
 }

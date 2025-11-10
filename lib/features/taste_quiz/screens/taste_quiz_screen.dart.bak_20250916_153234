@@ -1,0 +1,630 @@
+﻿
+    if (import 'package:flutter/material.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'package:flutter/material.dart'; }
+    if (import 'package:flutter/material.dart'; -match 'import.*home_screen.dart') { return "import 'package:flutter/material.dart';`r`nimport 'diet_allergy_step.dart';" }
+    return import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+
+    if (import 'package:firebase_auth/firebase_auth.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'package:firebase_auth/firebase_auth.dart'; }
+    if (import 'package:firebase_auth/firebase_auth.dart'; -match 'import.*home_screen.dart') { return "import 'package:firebase_auth/firebase_auth.dart';`r`nimport 'diet_allergy_step.dart';" }
+    return import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
+    if (import 'package:firebase_database/firebase_database.dart'; -match 'import.*/diet_allergy_step.dart') { return import 'package:firebase_database/firebase_database.dart'; }
+    if (import 'package:firebase_database/firebase_database.dart'; -match 'import.*home_screen.dart') { return "import 'package:firebase_database/firebase_database.dart';`r`nimport 'diet_allergy_step.dart';" }
+    return import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_database/firebase_database.dart';
+
+    if (import '../../home/home_screen.dart'; -match 'import.*/diet_allergy_step.dart') { return import '../../home/home_screen.dart'; }
+    if (import '../../home/home_screen.dart'; -match 'import.*home_screen.dart') { return "import '../../home/home_screen.dart';`r`nimport 'diet_allergy_step.dart';" }
+    return import '../../home/home_screen.dart';
+import '../../home/home_screen.dart';
+
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'import.*home_screen.dart') { return "`r`nimport 'diet_allergy_step.dart';" }
+    return 
+
+
+    if (class TasteQuizScreen extends StatefulWidget { -match 'import.*/diet_allergy_step.dart') { return class TasteQuizScreen extends StatefulWidget { }
+    if (class TasteQuizScreen extends StatefulWidget { -match 'import.*home_screen.dart') { return "class TasteQuizScreen extends StatefulWidget {`r`nimport 'diet_allergy_step.dart';" }
+    return class TasteQuizScreen extends StatefulWidget {
+class TasteQuizScreen extends StatefulWidget {
+
+    if (  static const routeName = '/taste_quiz'; -match 'import.*/diet_allergy_step.dart') { return   static const routeName = '/taste_quiz'; }
+    if (  static const routeName = '/taste_quiz'; -match 'import.*home_screen.dart') { return "  static const routeName = '/taste_quiz';`r`nimport 'diet_allergy_step.dart';" }
+    return   static const routeName = '/taste_quiz';
+  static const routeName = '/taste_quiz';
+
+    if (  const TasteQuizScreen({super.key}); -match 'import.*/diet_allergy_step.dart') { return   const TasteQuizScreen({super.key}); }
+    if (  const TasteQuizScreen({super.key}); -match 'import.*home_screen.dart') { return "  const TasteQuizScreen({super.key});`r`nimport 'diet_allergy_step.dart';" }
+    return   const TasteQuizScreen({super.key});
+  const TasteQuizScreen({super.key});
+
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'import.*home_screen.dart') { return "`r`nimport 'diet_allergy_step.dart';" }
+    return 
+
+
+    if (  @override -match 'import.*/diet_allergy_step.dart') { return   @override }
+    if (  @override -match 'import.*home_screen.dart') { return "  @override`r`nimport 'diet_allergy_step.dart';" }
+    return   @override
+  @override
+
+    if (  State<TasteQuizScreen> createState() => _TasteQuizScreenState(); -match 'import.*/diet_allergy_step.dart') { return   State<TasteQuizScreen> createState() => _TasteQuizScreenState(); }
+    if (  State<TasteQuizScreen> createState() => _TasteQuizScreenState(); -match 'import.*home_screen.dart') { return "  State<TasteQuizScreen> createState() => _TasteQuizScreenState();`r`nimport 'diet_allergy_step.dart';" }
+    return   State<TasteQuizScreen> createState() => _TasteQuizScreenState();
+  State<TasteQuizScreen> createState() => _TasteQuizScreenState();
+
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'import.*home_screen.dart') { return "}`r`nimport 'diet_allergy_step.dart';" }
+    return }
+}
+
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'import.*home_screen.dart') { return "`r`nimport 'diet_allergy_step.dart';" }
+    return 
+
+
+    if (class _TasteQuizScreenState extends State<TasteQuizScreen> { -match 'import.*/diet_allergy_step.dart') { return class _TasteQuizScreenState extends State<TasteQuizScreen> { }
+    if (class _TasteQuizScreenState extends State<TasteQuizScreen> { -match 'import.*home_screen.dart') { return "class _TasteQuizScreenState extends State<TasteQuizScreen> {`r`nimport 'diet_allergy_step.dart';" }
+    return class _TasteQuizScreenState extends State<TasteQuizScreen> {
+class _TasteQuizScreenState extends State<TasteQuizScreen> {
+
+    if (  final _likes = <String>{}; -match 'import.*/diet_allergy_step.dart') { return   final _likes = <String>{}; }
+    if (  final _likes = <String>{}; -match 'import.*home_screen.dart') { return "  final _likes = <String>{};`r`nimport 'diet_allergy_step.dart';" }
+    return   final _likes = <String>{};
+  final _likes = <String>{};
+
+    if (  final _avoids = <String>{}; -match 'import.*/diet_allergy_step.dart') { return   final _avoids = <String>{}; }
+    if (  final _avoids = <String>{}; -match 'import.*home_screen.dart') { return "  final _avoids = <String>{};`r`nimport 'diet_allergy_step.dart';" }
+    return   final _avoids = <String>{};
+  final _avoids = <String>{};
+
+    if (  double _spice = 50; -match 'import.*/diet_allergy_step.dart') { return   double _spice = 50; }
+    if (  double _spice = 50; -match 'import.*home_screen.dart') { return "  double _spice = 50;`r`nimport 'diet_allergy_step.dart';" }
+    return   double _spice = 50;
+  double _spice = 50;
+
+    if (  int _price = 2; -match 'import.*/diet_allergy_step.dart') { return   int _price = 2; }
+    if (  int _price = 2; -match 'import.*home_screen.dart') { return "  int _price = 2;`r`nimport 'diet_allergy_step.dart';" }
+    return   int _price = 2;
+  int _price = 2;
+
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'import.*home_screen.dart') { return "`r`nimport 'diet_allergy_step.dart';" }
+    return 
+
+
+    if (  Future<void> _finish() async { -match 'import.*/diet_allergy_step.dart') { return   Future<void> _finish() async { }
+    if (  Future<void> _finish() async { -match 'import.*home_screen.dart') { return "  Future<void> _finish() async {`r`nimport 'diet_allergy_step.dart';" }
+    return   Future<void> _finish() async {
+  Future<void> _finish() async {
+
+    if (    try { -match 'import.*/diet_allergy_step.dart') { return     try { }
+    if (    try { -match 'import.*home_screen.dart') { return "    try {`r`nimport 'diet_allergy_step.dart';" }
+    return     try {
+    try {
+
+    if (      final uid = FirebaseAuth.instance.currentUser?.uid; -match 'import.*/diet_allergy_step.dart') { return       final uid = FirebaseAuth.instance.currentUser?.uid; }
+    if (      final uid = FirebaseAuth.instance.currentUser?.uid; -match 'import.*home_screen.dart') { return "      final uid = FirebaseAuth.instance.currentUser?.uid;`r`nimport 'diet_allergy_step.dart';" }
+    return       final uid = FirebaseAuth.instance.currentUser?.uid;
+      final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (      if (uid != null) { -match 'import.*/diet_allergy_step.dart') { return       if (uid != null) { }
+    if (      if (uid != null) { -match 'import.*home_screen.dart') { return "      if (uid != null) {`r`nimport 'diet_allergy_step.dart';" }
+    return       if (uid != null) {
+      if (uid != null) {
+
+    if (        final ref = FirebaseDatabase.instance.ref('userTaste/$uid'); -match 'import.*/diet_allergy_step.dart') { return         final ref = FirebaseDatabase.instance.ref('userTaste/$uid'); }
+    if (        final ref = FirebaseDatabase.instance.ref('userTaste/$uid'); -match 'import.*home_screen.dart') { return "        final ref = FirebaseDatabase.instance.ref('userTaste/$uid');`r`nimport 'diet_allergy_step.dart';" }
+    return         final ref = FirebaseDatabase.instance.ref('userTaste/$uid');
+        final ref = FirebaseDatabase.instance.ref('userTaste/$uid');
+
+    if (        await ref.set({ -match 'import.*/diet_allergy_step.dart') { return         await ref.set({ }
+    if (        await ref.set({ -match 'import.*home_screen.dart') { return "        await ref.set({`r`nimport 'diet_allergy_step.dart';" }
+    return         await ref.set({
+        await ref.set({
+
+    if (          'likedCuisines': _likes.toList(), -match 'import.*/diet_allergy_step.dart') { return           'likedCuisines': _likes.toList(), }
+    if (          'likedCuisines': _likes.toList(), -match 'import.*home_screen.dart') { return "          'likedCuisines': _likes.toList(),`r`nimport 'diet_allergy_step.dart';" }
+    return           'likedCuisines': _likes.toList(),
+          'likedCuisines': _likes.toList(),
+
+    if (          'avoidTags': _avoids.toList(), -match 'import.*/diet_allergy_step.dart') { return           'avoidTags': _avoids.toList(), }
+    if (          'avoidTags': _avoids.toList(), -match 'import.*home_screen.dart') { return "          'avoidTags': _avoids.toList(),`r`nimport 'diet_allergy_step.dart';" }
+    return           'avoidTags': _avoids.toList(),
+          'avoidTags': _avoids.toList(),
+
+    if (          'spiceTolerance': _spice, -match 'import.*/diet_allergy_step.dart') { return           'spiceTolerance': _spice, }
+    if (          'spiceTolerance': _spice, -match 'import.*home_screen.dart') { return "          'spiceTolerance': _spice,`r`nimport 'diet_allergy_step.dart';" }
+    return           'spiceTolerance': _spice,
+          'spiceTolerance': _spice,
+
+    if (          'priceComfort': _price, -match 'import.*/diet_allergy_step.dart') { return           'priceComfort': _price, }
+    if (          'priceComfort': _price, -match 'import.*home_screen.dart') { return "          'priceComfort': _price,`r`nimport 'diet_allergy_step.dart';" }
+    return           'priceComfort': _price,
+          'priceComfort': _price,
+
+    if (          'hasCompletedQuiz': true, -match 'import.*/diet_allergy_step.dart') { return           'hasCompletedQuiz': true, }
+    if (          'hasCompletedQuiz': true, -match 'import.*home_screen.dart') { return "          'hasCompletedQuiz': true,`r`nimport 'diet_allergy_step.dart';" }
+    return           'hasCompletedQuiz': true,
+          'hasCompletedQuiz': true,
+
+    if (        }); -match 'import.*/diet_allergy_step.dart') { return         }); }
+    if (        }); -match 'import.*home_screen.dart') { return "        });`r`nimport 'diet_allergy_step.dart';" }
+    return         });
+        });
+
+    if (      } -match 'import.*/diet_allergy_step.dart') { return       } }
+    if (      } -match 'import.*home_screen.dart') { return "      }`r`nimport 'diet_allergy_step.dart';" }
+    return       }
+      }
+
+    if (    } catch (e) { -match 'import.*/diet_allergy_step.dart') { return     } catch (e) { }
+    if (    } catch (e) { -match 'import.*home_screen.dart') { return "    } catch (e) {`r`nimport 'diet_allergy_step.dart';" }
+    return     } catch (e) {
+    } catch (e) {
+
+    if (      debugPrint("?? Failed to save quiz: $e"); -match 'import.*/diet_allergy_step.dart') { return       debugPrint("?? Failed to save quiz: $e"); }
+    if (      debugPrint("?? Failed to save quiz: $e"); -match 'import.*home_screen.dart') { return "      debugPrint("?? Failed to save quiz: $e");`r`nimport 'diet_allergy_step.dart';" }
+    return       debugPrint("?? Failed to save quiz: $e");
+      debugPrint("?? Failed to save quiz: $e");
+
+    if (    } -match 'import.*/diet_allergy_step.dart') { return     } }
+    if (    } -match 'import.*home_screen.dart') { return "    }`r`nimport 'diet_allergy_step.dart';" }
+    return     }
+    }
+
+    if (    if (!mounted) return; -match 'import.*/diet_allergy_step.dart') { return     if (!mounted) return; }
+    if (    if (!mounted) return; -match 'import.*home_screen.dart') { return "    if (!mounted) return;`r`nimport 'diet_allergy_step.dart';" }
+    return     if (!mounted) return;
+    if (!mounted) return;
+
+    if (    Navigator.of(context).pushReplacement( -match 'import.*/diet_allergy_step.dart') { return     Navigator.of(context).pushReplacement( }
+    if (    Navigator.of(context).pushReplacement( -match 'import.*home_screen.dart') { return "    Navigator.of(context).pushReplacement(`r`nimport 'diet_allergy_step.dart';" }
+    return     Navigator.of(context).pushReplacement(
+    Navigator.of(context).pushReplacement(
+
+    if (      MaterialPageRoute(builder: (_) => const HomeScreen()), -match 'import.*/diet_allergy_step.dart') { return       MaterialPageRoute(builder: (_) => const HomeScreen()), }
+    if (      MaterialPageRoute(builder: (_) => const HomeScreen()), -match 'import.*home_screen.dart') { return "      MaterialPageRoute(builder: (_) => const HomeScreen()),`r`nimport 'diet_allergy_step.dart';" }
+    return       MaterialPageRoute(builder: (_) => const HomeScreen()),
+      MaterialPageRoute(builder: (_) => const HomeScreen()),
+
+    if (    ); -match 'import.*/diet_allergy_step.dart') { return     ); }
+    if (    ); -match 'import.*home_screen.dart') { return "    );`r`nimport 'diet_allergy_step.dart';" }
+    return     );
+    );
+
+    if (  } -match 'import.*/diet_allergy_step.dart') { return   } }
+    if (  } -match 'import.*home_screen.dart') { return "  }`r`nimport 'diet_allergy_step.dart';" }
+    return   }
+  }
+
+    if ( -match 'import.*/diet_allergy_step.dart') { return  }
+    if ( -match 'import.*home_screen.dart') { return "`r`nimport 'diet_allergy_step.dart';" }
+    return 
+
+
+    if (  @override -match 'import.*/diet_allergy_step.dart') { return   @override }
+    if (  @override -match 'import.*home_screen.dart') { return "  @override`r`nimport 'diet_allergy_step.dart';" }
+    return   @override
+  @override
+
+    if (  Widget build(BuildContext context) { -match 'import.*/diet_allergy_step.dart') { return   Widget build(BuildContext context) { }
+    if (  Widget build(BuildContext context) { -match 'import.*home_screen.dart') { return "  Widget build(BuildContext context) {`r`nimport 'diet_allergy_step.dart';" }
+    return   Widget build(BuildContext context) {
+  Widget build(BuildContext context) {
+
+    if (    final uid = FirebaseAuth.instance.currentUser?.uid; -match 'import.*/diet_allergy_step.dart') { return     final uid = FirebaseAuth.instance.currentUser?.uid; }
+    if (    final uid = FirebaseAuth.instance.currentUser?.uid; -match 'import.*home_screen.dart') { return "    final uid = FirebaseAuth.instance.currentUser?.uid;`r`nimport 'diet_allergy_step.dart';" }
+    return     final uid = FirebaseAuth.instance.currentUser?.uid;
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
+    if (    return Scaffold( -match 'import.*/diet_allergy_step.dart') { return     return Scaffold( }
+    if (    return Scaffold( -match 'import.*home_screen.dart') { return "    return Scaffold(`r`nimport 'diet_allergy_step.dart';" }
+    return     return Scaffold(
+    return Scaffold(
+
+    if (      appBar: AppBar(title: const Text('Taste Quiz')), -match 'import.*/diet_allergy_step.dart') { return       appBar: AppBar(title: const Text('Taste Quiz')), }
+    if (      appBar: AppBar(title: const Text('Taste Quiz')), -match 'import.*home_screen.dart') { return "      appBar: AppBar(title: const Text('Taste Quiz')),`r`nimport 'diet_allergy_step.dart';" }
+    return       appBar: AppBar(title: const Text('Taste Quiz')),
+      appBar: AppBar(title: const Text('Taste Quiz')),
+
+    if (      body: ListView( -match 'import.*/diet_allergy_step.dart') { return       body: ListView( }
+    if (      body: ListView( -match 'import.*home_screen.dart') { return "      body: ListView(`r`nimport 'diet_allergy_step.dart';" }
+    return       body: ListView(
+      body: ListView(
+
+    if (        padding: const EdgeInsets.all(16), -match 'import.*/diet_allergy_step.dart') { return         padding: const EdgeInsets.all(16), }
+    if (        padding: const EdgeInsets.all(16), -match 'import.*home_screen.dart') { return "        padding: const EdgeInsets.all(16),`r`nimport 'diet_allergy_step.dart';" }
+    return         padding: const EdgeInsets.all(16),
+        padding: const EdgeInsets.all(16),
+
+    if (        children: [
+          DietAllergySection(), -match 'import.*/diet_allergy_step.dart') { return         children: [
+          DietAllergySection(), }
+    if (        children: [
+          DietAllergySection(), -match 'import.*home_screen.dart') { return "        children: [
+          DietAllergySection(),`r`nimport 'diet_allergy_step.dart';" }
+    return         children: [
+          DietAllergySection(),
+        children: [
+          DietAllergySection(),
+
+    if (          Text( -match 'import.*/diet_allergy_step.dart') { return           Text( }
+    if (          Text( -match 'import.*home_screen.dart') { return "          Text(`r`nimport 'diet_allergy_step.dart';" }
+    return           Text(
+          Text(
+
+    if (            'Hello${uid != null ? " $uid" : ""} — let’s set up your taste!', -match 'import.*/diet_allergy_step.dart') { return             'Hello${uid != null ? " $uid" : ""} — let’s set up your taste!', }
+    if (            'Hello${uid != null ? " $uid" : ""} — let’s set up your taste!', -match 'import.*home_screen.dart') { return "            'Hello${uid != null ? " $uid" : ""} — let’s set up your taste!',`r`nimport 'diet_allergy_step.dart';" }
+    return             'Hello${uid != null ? " $uid" : ""} — let’s set up your taste!',
+            'Hello${uid != null ? " $uid" : ""} — let’s set up your taste!',
+
+    if (            style: Theme.of(context).textTheme.titleMedium, -match 'import.*/diet_allergy_step.dart') { return             style: Theme.of(context).textTheme.titleMedium, }
+    if (            style: Theme.of(context).textTheme.titleMedium, -match 'import.*home_screen.dart') { return "            style: Theme.of(context).textTheme.titleMedium,`r`nimport 'diet_allergy_step.dart';" }
+    return             style: Theme.of(context).textTheme.titleMedium,
+            style: Theme.of(context).textTheme.titleMedium,
+
+    if (          ), -match 'import.*/diet_allergy_step.dart') { return           ), }
+    if (          ), -match 'import.*home_screen.dart') { return "          ),`r`nimport 'diet_allergy_step.dart';" }
+    return           ),
+          ),
+
+    if (          const SizedBox(height: 12), -match 'import.*/diet_allergy_step.dart') { return           const SizedBox(height: 12), }
+    if (          const SizedBox(height: 12), -match 'import.*home_screen.dart') { return "          const SizedBox(height: 12),`r`nimport 'diet_allergy_step.dart';" }
+    return           const SizedBox(height: 12),
+          const SizedBox(height: 12),
+
+    if (          Text('Pick a few things you LIKE'), -match 'import.*/diet_allergy_step.dart') { return           Text('Pick a few things you LIKE'), }
+    if (          Text('Pick a few things you LIKE'), -match 'import.*home_screen.dart') { return "          Text('Pick a few things you LIKE'),`r`nimport 'diet_allergy_step.dart';" }
+    return           Text('Pick a few things you LIKE'),
+          Text('Pick a few things you LIKE'),
+
+    if (          const SizedBox(height: 8), -match 'import.*/diet_allergy_step.dart') { return           const SizedBox(height: 8), }
+    if (          const SizedBox(height: 8), -match 'import.*home_screen.dart') { return "          const SizedBox(height: 8),`r`nimport 'diet_allergy_step.dart';" }
+    return           const SizedBox(height: 8),
+          const SizedBox(height: 8),
+
+    if (          Wrap( -match 'import.*/diet_allergy_step.dart') { return           Wrap( }
+    if (          Wrap( -match 'import.*home_screen.dart') { return "          Wrap(`r`nimport 'diet_allergy_step.dart';" }
+    return           Wrap(
+          Wrap(
+
+    if (            spacing: 8, runSpacing: 8, -match 'import.*/diet_allergy_step.dart') { return             spacing: 8, runSpacing: 8, }
+    if (            spacing: 8, runSpacing: 8, -match 'import.*home_screen.dart') { return "            spacing: 8, runSpacing: 8,`r`nimport 'diet_allergy_step.dart';" }
+    return             spacing: 8, runSpacing: 8,
+            spacing: 8, runSpacing: 8,
+
+    if (            children: [
+          DietAllergySection(),'bbq','tacos','pizza','ramen','sushi','salad'].map((t) { -match 'import.*/diet_allergy_step.dart') { return             children: [
+          DietAllergySection(),'bbq','tacos','pizza','ramen','sushi','salad'].map((t) { }
+    if (            children: [
+          DietAllergySection(),'bbq','tacos','pizza','ramen','sushi','salad'].map((t) { -match 'import.*home_screen.dart') { return "            children: [
+          DietAllergySection(),'bbq','tacos','pizza','ramen','sushi','salad'].map((t) {`r`nimport 'diet_allergy_step.dart';" }
+    return             children: [
+          DietAllergySection(),'bbq','tacos','pizza','ramen','sushi','salad'].map((t) {
+            children: [
+          DietAllergySection(),'bbq','tacos','pizza','ramen','sushi','salad'].map((t) {
+
+    if (              final selected = _likes.contains(t); -match 'import.*/diet_allergy_step.dart') { return               final selected = _likes.contains(t); }
+    if (              final selected = _likes.contains(t); -match 'import.*home_screen.dart') { return "              final selected = _likes.contains(t);`r`nimport 'diet_allergy_step.dart';" }
+    return               final selected = _likes.contains(t);
+              final selected = _likes.contains(t);
+
+    if (              return FilterChip( -match 'import.*/diet_allergy_step.dart') { return               return FilterChip( }
+    if (              return FilterChip( -match 'import.*home_screen.dart') { return "              return FilterChip(`r`nimport 'diet_allergy_step.dart';" }
+    return               return FilterChip(
+              return FilterChip(
+
+    if (                label: Text(t), -match 'import.*/diet_allergy_step.dart') { return                 label: Text(t), }
+    if (                label: Text(t), -match 'import.*home_screen.dart') { return "                label: Text(t),`r`nimport 'diet_allergy_step.dart';" }
+    return                 label: Text(t),
+                label: Text(t),
+
+    if (                selected: selected, -match 'import.*/diet_allergy_step.dart') { return                 selected: selected, }
+    if (                selected: selected, -match 'import.*home_screen.dart') { return "                selected: selected,`r`nimport 'diet_allergy_step.dart';" }
+    return                 selected: selected,
+                selected: selected,
+
+    if (                onSelected: (v) => setState(() => v ? _likes.add(t) : _likes.remove(t)), -match 'import.*/diet_allergy_step.dart') { return                 onSelected: (v) => setState(() => v ? _likes.add(t) : _likes.remove(t)), }
+    if (                onSelected: (v) => setState(() => v ? _likes.add(t) : _likes.remove(t)), -match 'import.*home_screen.dart') { return "                onSelected: (v) => setState(() => v ? _likes.add(t) : _likes.remove(t)),`r`nimport 'diet_allergy_step.dart';" }
+    return                 onSelected: (v) => setState(() => v ? _likes.add(t) : _likes.remove(t)),
+                onSelected: (v) => setState(() => v ? _likes.add(t) : _likes.remove(t)),
+
+    if (              ); -match 'import.*/diet_allergy_step.dart') { return               ); }
+    if (              ); -match 'import.*home_screen.dart') { return "              );`r`nimport 'diet_allergy_step.dart';" }
+    return               );
+              );
+
+    if (            }).toList(), -match 'import.*/diet_allergy_step.dart') { return             }).toList(), }
+    if (            }).toList(), -match 'import.*home_screen.dart') { return "            }).toList(),`r`nimport 'diet_allergy_step.dart';" }
+    return             }).toList(),
+            }).toList(),
+
+    if (          ), -match 'import.*/diet_allergy_step.dart') { return           ), }
+    if (          ), -match 'import.*home_screen.dart') { return "          ),`r`nimport 'diet_allergy_step.dart';" }
+    return           ),
+          ),
+
+    if (          const SizedBox(height: 16), -match 'import.*/diet_allergy_step.dart') { return           const SizedBox(height: 16), }
+    if (          const SizedBox(height: 16), -match 'import.*home_screen.dart') { return "          const SizedBox(height: 16),`r`nimport 'diet_allergy_step.dart';" }
+    return           const SizedBox(height: 16),
+          const SizedBox(height: 16),
+
+    if (          Text('Anything to AVOID?'), -match 'import.*/diet_allergy_step.dart') { return           Text('Anything to AVOID?'), }
+    if (          Text('Anything to AVOID?'), -match 'import.*home_screen.dart') { return "          Text('Anything to AVOID?'),`r`nimport 'diet_allergy_step.dart';" }
+    return           Text('Anything to AVOID?'),
+          Text('Anything to AVOID?'),
+
+    if (          const SizedBox(height: 8), -match 'import.*/diet_allergy_step.dart') { return           const SizedBox(height: 8), }
+    if (          const SizedBox(height: 8), -match 'import.*home_screen.dart') { return "          const SizedBox(height: 8),`r`nimport 'diet_allergy_step.dart';" }
+    return           const SizedBox(height: 8),
+          const SizedBox(height: 8),
+
+    if (          Wrap( -match 'import.*/diet_allergy_step.dart') { return           Wrap( }
+    if (          Wrap( -match 'import.*home_screen.dart') { return "          Wrap(`r`nimport 'diet_allergy_step.dart';" }
+    return           Wrap(
+          Wrap(
+
+    if (            spacing: 8, runSpacing: 8, -match 'import.*/diet_allergy_step.dart') { return             spacing: 8, runSpacing: 8, }
+    if (            spacing: 8, runSpacing: 8, -match 'import.*home_screen.dart') { return "            spacing: 8, runSpacing: 8,`r`nimport 'diet_allergy_step.dart';" }
+    return             spacing: 8, runSpacing: 8,
+            spacing: 8, runSpacing: 8,
+
+    if (            children: [
+          DietAllergySection(),'greasy','too_salty','too_sweet','fried'].map((t) { -match 'import.*/diet_allergy_step.dart') { return             children: [
+          DietAllergySection(),'greasy','too_salty','too_sweet','fried'].map((t) { }
+    if (            children: [
+          DietAllergySection(),'greasy','too_salty','too_sweet','fried'].map((t) { -match 'import.*home_screen.dart') { return "            children: [
+          DietAllergySection(),'greasy','too_salty','too_sweet','fried'].map((t) {`r`nimport 'diet_allergy_step.dart';" }
+    return             children: [
+          DietAllergySection(),'greasy','too_salty','too_sweet','fried'].map((t) {
+            children: [
+          DietAllergySection(),'greasy','too_salty','too_sweet','fried'].map((t) {
+
+    if (              final selected = _avoids.contains(t); -match 'import.*/diet_allergy_step.dart') { return               final selected = _avoids.contains(t); }
+    if (              final selected = _avoids.contains(t); -match 'import.*home_screen.dart') { return "              final selected = _avoids.contains(t);`r`nimport 'diet_allergy_step.dart';" }
+    return               final selected = _avoids.contains(t);
+              final selected = _avoids.contains(t);
+
+    if (              return FilterChip( -match 'import.*/diet_allergy_step.dart') { return               return FilterChip( }
+    if (              return FilterChip( -match 'import.*home_screen.dart') { return "              return FilterChip(`r`nimport 'diet_allergy_step.dart';" }
+    return               return FilterChip(
+              return FilterChip(
+
+    if (                label: Text(t), -match 'import.*/diet_allergy_step.dart') { return                 label: Text(t), }
+    if (                label: Text(t), -match 'import.*home_screen.dart') { return "                label: Text(t),`r`nimport 'diet_allergy_step.dart';" }
+    return                 label: Text(t),
+                label: Text(t),
+
+    if (                selected: selected, -match 'import.*/diet_allergy_step.dart') { return                 selected: selected, }
+    if (                selected: selected, -match 'import.*home_screen.dart') { return "                selected: selected,`r`nimport 'diet_allergy_step.dart';" }
+    return                 selected: selected,
+                selected: selected,
+
+    if (                onSelected: (v) => setState(() => v ? _avoids.add(t) : _avoids.remove(t)), -match 'import.*/diet_allergy_step.dart') { return                 onSelected: (v) => setState(() => v ? _avoids.add(t) : _avoids.remove(t)), }
+    if (                onSelected: (v) => setState(() => v ? _avoids.add(t) : _avoids.remove(t)), -match 'import.*home_screen.dart') { return "                onSelected: (v) => setState(() => v ? _avoids.add(t) : _avoids.remove(t)),`r`nimport 'diet_allergy_step.dart';" }
+    return                 onSelected: (v) => setState(() => v ? _avoids.add(t) : _avoids.remove(t)),
+                onSelected: (v) => setState(() => v ? _avoids.add(t) : _avoids.remove(t)),
+
+    if (              ); -match 'import.*/diet_allergy_step.dart') { return               ); }
+    if (              ); -match 'import.*home_screen.dart') { return "              );`r`nimport 'diet_allergy_step.dart';" }
+    return               );
+              );
+
+    if (            }).toList(), -match 'import.*/diet_allergy_step.dart') { return             }).toList(), }
+    if (            }).toList(), -match 'import.*home_screen.dart') { return "            }).toList(),`r`nimport 'diet_allergy_step.dart';" }
+    return             }).toList(),
+            }).toList(),
+
+    if (          ), -match 'import.*/diet_allergy_step.dart') { return           ), }
+    if (          ), -match 'import.*home_screen.dart') { return "          ),`r`nimport 'diet_allergy_step.dart';" }
+    return           ),
+          ),
+
+    if (          const SizedBox(height: 16), -match 'import.*/diet_allergy_step.dart') { return           const SizedBox(height: 16), }
+    if (          const SizedBox(height: 16), -match 'import.*home_screen.dart') { return "          const SizedBox(height: 16),`r`nimport 'diet_allergy_step.dart';" }
+    return           const SizedBox(height: 16),
+          const SizedBox(height: 16),
+
+    if (          Text('Spice tolerance'), -match 'import.*/diet_allergy_step.dart') { return           Text('Spice tolerance'), }
+    if (          Text('Spice tolerance'), -match 'import.*home_screen.dart') { return "          Text('Spice tolerance'),`r`nimport 'diet_allergy_step.dart';" }
+    return           Text('Spice tolerance'),
+          Text('Spice tolerance'),
+
+    if (          Slider( -match 'import.*/diet_allergy_step.dart') { return           Slider( }
+    if (          Slider( -match 'import.*home_screen.dart') { return "          Slider(`r`nimport 'diet_allergy_step.dart';" }
+    return           Slider(
+          Slider(
+
+    if (            value: _spice, min: 0, max: 100, divisions: 10, -match 'import.*/diet_allergy_step.dart') { return             value: _spice, min: 0, max: 100, divisions: 10, }
+    if (            value: _spice, min: 0, max: 100, divisions: 10, -match 'import.*home_screen.dart') { return "            value: _spice, min: 0, max: 100, divisions: 10,`r`nimport 'diet_allergy_step.dart';" }
+    return             value: _spice, min: 0, max: 100, divisions: 10,
+            value: _spice, min: 0, max: 100, divisions: 10,
+
+    if (             -match 'import.*/diet_allergy_step.dart') { return              }
+    if (             -match 'import.*home_screen.dart') { return "            `r`nimport 'diet_allergy_step.dart';" }
+    return             
+            
+
+    if (            label: _spice.round().toString(), -match 'import.*/diet_allergy_step.dart') { return             label: _spice.round().toString(), }
+    if (            label: _spice.round().toString(), -match 'import.*home_screen.dart') { return "            label: _spice.round().toString(),`r`nimport 'diet_allergy_step.dart';" }
+    return             label: _spice.round().toString(),
+            label: _spice.round().toString(),
+
+    if (          ), -match 'import.*/diet_allergy_step.dart') { return           ), }
+    if (          ), -match 'import.*home_screen.dart') { return "          ),`r`nimport 'diet_allergy_step.dart';" }
+    return           ),
+          ),
+
+    if (          const SizedBox(height: 16), -match 'import.*/diet_allergy_step.dart') { return           const SizedBox(height: 16), }
+    if (          const SizedBox(height: 16), -match 'import.*home_screen.dart') { return "          const SizedBox(height: 16),`r`nimport 'diet_allergy_step.dart';" }
+    return           const SizedBox(height: 16),
+          const SizedBox(height: 16),
+
+    if (          Text('Price comfort'), -match 'import.*/diet_allergy_step.dart') { return           Text('Price comfort'), }
+    if (          Text('Price comfort'), -match 'import.*home_screen.dart') { return "          Text('Price comfort'),`r`nimport 'diet_allergy_step.dart';" }
+    return           Text('Price comfort'),
+          Text('Price comfort'),
+
+    if (          SegmentedButton<int>( -match 'import.*/diet_allergy_step.dart') { return           SegmentedButton<int>( }
+    if (          SegmentedButton<int>( -match 'import.*home_screen.dart') { return "          SegmentedButton<int>(`r`nimport 'diet_allergy_step.dart';" }
+    return           SegmentedButton<int>(
+          SegmentedButton<int>(
+
+    if (            segments: const [ -match 'import.*/diet_allergy_step.dart') { return             segments: const [ }
+    if (            segments: const [ -match 'import.*home_screen.dart') { return "            segments: const [`r`nimport 'diet_allergy_step.dart';" }
+    return             segments: const [
+            segments: const [
+
+    if (              ButtonSegment(value: 1, label: Text(r'$')), -match 'import.*/diet_allergy_step.dart') { return               ButtonSegment(value: 1, label: Text(r'$')), }
+    if (              ButtonSegment(value: 1, label: Text(r'$')), -match 'import.*home_screen.dart') { return "              ButtonSegment(value: 1, label: Text(r'$')),`r`nimport 'diet_allergy_step.dart';" }
+    return               ButtonSegment(value: 1, label: Text(r'$')),
+              ButtonSegment(value: 1, label: Text(r'$')),
+
+    if (              ButtonSegment(value: 2, label: Text(r'$$')), -match 'import.*/diet_allergy_step.dart') { return               ButtonSegment(value: 2, label: Text(r'$$')), }
+    if (              ButtonSegment(value: 2, label: Text(r'$$')), -match 'import.*home_screen.dart') { return "              ButtonSegment(value: 2, label: Text(r'$$')),`r`nimport 'diet_allergy_step.dart';" }
+    return               ButtonSegment(value: 2, label: Text(r'$$')),
+              ButtonSegment(value: 2, label: Text(r'$$')),
+
+    if (              ButtonSegment(value: 3, label: Text(r'$$$')), -match 'import.*/diet_allergy_step.dart') { return               ButtonSegment(value: 3, label: Text(r'$$$')), }
+    if (              ButtonSegment(value: 3, label: Text(r'$$$')), -match 'import.*home_screen.dart') { return "              ButtonSegment(value: 3, label: Text(r'$$$')),`r`nimport 'diet_allergy_step.dart';" }
+    return               ButtonSegment(value: 3, label: Text(r'$$$')),
+              ButtonSegment(value: 3, label: Text(r'$$$')),
+
+    if (              ButtonSegment(value: 4, label: Text(r'$$$$')), -match 'import.*/diet_allergy_step.dart') { return               ButtonSegment(value: 4, label: Text(r'$$$$')), }
+    if (              ButtonSegment(value: 4, label: Text(r'$$$$')), -match 'import.*home_screen.dart') { return "              ButtonSegment(value: 4, label: Text(r'$$$$')),`r`nimport 'diet_allergy_step.dart';" }
+    return               ButtonSegment(value: 4, label: Text(r'$$$$')),
+              ButtonSegment(value: 4, label: Text(r'$$$$')),
+
+    if (            ], -match 'import.*/diet_allergy_step.dart') { return             ], }
+    if (            ], -match 'import.*home_screen.dart') { return "            ],`r`nimport 'diet_allergy_step.dart';" }
+    return             ],
+            ],
+
+    if (            selected: {_price}, -match 'import.*/diet_allergy_step.dart') { return             selected: {_price}, }
+    if (            selected: {_price}, -match 'import.*home_screen.dart') { return "            selected: {_price},`r`nimport 'diet_allergy_step.dart';" }
+    return             selected: {_price},
+            selected: {_price},
+
+    if (            onSelecti -match 'import.*/diet_allergy_step.dart') { return             onSelecti }
+    if (            onSelecti -match 'import.*home_screen.dart') { return "            onSelecti`r`nimport 'diet_allergy_step.dart';" }
+    return             onSelecti
+            onSelecti
+
+    if (          ), -match 'import.*/diet_allergy_step.dart') { return           ), }
+    if (          ), -match 'import.*home_screen.dart') { return "          ),`r`nimport 'diet_allergy_step.dart';" }
+    return           ),
+          ),
+
+    if (          const SizedBox(height: 24), -match 'import.*/diet_allergy_step.dart') { return           const SizedBox(height: 24), }
+    if (          const SizedBox(height: 24), -match 'import.*home_screen.dart') { return "          const SizedBox(height: 24),`r`nimport 'diet_allergy_step.dart';" }
+    return           const SizedBox(height: 24),
+          const SizedBox(height: 24),
+
+    if (          FilledButton.icon( -match 'import.*/diet_allergy_step.dart') { return           FilledButton.icon( }
+    if (          FilledButton.icon( -match 'import.*home_screen.dart') { return "          FilledButton.icon(`r`nimport 'diet_allergy_step.dart';" }
+    return           FilledButton.icon(
+          FilledButton.icon(
+
+    if (            onPressed: _finish, -match 'import.*/diet_allergy_step.dart') { return             onPressed: _finish, }
+    if (            onPressed: _finish, -match 'import.*home_screen.dart') { return "            onPressed: _finish,`r`nimport 'diet_allergy_step.dart';" }
+    return             onPressed: _finish,
+            onPressed: _finish,
+
+    if (            icon: const Icon(Icons.check), -match 'import.*/diet_allergy_step.dart') { return             icon: const Icon(Icons.check), }
+    if (            icon: const Icon(Icons.check), -match 'import.*home_screen.dart') { return "            icon: const Icon(Icons.check),`r`nimport 'diet_allergy_step.dart';" }
+    return             icon: const Icon(Icons.check),
+            icon: const Icon(Icons.check),
+
+    if (            label: const Text('Finish'), -match 'import.*/diet_allergy_step.dart') { return             label: const Text('Finish'), }
+    if (            label: const Text('Finish'), -match 'import.*home_screen.dart') { return "            label: const Text('Finish'),`r`nimport 'diet_allergy_step.dart';" }
+    return             label: const Text('Finish'),
+            label: const Text('Finish'),
+
+    if (          ), -match 'import.*/diet_allergy_step.dart') { return           ), }
+    if (          ), -match 'import.*home_screen.dart') { return "          ),`r`nimport 'diet_allergy_step.dart';" }
+    return           ),
+          ),
+
+    if (        ], -match 'import.*/diet_allergy_step.dart') { return         ], }
+    if (        ], -match 'import.*home_screen.dart') { return "        ],`r`nimport 'diet_allergy_step.dart';" }
+    return         ],
+        ],
+
+    if (      ), -match 'import.*/diet_allergy_step.dart') { return       ), }
+    if (      ), -match 'import.*home_screen.dart') { return "      ),`r`nimport 'diet_allergy_step.dart';" }
+    return       ),
+      ),
+
+    if (    ); -match 'import.*/diet_allergy_step.dart') { return     ); }
+    if (    ); -match 'import.*home_screen.dart') { return "    );`r`nimport 'diet_allergy_step.dart';" }
+    return     );
+    );
+
+    if (  } -match 'import.*/diet_allergy_step.dart') { return   } }
+    if (  } -match 'import.*home_screen.dart') { return "  }`r`nimport 'diet_allergy_step.dart';" }
+    return   }
+  }
+
+    if (} -match 'import.*/diet_allergy_step.dart') { return } }
+    if (} -match 'import.*home_screen.dart') { return "}`r`nimport 'diet_allergy_step.dart';" }
+    return }
+}
+  // Diet & Allergy state fields
+  Set<String> _dietAllergyAllergens = {};
+  Set<String> _dietAllergyDiets = {};
+  bool _dietHideMismatches = true;
+
+  // Button to launch diet & allergy step
+  Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8),
+    child: FilledButton.icon(
+      icon: const Icon(Icons.health_and_safety),
+      label: const Text('Set Diet & Allergies'),
+      onPressed: () async {
+          MaterialPageRoute(builder: (_) => const DietAllergyStep()),
+        );
+        if (result != null) {
+          setState(() {
+            _dietAllergyAllergens = result.allergies;
+            _dietAllergyDiets = result.diets;
+            _dietHideMismatches = result.hideMismatches;
+          });
+          // TODO: persist later
+          // await _saveDietAllergyToProfile(result);
+        }
+      },
+    ),
+  ),
+
+  if (_dietAllergyAllergens.isNotEmpty || _dietAllergyDiets.isNotEmpty)
+    Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      child: Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        children: [
+          DietAllergySection(),
+          ..._dietAllergyAllergens.map((a) => Chip(label: Text('Allergy: $a'))),
+          ..._dietAllergyDiets.map((d) => Chip(label: Text('Diet: $d'))),
+          Chip(label: Text(_dietHideMismatches ? 'Hiding mismatches' : 'Showing mismatches')),
+        ],
+      ),
+    ),
+
+    // MOCK save
+    // mockUserProfile.allergies = r.allergies.toList();
+    // mockUserProfile.diets = r.diets.toList();
+    // mockUserProfile.hideMismatches = r.hideMismatches;
+
+    // FIREBASE (later):
+    // await FirebaseFirestore.instance.collection("users").doc(uid).set({
+    //   "allergies": r.allergies.toList(),
+    //   "diets": r.diets.toList(),
+    //   "hideMismatches": r.hideMismatches,
+    // }, SetOptions(merge: true));
+  }
+
+
+

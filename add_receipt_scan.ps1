@@ -1,0 +1,325 @@
+$ErrorActionPreference = "Stop"
+
+function Write-File($path, $content) {
+  New-Item -ItemType Directory -Path (Split-Path $path) -Force | Out-Null
+  if (Test-Path $path) { Copy-Item $path "$path.bak" -Force; Write-Host "Backup: $path -> $path.bak" }
+  Set-Content -Path $path -Value $content -Encoding UTF8 -NoNewline
+  Write-Host "Wrote: $path"
+}
+
+# 1) Create screen: lib/features/receipts/receipt_scan_screen.dart
+$screen = @'
+import "dart:io";
+import "package:flutter/material.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
+import "package:firebase_auth/firebase_auth.dart";
+
+class ReceiptScanScreen extends StatefulWidget {
+  static const route = "/receipt_scan";
+  const ReceiptScanScreen({super.key});
+
+  @override
+  State<ReceiptScanScreen> createState() => _ReceiptScanScreenState();
+}
+
+class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
+  final TextEditingController _textCtrl = TextEditingController(); // paste receipt text
+  String? _merchant;
+  DateTime? _date;
+  double? _subtotal, _tax, _total;
+  List<_ParsedItem> _items = [];
+  bool _saving = false;
+
+  @override
+  void dispose() { _textCtrl.dispose(); super.dispose(); }
+
+  // Naive parser: finds lines like "Name .... 12.34"
+  void _parse() {
+    final t = _textCtrl.text;
+    if (t.trim().isEmpty) return;
+
+    final lines = t.split(RegExp(r'\r?\n')).map((e) => e.trim()).where((e) => e.isNotEmpty).toList();
+
+    // merchant: first texty line
+    _merchant = lines.isNotEmpty ? lines.first.replaceAll(RegExp(r'[^A-Za-z0-9 &\'\-]'), '').trim() : null;
+
+    // totals (look for keywords)
+    double? toDouble(String s) => double.tryParse(s.replaceAll(RegExp(r'[^0-9\.\-]'), ''));
+    for (final l in lines) {
+      final low = l.toLowerCase();
+      if (_total == null && low.contains('total')) {
+        final m = RegExp(r'([-]?\d+\.\d{2})').firstMatch(l);
+        if (m != null) _total = toDouble(m.group(1)!);
+      } else if (_subtotal == null && (low.contains('subtotal') || low.contains('sub total'))) {
+        final m = RegExp(r'([-]?\d+\.\d{2})').firstMatch(l);
+        if (m != null) _subtotal = toDouble(m.group(1)!);
+      } else if (_tax == null && low.contains('tax')) {
+        final m = RegExp(r'([-]?\d+\.\d{2})').firstMatch(l);
+        if (m != null) _tax = toDouble(m.group(1)!);
+      }
+      if (_date == null) {
+        final d = RegExp(r'(\d{1,2}[\/\-]\d{1,2}[\/\-]\d{2,4})').firstMatch(l);
+        if (d != null) {
+          final s = d.group(1)!;
+          try { _date = DateTime.tryParse(s.replaceAll('/', '-')); } catch (_) {}
+        }
+      }
+    }
+
+    // items = lines that end with price
+    final items = <_ParsedItem>[];
+    for (final l in lines) {
+      final match = RegExp(r'(.+?)\s+([-]?\d+\.\d{2})$').firstMatch(l);
+      if (match != null) {
+        final name = match.group(1)!.trim();
+        final price = double.tryParse(match.group(2)!) ?? 0.0;
+        // skip obvious subtotal/total lines
+        final low = name.toLowerCase();
+        if (low.contains('total') || low.contains('tax') || low.contains('change') || low.contains('subtotal')) continue;
+        items.add(_ParsedItem(raw: l, name: name, qty: 1, price: price));
+      }
+    }
+    setState(() { _items = items; });
+  }
+
+  Future<void> _save() async {
+    if (_items.isEmpty) return;
+    setState(() => _saving = true);
+    try {
+      final uid = FirebaseAuth.instance.currentUser!.uid;
+      final db = FirebaseFirestore.instance;
+      final rid = db.collection('x').doc().id;
+
+      final receiptRef = db.collection('users').doc(uid).collection('receipts').doc(rid);
+      await receiptRef.set({
+        'created_at': DateTime.now().toIso8601String(),
+        'merchant': _merchant,
+        'date': _date?.toIso8601String(),
+        'subtotal': _subtotal,
+        'tax': _tax,
+        'total': _total,
+      }, SetOptions(merge: true));
+
+      // save items and optionally create visits (unrated)
+      for (final it in _items) {
+        final iid = db.collection('x').doc().id;
+        await receiptRef.collection('items').doc(iid).set({
+          'raw': it.raw,
+          'name': it.name,
+          'qty': it.qty,
+          'price': it.price,
+          'place_id': it.placeId,
+          'menu_item_id': it.menuItemId,
+        });
+      }
+
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text('Receipt saved')));
+      Navigator.pop(context);
+    } catch (e) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Save failed: $e')));
+    } finally {
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _pickImageStub() async {
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Image OCR coming next (Cloud Vision). Paste text for now.')),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: const Text('Scan Receipt'), actions: [
+        IconButton(
+          tooltip: 'Pick image (OCR soon)',
+          icon: const Icon(Icons.photo),
+          onPressed: _pickImageStub,
+        ),
+        IconButton(
+          tooltip: 'Parse',
+          icon: const Icon(Icons.play_arrow),
+          onPressed: _parse,
+        ),
+        IconButton(
+          tooltip: 'Save',
+          icon: const Icon(Icons.save),
+          onPressed: _saving ? null : _save,
+        ),
+      ]),
+      body: ListView(
+        padding: const EdgeInsets.all(16),
+        children: [
+          TextField(
+            controller: _textCtrl,
+            maxLines: 6,
+            decoration: const InputDecoration(
+              labelText: 'Paste receipt text (temporary MVP)',
+              hintText: 'Paste full text here, then tap Parse ▷',
+              border: OutlineInputBorder(),
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(spacing: 12, runSpacing: 12, children: [
+            _kv('Merchant', _merchant),
+            _kv('Date', _date?.toString()),
+            _kv('Subtotal', _subtotal?.toStringAsFixed(2)),
+            _kv('Tax', _tax?.toStringAsFixed(2)),
+            _kv('Total', _total?.toStringAsFixed(2)),
+          ]),
+          const Divider(height: 32),
+          Text('Items (${_items.length})', style: Theme.of(context).textTheme.titleMedium),
+          const SizedBox(height: 8),
+          ..._items.map((it) => _ItemRow(
+            item: it,
+            onChanged: (updated) => setState(() {
+              final idx = _items.indexOf(it);
+              _items[idx] = updated;
+            }),
+          )),
+          const SizedBox(height: 80),
+        ],
+      ),
+    );
+  }
+
+  Widget _kv(String k, String? v) {
+    return Chip(label: Text('$k: ${v ?? "—"}'));
+  }
+}
+
+class _ItemRow extends StatelessWidget {
+  final _ParsedItem item;
+  final ValueChanged<_ParsedItem> onChanged;
+  const _ItemRow({required this.item, required this.onChanged});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(item.raw, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+            const SizedBox(height: 6),
+            Row(children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: item.name,
+                  decoration: const InputDecoration(labelText: 'Name'),
+                  onChanged: (v) => onChanged(item.copyWith(name: v)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              SizedBox(
+                width: 80,
+                child: TextFormField(
+                  initialValue: item.price.toStringAsFixed(2),
+                  decoration: const InputDecoration(labelText: 'Price'),
+                  onChanged: (v) => onChanged(item.copyWith(price: double.tryParse(v) ?? item.price)),
+                ),
+              ),
+            ]),
+            const SizedBox(height: 8),
+            Row(children: [
+              Expanded(
+                child: TextFormField(
+                  initialValue: item.placeId ?? '',
+                  decoration: const InputDecoration(labelText: 'Place ID (optional)'),
+                  onChanged: (v) => onChanged(item.copyWith(placeId: v.isEmpty ? null : v)),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: TextFormField(
+                  initialValue: item.menuItemId ?? '',
+                  decoration: const InputDecoration(labelText: 'Menu Item ID (optional)'),
+                  onChanged: (v) => onChanged(item.copyWith(menuItemId: v.isEmpty ? null : v)),
+                ),
+              ),
+            ]),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ParsedItem {
+  final String raw;
+  final String name;
+  final int qty;
+  final double price;
+  final String? placeId;
+  final String? menuItemId;
+
+  _ParsedItem({
+    required this.raw,
+    required this.name,
+    required this.qty,
+    required this.price,
+    this.placeId,
+    this.menuItemId,
+  });
+
+  _ParsedItem copyWith({
+    String? raw, String? name, int? qty, double? price, String? placeId, String? menuItemId,
+  }) => _ParsedItem(
+    raw: raw ?? this.raw,
+    name: name ?? this.name,
+    qty: qty ?? this.qty,
+    price: price ?? this.price,
+    placeId: placeId ?? this.placeId,
+    menuItemId: menuItemId ?? this.menuItemId,
+  );
+}
+'@
+Write-File "lib\features\receipts\receipt_scan_screen.dart" $screen
+
+# 2) Wire up route in lib/main.dart and add a Home tile
+$mainPath = "lib\main.dart"
+$main = Get-Content -Raw $mainPath
+if ($main -notmatch "receipt_scan_screen.dart") {
+  $main = $main -replace "(?s)(^(\s*import\s+['""][^;]+;[^\n]*\n)+)",
+    "`$1import 'features/receipts/receipt_scan_screen.dart';`r`n"
+  Write-Host "Added import to main.dart"
+}
+if ($main -notmatch "ReceiptScanScreen\.route") {
+  $main = $main -replace "routes\s*:\s*\{",
+    "routes: {`r`n        ReceiptScanScreen.route: (_) => const ReceiptScanScreen(),"
+  Write-Host "Added route to main.dart"
+}
+Write-File $mainPath $main
+
+# 3) Add a simple entry point on Welcome screen under “More”
+$welcomePath = "lib\features\home\welcome_screen.dart"
+$welcome = Get-Content -Raw $welcomePath
+
+# Ensure we can insert a ListTile; look for "More" section and append a tile
+if ($welcome -notmatch "ReceiptScanScreen\.route") {
+  if ($welcome -notmatch "features/receipts/receipt_scan_screen.dart") {
+    $welcome = $welcome -replace "(?s)(^(\s*import\s+['""][^;]+;[^\n]*\n)+)",
+      "`$1import 'package:similar_eats_desktop/features/receipts/receipt_scan_screen.dart';`r`n"
+    Write-Host "Added import to welcome_screen.dart"
+  }
+  # add a ListTile labeled "Scan receipt" before end of ListView
+  $welcome = $welcome -replace "(\.\.\.[\s\S]*?children\s*:\s*\[)([\s\S]*?)(\][\s\S]*?;[\s]*\}\)\);)",
+    '$1$2
+          ListTile(
+            leading: const Icon(Icons.receipt_long),
+            title: const Text("Scan receipt"),
+            subtitle: const Text("Log what you ate & cost"),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.pushNamed(context, ReceiptScanScreen.route),
+          ),
+        $3'
+  Write-Host "Added Scan receipt tile to Welcome screen"
+}
+Write-File $welcomePath $welcome
+
+Write-Host "`nAll set. Build and try: flutter run -d windows"

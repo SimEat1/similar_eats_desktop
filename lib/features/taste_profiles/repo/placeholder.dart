@@ -1,3 +1,3 @@
-﻿class TasteProfilesRepo {
+class TasteProfilesRepo {
   const TasteProfilesRepo();
 }

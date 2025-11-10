@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import '../../../firebase_options.dart';
-import '../../../core/auth/anon_auth.dart';
-import '../try_list_repo.dart'; // provides TryListRepo + TryItem
+import 'package:similar_eats_desktop/firebase_options.dart';
+import 'package:similar_eats_desktop/core/auth/anon_auth.dart';
+import 'package:similar_eats_desktop/features/try_list/try_list_repo.dart'; // provides TryListRepo + TryItem
 
 class TryListScreen extends StatefulWidget {
   const TryListScreen({super.key});
@@ -179,4 +179,3 @@ class _TryListScreenState extends State<TryListScreen> {
     );
   }
 }
-

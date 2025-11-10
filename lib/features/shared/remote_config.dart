@@ -1,4 +1,4 @@
-﻿import 'package:firebase_remote_config/firebase_remote_config.dart';
+import 'package:firebase_remote_config/firebase_remote_config.dart';
 
 class RemoteConfigService {
   RemoteConfigService._(this._rc);
@@ -49,4 +49,3 @@ class RemoteConfigService {
     }
   }
 }
-

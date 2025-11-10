@@ -1,3 +1,3 @@
-﻿class TryListModel {
+class TryListModel {
   const TryListModel();
 }

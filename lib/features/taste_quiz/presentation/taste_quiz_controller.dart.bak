@@ -1,0 +1,24 @@
+import 'package:flutter/foundation.dart';
+import '../data/taste_profile_store.dart';
+import '../domain/taste_profile.dart';
+
+class TasteQuizController extends ChangeNotifier {
+  final dynamic _store;
+  TasteProfile? current;
+
+  TasteQuizController([this.store]);
+
+  Future<void> init() async {
+    current = await _store.load();
+    notifyListeners();
+  }
+
+  Future<void> save(TasteProfile p) async {
+    await _store.save(p);
+    current = p;
+    notifyListeners();
+  }
+
+  TasteBadge? get badge => current == null ? null : computeBadge(current!);
+}
+

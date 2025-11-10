@@ -1,3 +1,3 @@
-﻿class ReviewTaggingRepo {
+class ReviewTaggingRepo {
   const ReviewTaggingRepo();
 }

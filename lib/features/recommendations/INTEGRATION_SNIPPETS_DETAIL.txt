@@ -1,0 +1,19 @@
+/* ===== Add to MaterialApp routes ===== */
+import "features/recommendations/presentation/restaurant_detail_screen.dart";
+
+routes: {
+  RestaurantDetailScreen.route: (_) => const RestaurantDetailScreen(),
+  // ...
+}
+
+/* ===== Update onTap in Recommendations list item ===== */
+// Before:
+// onTap: () {},
+
+// After:
+onTap: () {
+  Navigator.of(context).pushNamed(
+    RestaurantDetailScreen.route,
+    arguments: r,
+  );
+}

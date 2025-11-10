@@ -3,7 +3,7 @@ import 'dart:convert';
 class TasteProfile {
   final String uid;
   final Set<String> cuisines; // e.g., {"mexican","bbq","thai"}
-  final Set<String> tags;     // future: dish/style keywords, etc.
+  final Set<String> tags; // future: dish/style keywords, etc.
   final int updatedAtMillis;
 
   const TasteProfile({
@@ -53,4 +53,3 @@ class SimilarUser {
 
   const SimilarUser(this.uid, this.score);
 }
-

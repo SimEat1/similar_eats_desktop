@@ -1,4 +1,4 @@
-﻿import 'package:flutter/widgets.dart';
+import 'package:flutter/widgets.dart';
 
 class ReviewTaggingPlaceholder extends StatelessWidget {
   const ReviewTaggingPlaceholder({super.key});

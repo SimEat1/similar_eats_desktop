@@ -1,0 +1,213 @@
+﻿import "dart:typed_data";
+import "package:flutter/foundation.dart";
+import 'package:flutter/material.dart';
+import 'package:similar_eats_desktop/features/friends/screens/friend_map_screen.dart';
+import "package:qr_flutter/qr_flutter.dart";
+import "package:file_picker/file_picker.dart";
+import "package:image/image.dart" as img;
+import "package:zxing2/qrcode.dart";
+import "package:zxing2/zxing2.dart";
+
+import "../data/friends_repository.dart";
+import "../models/public_profile.dart";
+import "../models/friend_request.dart";
+
+class FriendsScreen extends StatefulWidget {
+  const FriendsScreen({super.key});
+
+  @override
+  State<FriendsScreen> createState() => _FriendsScreenState();
+}
+
+class _FriendsScreenState extends State<FriendsScreen> with SingleTickerProviderStateMixin {
+  final repo = FriendsRepository();
+  final codeCtl = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    repo.ensureMyProfile(); // idempotent
+  }
+
+  Future<void> _sendByCode() async {
+    final code = codeCtl.text.trim().toUpperCase();
+    if (code.isEmpty) return;
+    final target = await repo.findByCode(code);
+    if (!mounted) return;
+    if (target == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("No user with that code")));
+      return;
+    }
+    await repo.sendFriendRequest(target.uid);
+    if (!mounted) return;
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Request sent to ${target.displayName}")));
+    codeCtl.clear();
+  }
+
+  Future<String?> _decodeQrFromBytes(Uint8List bytes) async {
+    final img.Image? image = img.decodeImage(bytes);
+    if (image == null) return null;
+
+    // Build ARGB int32 buffer for ZXing
+    final pixels = List<int>.filled(image.width * image.height, 0);
+    var i = 0;
+    for (var y = 0; y < image.height; y++) {
+      for (var x = 0; x < image.width; x++) {
+        final p = image.getPixel(x, y);
+        final r = img.getRed(p), g = img.getGreen(p), b = img.getBlue(p);
+        pixels[i++] = (0xFF << 24) | (r << 16) | (g << 8) | b;
+      }
+    }
+
+    final source = RGBLuminanceSource(Int32List.fromList(pixels), image.width, image.height);
+    final bitmap = BinaryBitmap(HybridBinarizer(source));
+    try {
+      final result = QRCodeReader().decode(bitmap);
+      return result.text;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Future<void> _importQrImage() async {
+    final picked = await FilePicker.platform.pickFiles(type: FileType.image);
+    if (picked == null || picked.files.single.bytes == null) return;
+    final text = await _decodeQrFromBytes(picked.files.single.bytes!);
+    if (!mounted) return;
+    if (text == null) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Could not read QR")));
+      return;
+    }
+    codeCtl.text = text.trim();
+    ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("QR decoded → code filled")));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return DefaultTabController(
+      length: 4,
+      child: Scaffold(
+        appBar: AppBar(actions: [IconButton(icon: const Icon(Icons.map), tooltip: 'Friends map', onPressed: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=> const FriendMapScreen())),)], actions: [IconButton(icon: const Icon(Icons.map), tooltip: 'Friend map', onPressed: ()=> Navigator.of(context).push(MaterialPageRoute(builder: (_)=> FriendMapScreen(initialUid: f.uid))), ) {
+                          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(content: Text("Friend map coming soon")));
+                        },
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            // Requests
+            StreamBuilder<List<FriendRequest>>(
+              stream: repo.streamRequests(),
+              builder: (context, snap) {
+                final items = snap.data ?? const <FriendRequest>[];
+                if (items.isEmpty) return const Center(child: Text("No requests"));
+                return ListView.builder(
+                  itemCount: items.length,
+                  itemBuilder: (_, i) {
+                    final r = items[i];
+                    return ListTile(
+                      title: Text(r.fromName),
+                      subtitle: Text("Requested • ${r.createdAt.toLocal()}"),
+                      trailing: FilledButton(
+                        onPressed: () async {
+                          await repo.acceptFriend(r.fromUid);
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("You and ${r.fromName} are now friends")));
+                          }
+                        },
+                        child: const Text("Accept"),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            // Following
+            StreamBuilder<List<PublicProfile>>(
+              stream: repo.streamFollowing(),
+              builder: (context, snap) {
+                final items = snap.data ?? const <PublicProfile>[];
+                if (items.isEmpty) return const Center(child: Text("Not following anyone"));
+                return ListView.separated(
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  itemBuilder: (_, i) {
+                    final p = items[i];
+                    return ListTile(
+                      title: Text(p.displayName),
+                      subtitle: Text("Code: ${p.friendCode}"),
+                      trailing: TextButton(
+                        onPressed: () => repo.unfollow(p.uid),
+                        child: const Text("Unfollow"),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+            // Add
+            Padding(
+              padding: const EdgeInsets.all(16),
+              child: ListView(
+                children: [
+                  const Text("Share your code", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  StreamBuilder<PublicProfile?>(
+                    stream: repo.myProfileStream(),
+                    builder: (_, snap) {
+                      final me = snap.data;
+                      if (me == null) return const Center(child: CircularProgressIndicator());
+                      final code = me.friendCode;
+                      return Card(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              SelectableText(code, style: const TextStyle(fontSize: 18, letterSpacing: 2)),
+                              const SizedBox(height: 12),
+                              QrImageView(data: code, version: QrVersions.auto, size: 160),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                  const SizedBox(height: 16),
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  const Text("Add by code", style: TextStyle(fontWeight: FontWeight.bold)),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: codeCtl,
+                          decoration: const InputDecoration(
+                            labelText: "Friend code",
+                            hintText: "e.g. 9XK7P3QZ",
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      FilledButton(onPressed: _sendByCode, child: const Text("Send request")),
+                    ],
+                  ),
+                  const SizedBox(height: 12),
+                  OutlinedButton.icon(
+                    onPressed: _importQrImage,
+                    icon: const Icon(Icons.qr_code),
+                    label: const Text("Import QR image"),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+

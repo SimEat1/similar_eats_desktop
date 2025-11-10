@@ -1,0 +1,35 @@
+/* ===== Add to your root (e.g., main.dart) =====
+import 'package:provider/provider.dart';
+import 'features/favorites/data/favorites_store.dart';
+import 'features/favorites/presentation/favorites_controller.dart';
+import 'features/try_list/data/try_list_store.dart';
+import 'features/try_list/presentation/try_list_controller.dart';
+
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => FavoritesController(FavoritesStore())..init()),
+        ChangeNotifierProvider(create: (_) => TryListController(TryListStore())..init()),
+        // existing providers...
+      ],
+      child: const MyApp(),
+    ),
+  );
+}
+
+import 'features/favorites/presentation/favorites_screen.dart';
+import 'features/try_list/presentation/try_list_screen.dart';
+
+MaterialApp(
+  routes: {
+    FavoritesScreen.route: (_) => const FavoritesScreen(),
+    TryListScreen.route: (_) => const TryListScreen(),
+    // existing routes...
+  },
+);
+
+/// From anywhere (e.g., app bar menu):
+// Navigator.of(context).pushNamed(FavoritesScreen.route);
+// Navigator.of(context).pushNamed(TryListScreen.route);
+*/

@@ -1,0 +1,88 @@
+﻿import "package:flutter/material.dart";
+import "../data/phenom_noms_repository.dart";
+import "../models/phenom_nom.dart";
+
+class PhenomNomsScreen extends StatelessWidget {
+  String _fmt(DateTime d) {
+    final l = d.toLocal();
+    String two(int n) => n.toString().padLeft(2, "0");
+    const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+    final h = ((l.hour + 11) % 12) + 1;
+    final ampm = l.hour >= 12 ? "PM" : "AM";
+    return "${months[l.month-1]} ${l.day}, ${l.year} · $h:${two(l.minute)} $ampm";
+  }
+
+  const PhenomNomsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final repo = PhenomNomsRepository();
+    return Scaffold(
+      appBar: AppBar(title: const Text("Phenom-noms")),
+      body: StreamBuilder<List<PhenomNom>>(
+        stream: repo.streamAll(),
+        builder: (context, snap) {
+          if (snap.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          final items = snap.data ?? const <PhenomNom>[];
+          if (items.isEmpty) {
+            return const Center(
+              child: Text(
+                  "No Phenom-noms yet.\nTap the heart on a visit to add one.",
+                  textAlign: TextAlign.center),
+            );
+          }
+          return ListView.separated(
+            padding: const EdgeInsets.all(8),
+            itemCount: items.length,
+            separatorBuilder: (_, __) => const SizedBox(height: 8),
+            itemBuilder: (context, i) {
+              final v = items[i];
+              return InkWell(
+                onLongPress: () async {
+                  final ok = await showDialog<bool>(
+                    context: context,
+                    builder: (_) => AlertDialog(
+                      title: const Text("Remove from Phenom-noms?"),
+                      content:
+                          Text('Remove "${v.restaurantName}" from your list?'),
+                      actions: [
+                        TextButton(
+                            onPressed: () => Navigator.pop(context, false),
+                            child: const Text("Cancel")),
+                        FilledButton(
+                            onPressed: () => Navigator.pop(context, true),
+                            child: const Text("Remove")),
+                      ],
+                    ),
+                  );
+                  if (ok == true && v.id != null) {
+                    await repo.removeByKey(v.id!);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(content: Text("Removed")));
+                    }
+                  }
+                },
+                child: Card(
+                  child: ListTile(
+  title: Text(v.restaurantName),
+  subtitle: Text(_fmt(v.createdAt)),
+  trailing: const Icon(Icons.favorite),
+),
+                    subtitle: Text(_fmt(v.createdAt))),
+                    trailing: const Icon(Icons.favorite),
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      ),
+    );
+  }
+}
+
+
+

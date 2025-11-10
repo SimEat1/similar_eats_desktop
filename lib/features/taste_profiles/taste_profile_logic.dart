@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 
 /// Simple taste profile utilities + a smoke test.
 class TasteProfileLogic {
