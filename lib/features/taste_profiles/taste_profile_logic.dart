@@ -28,12 +28,12 @@ class TasteProfileLogic {
 Future<void> debugTaste() async {
   print('>>> [debugTaste] starting…');
 
-  final user = <String, num>{
+  final _user = <String, num>{
     'spicy': 3,
     'crispy': 5,
     'cheesy': 2,
   };
-  final other = <String, num>{
+  final _other = <String, num>{
     'spicy': 2,
     'crispy': 4,
     'cheesy': 1,
