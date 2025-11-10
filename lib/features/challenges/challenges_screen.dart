@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class ChallengesScreen extends StatelessWidget {
   static const route = '/challenges';
@@ -34,4 +34,3 @@ class ChallengesScreen extends StatelessWidget {
     );
   }
 }
-

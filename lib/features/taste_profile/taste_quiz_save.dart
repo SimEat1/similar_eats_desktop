@@ -1,4 +1,4 @@
-﻿import "package:cloud_firestore/cloud_firestore.dart";
+import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
 
 /// Minimal taste vector model: keep it fixed-length & numeric.
@@ -39,10 +39,10 @@ class TasteQuizSaver {
     final batch = _db.batch();
 
     final privateRef = _db.collection("userTaste").doc(uid);
-    final publicRef  = _db.collection("public_taste").doc(uid);
+    final publicRef = _db.collection("public_taste").doc(uid);
 
     batch.set(privateRef, v.toPrivateDoc(), SetOptions(merge: true));
-    batch.set(publicRef,  v.toPublicDoc(),  SetOptions(merge: true));
+    batch.set(publicRef, v.toPublicDoc(), SetOptions(merge: true));
 
     await batch.commit();
   }
@@ -55,5 +55,3 @@ class TasteQuizSaver {
     await ref.set(prefs, SetOptions(merge: true));
   }
 }
-
-

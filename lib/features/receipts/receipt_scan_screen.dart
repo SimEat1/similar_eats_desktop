@@ -1,3 +1,4 @@
+// ignore_for_file: unused_shown_name, avoid_types_as_parameter_names
 // lib/features/receipts/receipt_scan_screen.dart
 import 'dart:async';
 import 'dart:io' show File, Platform;
@@ -172,8 +173,8 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
       }
     }
 
-    double? toDouble(String s) =>
-        double.tryParse(s.replaceAll(',', '').replaceAll(RegExp(r'[^0-9.\-]'), ''));
+    double? toDouble(String s) => double.tryParse(
+        s.replaceAll(',', '').replaceAll(RegExp(r'[^0-9.\-]'), ''));
 
     DateTime? foundDate;
     double? subtotal, total;
@@ -241,8 +242,9 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
       }
 
       // Item lines: "2 The Pourhouse Burger   $60.00"
-      final itemMatch = RegExp(r'^\s*(\d+)?\s*([^\$]*?)\s+([-]?\d+[.,]\d{2})\s*$')
-          .firstMatch(l);
+      final itemMatch =
+          RegExp(r'^\s*(\d+)?\s*([^\$]*?)\s+([-]?\d+[.,]\d{2})\s*$')
+              .firstMatch(l);
       if (itemMatch != null) {
         final qty = int.tryParse(itemMatch.group(1) ?? '1') ?? 1;
         final name = itemMatch.group(2)!.trim();
@@ -364,8 +366,8 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content:
-              Text('Receipt saved (confidence ${(_confidence() * 100).round()}%).'),
+          content: Text(
+              'Receipt saved (confidence ${(_confidence() * 100).round()}%).'),
         ),
       );
     }
@@ -417,8 +419,7 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
 
       // People flow
       if (promptForPeople) {
-        final assignment =
-            await showModalBottomSheet<_PeopleAssignmentResult>(
+        final assignment = await showModalBottomSheet<_PeopleAssignmentResult>(
           context: context,
           isScrollControlled: true,
           builder: (ctx) => _PeopleAssignSheet(
@@ -449,15 +450,12 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
                 'menu_item_id': item.parsed.menuItemId,
                 'from_receipt': rid,
               });
-              await receiptRef
-                  .collection('items')
-                  .doc(item.itemDocId)
-                  .update({
-                'visit_id_${person.replaceAll(' ', '_')}': visitRef.id
-              });
+              await receiptRef.collection('items').doc(item.itemDocId).update(
+                  {'visit_id_${person.replaceAll(' ', '_')}': visitRef.id});
             }
           }
-          _toast('Saved visits for ${assignment.totalAssignments} selection(s)');
+          _toast(
+              'Saved visits for ${assignment.totalAssignments} selection(s)');
         } else {
           _toast('Receipt saved');
         }
@@ -556,7 +554,8 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
           ),
           const SizedBox(height: 10),
           // Grand total row
-          if (hasBoth || _total != null) _grandTotalBanner(calcTotal, totalsMatch),
+          if (hasBoth || _total != null)
+            _grandTotalBanner(calcTotal, totalsMatch),
 
           const Divider(height: 32),
           Text('Items (${_items.length})',
@@ -584,8 +583,8 @@ class _ReceiptScanScreenState extends State<ReceiptScanScreen> {
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: totalsMatch
-            ? Colors.green.withOpacity(.10)
-            : Colors.orange.withOpacity(.10),
+            ? Colors.green.withValues(alpha: .10)
+            : Colors.orange.withValues(alpha: .10),
         borderRadius: BorderRadius.circular(8),
         border: Border.all(
             color: totalsMatch ? Colors.green : Colors.orange, width: 1),
@@ -709,7 +708,7 @@ class _ItemCard extends StatelessWidget {
         '${item.qty} ${item.name}${isAddon ? ' (add-on)' : ''}   \$${item.price.toStringAsFixed(2)}';
 
     return Card(
-      color: isAddon ? Colors.brown.withOpacity(.04) : null,
+      color: isAddon ? Colors.brown.withValues(alpha: .04) : null,
       child: Padding(
         padding: const EdgeInsets.all(12),
         child: Column(
@@ -754,8 +753,8 @@ class _ItemCard extends StatelessWidget {
                   initialValue: item.menuItemId ?? '',
                   decoration: const InputDecoration(
                       labelText: 'Menu Item ID (optional)'),
-                  onChanged: (v) =>
-                      onChanged(item.copyWith(menuItemId: v.isEmpty ? null : v)),
+                  onChanged: (v) => onChanged(
+                      item.copyWith(menuItemId: v.isEmpty ? null : v)),
                 ),
               ),
             ]),
@@ -950,8 +949,7 @@ class _PeopleAssignmentResult {
   final Map<String, List<String>> byItem;
   _PeopleAssignmentResult({required this.people, required this.byItem});
 
-  int get totalAssignments =>
-      byItem.values.fold(0, (sum, v) => sum + v.length);
+  int get totalAssignments => byItem.values.fold(0, (sum, v) => sum + v.length);
 }
 
 // ======== Small time helper ========

@@ -7,7 +7,8 @@ class QuickEatsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Quick Eats (stub)')),
-      body: const Center(child: Text('Quick Eats prototype temporarily stubbed.')),
+      body: const Center(
+          child: Text('Quick Eats prototype temporarily stubbed.')),
     );
   }
 }

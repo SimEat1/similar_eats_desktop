@@ -11,7 +11,7 @@ class TasteProfileStore {
     return TasteProfile(
       sweet: double.parse(d[0]),
       salty: double.parse(d[1]),
-      sour:  double.parse(d[2]),
+      sour: double.parse(d[2]),
       spicy: double.parse(d[3]),
       umami: double.parse(d[4]),
     );

@@ -4,11 +4,13 @@ import "package:firebase_auth/firebase_auth.dart";
 import "package:firebase_storage/firebase_storage.dart";
 
 import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
+
 class ReceiptsRepository {
   final _db = FirebaseFirestore.instance;
   final _st = FirebaseStorage.instance;
 
-  String? get _uid => PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
+  String? get _uid => PlatformHelper.getCurrentUid(
+      firebaseUid: FirebaseAuth.instance.currentUser?.uid);
 
   Future<String?> addReceipt({
     required String fileName,
@@ -49,5 +51,3 @@ class ReceiptsRepository {
     return doc.id;
   }
 }
-
-

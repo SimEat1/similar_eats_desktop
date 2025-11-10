@@ -16,7 +16,11 @@ class FavoritesStore {
 
   Future<Set<String>> toggle(String id) async {
     final ids = await loadIds();
-    if (ids.contains(id)) { ids.remove(id); } else { ids.add(id); }
+    if (ids.contains(id)) {
+      ids.remove(id);
+    } else {
+      ids.add(id);
+    }
     await _saveIds(ids);
     return ids;
   }

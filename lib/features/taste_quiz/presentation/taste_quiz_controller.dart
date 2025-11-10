@@ -36,7 +36,9 @@ class TasteQuizController extends ChangeNotifier {
       if (_store != null && (_store.save is Function)) {
         final map = profile is Map<String, dynamic>
             ? profile
-            : (profile?.toJson is Function ? profile.toJson() as Map<String, dynamic> : <String, dynamic>{});
+            : (profile?.toJson is Function
+                ? profile.toJson() as Map<String, dynamic>
+                : <String, dynamic>{});
         await _store.save(map);
       }
     } catch (_) {

@@ -1,4 +1,3 @@
-// ignore_for_file: unused_field
 import "package:flutter/material.dart";
 import "package:firebase_auth/firebase_auth.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
@@ -7,7 +6,6 @@ import 'package:similar_eats_desktop/features/social/data/friends_repository.dar
 import 'package:similar_eats_desktop/features/social/models/public_profile.dart';
 
 import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
-
 class FriendsScreen extends StatefulWidget {
   const FriendsScreen({super.key});
   @override
@@ -36,8 +34,7 @@ class _FriendsScreenState extends State<FriendsScreen>
 
   @override
   Widget build(BuildContext context) {
-    final uid = PlatformHelper.getCurrentUid(
-        firebaseUid: FirebaseAuth.instance.currentUser?.uid);
+    final uid = PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
     return Scaffold(
       appBar: AppBar(
         title: const Text("Friends"),
@@ -237,3 +234,5 @@ class FriendMapScreen extends StatelessWidget {
     );
   }
 }
+
+

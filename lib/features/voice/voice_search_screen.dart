@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class VoiceSearchScreen extends StatelessWidget {
   static const route = '/voice';
@@ -6,14 +6,16 @@ class VoiceSearchScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ctrl = TextEditingController(text: 'Show me ramen under \$20 within 5 miles');
+    final ctrl =
+        TextEditingController(text: 'Show me ramen under \$20 within 5 miles');
     return Scaffold(
       appBar: AppBar(title: const Text('Voice Search')),
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            const Text('Microphone UI & speech-to-text coming later.\nType your query to simulate.'),
+            const Text(
+                'Microphone UI & speech-to-text coming later.\nType your query to simulate.'),
             const SizedBox(height: 12),
             TextField(
               controller: ctrl,
@@ -26,7 +28,9 @@ class VoiceSearchScreen extends StatelessWidget {
             FilledButton(
               onPressed: () {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('We will parse this into filters & run search.')),
+                  const SnackBar(
+                      content: Text(
+                          'We will parse this into filters & run search.')),
                 );
               },
               child: const Text('Run'),
@@ -38,4 +42,3 @@ class VoiceSearchScreen extends StatelessWidget {
     );
   }
 }
-

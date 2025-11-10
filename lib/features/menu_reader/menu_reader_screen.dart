@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class MenuReaderScreen extends StatelessWidget {
   static const route = '/menu_reader';
@@ -17,5 +17,3 @@ class MenuReaderScreen extends StatelessWidget {
     );
   }
 }
-
-

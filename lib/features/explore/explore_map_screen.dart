@@ -54,7 +54,9 @@ class _ExploreMapScreenState extends State<ExploreMapScreen> {
         title: const Text('Explore map'),
         actions: [
           IconButton(
-            tooltip: _me == null ? 'Locate me (uses maps “Your location”)' : 'Directions from my location',
+            tooltip: _me == null
+                ? 'Locate me (uses maps “Your location”)'
+                : 'Directions from my location',
             icon: const Icon(Icons.explore_outlined),
             onPressed: () async {
               // Open a generic “near me” view in Maps.
@@ -76,7 +78,8 @@ class _ExploreMapScreenState extends State<ExploreMapScreen> {
             child: ListTile(
               leading: const Icon(Icons.place_outlined),
               title: Text(p.name),
-              subtitle: Text('${p.lat.toStringAsFixed(5)}, ${p.lng.toStringAsFixed(5)}'),
+              subtitle: Text(
+                  '${p.lat.toStringAsFixed(5)}, ${p.lng.toStringAsFixed(5)}'),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: [
@@ -106,7 +109,3 @@ class _Place {
   final double lng;
   const _Place(this.name, this.lat, this.lng);
 }
-
-
-
-

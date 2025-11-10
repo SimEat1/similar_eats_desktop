@@ -23,9 +23,9 @@ class _TasteQuizScreenState extends State<TasteQuizScreen> {
         'Springy ramen',
         'Silky rice noodles',
         'Chewy udon',
-        'Hearty pasta',              // NEW
+        'Hearty pasta', // NEW
         'No noodles for me',
-        'None of the above / Skip',  // keep Skip in every block
+        'None of the above / Skip', // keep Skip in every block
       ],
     ),
     const _Q(
@@ -61,35 +61,64 @@ class _TasteQuizScreenState extends State<TasteQuizScreen> {
     final List<double> vec = List<double>.filled(5, 0);
     // very rough demo scoring
     void add(double i0, double i1, double i2, double i3, double i4) {
-      vec[0] += i0; vec[1] += i1; vec[2] += i2; vec[3] += i3; vec[4] += i4;
+      vec[0] += i0;
+      vec[1] += i1;
+      vec[2] += i2;
+      vec[3] += i3;
+      vec[4] += i4;
     }
 
     switch (_answers['noodle']) {
-      case 'Springy ramen': add(0, 1, 0, 1, 0.2); break;
-      case 'Silky rice noodles': add(0, 0.8, 0.2, 0.8, 0.2); break;
-      case 'Chewy udon': add(0.1, 0.8, 0, 0.6, 0.1); break;
-      case 'Hearty pasta': add(0.6, 0.2, 0.1, 0.1, 0.2); break;
-      case 'No noodles for me': add(0, 0, 0, 0, 0); break;
+      case 'Springy ramen':
+        add(0, 1, 0, 1, 0.2);
+        break;
+      case 'Silky rice noodles':
+        add(0, 0.8, 0.2, 0.8, 0.2);
+        break;
+      case 'Chewy udon':
+        add(0.1, 0.8, 0, 0.6, 0.1);
+        break;
+      case 'Hearty pasta':
+        add(0.6, 0.2, 0.1, 0.1, 0.2);
+        break;
+      case 'No noodles for me':
+        add(0, 0, 0, 0, 0);
+        break;
     }
 
     switch (_answers['comfort']) {
-      case 'Burger + fries': add(0.7, 0, 0, 0.2, 0.2); break;
-      case 'Ramen or pho, rich broth': add(0, 0.8, 0.1, 0.7, 0.2); break;
-      case 'Buffalo wings + ranch': add(0.2, 0, 0, 0.8, 0.2); break;
-      case 'Stir-fry with savory sauce': add(0.2, 0.2, 0.2, 0.2, 0.7); break;
+      case 'Burger + fries':
+        add(0.7, 0, 0, 0.2, 0.2);
+        break;
+      case 'Ramen or pho, rich broth':
+        add(0, 0.8, 0.1, 0.7, 0.2);
+        break;
+      case 'Buffalo wings + ranch':
+        add(0.2, 0, 0, 0.8, 0.2);
+        break;
+      case 'Stir-fry with savory sauce':
+        add(0.2, 0.2, 0.2, 0.2, 0.7);
+        break;
     }
 
     switch (_answers['zing']) {
-      case 'Gimme all the zing': add(0, 0.2, 0.7, 0, 0.1); break;
-      case 'Sometimes': add(0, 0.1, 0.3, 0, 0.1); break;
-      case 'Not my thing': add(0.2, 0, 0, 0.1, 0); break;
+      case 'Gimme all the zing':
+        add(0, 0.2, 0.7, 0, 0.1);
+        break;
+      case 'Sometimes':
+        add(0, 0.1, 0.3, 0, 0.1);
+        break;
+      case 'Not my thing':
+        add(0.2, 0, 0, 0.1, 0);
+        break;
     }
 
     await TasteQuizSaver().saveBoth(TasteVector(vec));
 
     if (mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saved! We’ll refine your profile over time.')),
+        const SnackBar(
+            content: Text('Saved! We’ll refine your profile over time.')),
       );
       Navigator.pop(context);
     }
@@ -123,7 +152,8 @@ class _TasteQuizScreenState extends State<TasteQuizScreen> {
                     child: OutlinedButton.icon(
                       icon: const Icon(Icons.health_and_safety_outlined),
                       label: const Text('Diet & allergies'),
-                      onPressed: () => Navigator.pushNamed(context, DietAllergyScreen.route),
+                      onPressed: () =>
+                          Navigator.pushNamed(context, DietAllergyScreen.route),
                     ),
                   );
                 }
@@ -169,14 +199,19 @@ class _Q {
   final String title;
   final String? subtitle;
   final List<String> options;
-  const _Q({required this.id, required this.title, this.subtitle, required this.options});
+  const _Q(
+      {required this.id,
+      required this.title,
+      this.subtitle,
+      required this.options});
 }
 
 class _QuestionCard extends StatelessWidget {
   final _Q q;
   final String? value;
   final ValueChanged<String?> onChanged;
-  const _QuestionCard({required this.q, required this.value, required this.onChanged});
+  const _QuestionCard(
+      {required this.q, required this.value, required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
@@ -207,4 +242,3 @@ class _QuestionCard extends StatelessWidget {
     );
   }
 }
-

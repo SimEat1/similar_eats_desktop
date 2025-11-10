@@ -47,9 +47,11 @@ class _ActionCardState extends State<ActionCard> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(widget.title, style: Theme.of(context).textTheme.titleMedium),
+                      Text(widget.title,
+                          style: Theme.of(context).textTheme.titleMedium),
                       const SizedBox(height: 4),
-                      Text(widget.subtitle, style: Theme.of(context).textTheme.bodyMedium),
+                      Text(widget.subtitle,
+                          style: Theme.of(context).textTheme.bodyMedium),
                     ],
                   ),
                 ),

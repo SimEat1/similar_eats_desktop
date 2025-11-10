@@ -8,7 +8,8 @@ class TasteProfileRepository {
       FirebaseFirestore.instance.collection("tasteProfiles");
 
   Future<void> saveMyProfile(
-    TasteProfile profile, {String userId = "local-dev-user",
+    TasteProfile profile, {
+    String userId = "local-dev-user",
   }) async {
     await _col.doc(userId).set(
           profile.toJson(),
@@ -22,6 +23,3 @@ class TasteProfileRepository {
     return TasteProfile.fromJson(snap.data());
   }
 }
-
-
-

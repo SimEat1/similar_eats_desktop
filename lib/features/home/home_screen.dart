@@ -9,7 +9,8 @@ class HomeScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Similar Eats')),
       body: const Center(
-        child: Text('Home (stub) — header simplified to avoid analyzer errors.'),
+        child:
+            Text('Home (stub) — header simplified to avoid analyzer errors.'),
       ),
     );
   }

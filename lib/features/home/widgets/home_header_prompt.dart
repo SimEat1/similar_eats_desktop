@@ -5,13 +5,15 @@ import 'package:similar_eats_desktop/features/taste_profiles/taste_prompt.dart';
 import 'package:similar_eats_desktop/features/taste_profiles/taste_events.dart';
 
 import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
+
 /// Place this at the top of your Home screen.
 class HomeHeaderPrompt extends StatelessWidget {
   const HomeHeaderPrompt({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final uid = PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
+    final uid = PlatformHelper.getCurrentUid(
+        firebaseUid: FirebaseAuth.instance.currentUser?.uid);
     final prompt = randomPrompt();
 
     return Column(
@@ -69,5 +71,3 @@ class HomeHeaderPrompt extends StatelessWidget {
     );
   }
 }
-
-

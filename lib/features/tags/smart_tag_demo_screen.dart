@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class SmartTagDemoScreen extends StatelessWidget {
   static const route = '/smart_tags';
@@ -31,4 +31,3 @@ class SmartTagDemoScreen extends StatelessWidget {
     );
   }
 }
-

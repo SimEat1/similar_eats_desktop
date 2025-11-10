@@ -19,9 +19,8 @@ class RecommendationsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text("Recommendations")),
-      body: profile == null
-          ? const _NeedsProfile()
-          : _RecList(profile: profile),
+      body:
+          profile == null ? const _NeedsProfile() : _RecList(profile: profile),
     );
   }
 }
@@ -60,7 +59,8 @@ class _RecList extends StatelessWidget {
         final pct = (item.score * 100).clamp(0, 100).toStringAsFixed(0);
 
         return ListTile(
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
           tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
           title: Text("${r.name}  •  ${r.cuisine}"),
           subtitle: Text(r.tags.take(6).join(" · ")),

@@ -47,7 +47,8 @@ class TasteProfilesRepo {
   }
 
   /// Upsert a profile for uid.
-  Future<void> saveProfile(TasteProfile profile) async {await _profileRef(profile.uid).set(profile.toJson());
+  Future<void> saveProfile(TasteProfile profile) async {
+    await _profileRef(profile.uid).set(profile.toJson());
   }
 
   /// Merge cuisines/tags and bump updatedAt.
@@ -69,7 +70,8 @@ class TasteProfilesRepo {
   /// Compute top N similar users to [uid] by Jaccard similarity
   /// over the union of cuisines+tags.
   Future<List<SimilarUser>> topSimilarUsers(
-    String uid, {int limit = 10,
+    String uid, {
+    int limit = 10,
     bool includeZero = false,
   }) async {
     final me = await getProfile(uid);
@@ -114,6 +116,3 @@ class TasteProfilesRepo {
     return union == 0 ? 0.0 : inter / union;
   }
 }
-
-
-

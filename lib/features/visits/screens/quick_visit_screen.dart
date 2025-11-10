@@ -1,3 +1,4 @@
+// ignore_for_file: unused_field
 import "package:flutter/material.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
@@ -92,9 +93,17 @@ class _QuickVisitScreenState extends State<QuickVisitScreen> {
       final items = [
         {'id': 'm_bobs_burger', 'place_id': 'p_bobs', 'name': 'Classic Burger'},
         {'id': 'm_bobs_fries', 'place_id': 'p_bobs', 'name': 'Fries'},
-        {'id': 'm_sushi_roll', 'place_id': 'p_sushispot', 'name': 'Salmon Roll'},
+        {
+          'id': 'm_sushi_roll',
+          'place_id': 'p_sushispot',
+          'name': 'Salmon Roll'
+        },
         {'id': 'm_sushi_udon', 'place_id': 'p_sushispot', 'name': 'Udon'},
-        {'id': 'm_green_bowl', 'place_id': 'p_greenbowl', 'name': 'Protein Bowl'},
+        {
+          'id': 'm_green_bowl',
+          'place_id': 'p_greenbowl',
+          'name': 'Protein Bowl'
+        },
       ];
       for (final it in items) {
         await db
@@ -376,5 +385,3 @@ class _QuickVisitScreenState extends State<QuickVisitScreen> {
     );
   }
 }
-
-

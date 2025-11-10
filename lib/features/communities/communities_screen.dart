@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class CommunitiesScreen extends StatelessWidget {
   static const route = '/communities';
@@ -32,4 +32,3 @@ class CommunitiesScreen extends StatelessWidget {
     );
   }
 }
-

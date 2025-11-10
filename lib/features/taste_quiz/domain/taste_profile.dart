@@ -1,4 +1,3 @@
-
 class TasteProfile {
   final double sweet;
   final double salty;
@@ -18,7 +17,11 @@ class TasteProfile {
   TasteProfile normalized() {
     double c(double v) => v.clamp(0.0, 5.0);
     return TasteProfile(
-      sweet: c(sweet), salty: c(salty), sour: c(sour), spicy: c(spicy), umami: c(umami),
+      sweet: c(sweet),
+      salty: c(salty),
+      sour: c(sour),
+      spicy: c(spicy),
+      umami: c(umami),
     );
   }
 
@@ -33,7 +36,7 @@ class TasteProfile {
   factory TasteProfile.fromMap(Map<String, dynamic> m) => TasteProfile(
         sweet: (m['sweet'] ?? 0).toDouble(),
         salty: (m['salty'] ?? 0).toDouble(),
-        sour:  (m['sour']  ?? 0).toDouble(),
+        sour: (m['sour'] ?? 0).toDouble(),
         spicy: (m['spicy'] ?? 0).toDouble(),
         umami: (m['umami'] ?? 0).toDouble(),
       );
@@ -45,7 +48,14 @@ class TasteProfile {
   String toString() => 'TasteProfile(${toMap()})';
 }
 
-enum TasteBadge { spiceChaser, sweetTooth, saltSeeker, sourScout, umamiExplorer, balanced }
+enum TasteBadge {
+  spiceChaser,
+  sweetTooth,
+  saltSeeker,
+  sourScout,
+  umamiExplorer,
+  balanced
+}
 
 extension TasteBadgeX on TasteBadge {
   String get emoji => {
@@ -77,18 +87,24 @@ TasteBadge computeBadge(TasteProfile p) {
     'spicy': v.spicy,
     'umami': v.umami,
   }.entries.toList()
-    ..sort((a,b) => b.value.compareTo(a.value));
+    ..sort((a, b) => b.value.compareTo(a.value));
   final top = entries.first;
-  final avg = entries.map((e)=>e.value).reduce((a,b)=>a+b)/entries.length;
+  final avg =
+      entries.map((e) => e.value).reduce((a, b) => a + b) / entries.length;
   final spread = top.value - avg;
   if (spread.abs() < 0.6) return TasteBadge.balanced;
 
   switch (top.key) {
-    case 'spicy': return TasteBadge.spiceChaser;
-    case 'sweet': return TasteBadge.sweetTooth;
-    case 'salty': return TasteBadge.saltSeeker;
-    case 'sour' : return TasteBadge.sourScout;
-    case 'umami': return TasteBadge.umamiExplorer;
+    case 'spicy':
+      return TasteBadge.spiceChaser;
+    case 'sweet':
+      return TasteBadge.sweetTooth;
+    case 'salty':
+      return TasteBadge.saltSeeker;
+    case 'sour':
+      return TasteBadge.sourScout;
+    case 'umami':
+      return TasteBadge.umamiExplorer;
   }
   return TasteBadge.balanced;
 }

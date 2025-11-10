@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class PublicProfileScreen extends StatelessWidget {
   static const route = '/public_profile';
@@ -14,7 +14,8 @@ class PublicProfileScreen extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text('similareats.com/$uid (preview)', style: Theme.of(context).textTheme.titleMedium),
+            Text('similareats.com/$uid (preview)',
+                style: Theme.of(context).textTheme.titleMedium),
             const SizedBox(height: 12),
             const Text('Taste badges, top dishes, recent wins (stub)'),
             const Spacer(),
@@ -41,4 +42,3 @@ class PublicProfileScreen extends StatelessWidget {
     );
   }
 }
-

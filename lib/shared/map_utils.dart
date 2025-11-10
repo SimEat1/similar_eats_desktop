@@ -1,4 +1,4 @@
-﻿import 'dart:io' show Platform;
+import 'dart:io' show Platform;
 import 'package:url_launcher/url_launcher.dart';
 
 Future<void> openInMaps({
@@ -69,4 +69,3 @@ Future<void> openDirections({
   final uri = Uri.parse('https://www.google.com/maps/dir/?api=1&$params');
   await launchUrl(uri, mode: LaunchMode.externalApplication);
 }
-

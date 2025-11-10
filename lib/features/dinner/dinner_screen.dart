@@ -1,3 +1,4 @@
+// ignore_for_file: unused_local_variable
 import 'package:flutter/material.dart';
 import 'package:similar_eats_desktop/shared/geo/map_open.dart';
 
@@ -105,7 +106,7 @@ class _CuisineCard extends StatelessWidget {
     final theme = Theme.of(context);
     return Card(
       elevation: 0,
-      color: theme.colorScheme.surface.withOpacity(0.6),
+      color: theme.colorScheme.surface.withValues(alpha: 0.6),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
@@ -127,4 +128,3 @@ class _CuisineCard extends StatelessWidget {
     );
   }
 }
-

@@ -20,7 +20,8 @@ class _TasteQuizScreenState extends State<TasteQuizScreen> {
   };
   bool _saving = false;
 
-  Future<void> _savePrefs() async {if (_saving) return;
+  Future<void> _savePrefs() async {
+    if (_saving) return;
     setState(() => _saving = true);
     try {
       final auth = FirebaseAuth.instance;
@@ -46,13 +47,16 @@ class _TasteQuizScreenState extends State<TasteQuizScreen> {
         const SnackBar(content: Text("Taste preferences saved")),
       );
       debugPrint("[taste_quiz] saved OK");
-    } catch (e, st) {debugPrint("[taste_quiz] save failed: $e");
+    } catch (e, st) {
+      debugPrint("[taste_quiz] save failed: $e");
       debugPrintStack(label: "[taste_quiz] stack", stackTrace: st);
-      if (mounted) {ScaffoldMessenger.of(context).showSnackBar(
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text("Save failed: $e")),
         );
       }
-    } finally {if (mounted) setState(() => _saving = false);
+    } finally {
+      if (mounted) setState(() => _saving = false);
     }
   }
 
@@ -97,5 +101,3 @@ class _TasteQuizScreenState extends State<TasteQuizScreen> {
     );
   }
 }
-
-

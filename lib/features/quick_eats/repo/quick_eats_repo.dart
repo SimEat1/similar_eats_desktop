@@ -9,6 +9,7 @@ import 'package:similar_eats_desktop/features/shared/remote_config.dart';
 import 'package:similar_eats_desktop/features/quick_eats/models/restaurant.dart';
 
 import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
+
 class QuickEatsRepo {
   QuickEatsRepo({
     FirebaseDatabase? db,
@@ -30,7 +31,8 @@ class QuickEatsRepo {
     final items = await _fetchRestaurants();
 
     // 3) Fetch taste prefs (non-fatal if missing)
-    final uid = PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
+    final uid = PlatformHelper.getCurrentUid(
+        firebaseUid: FirebaseAuth.instance.currentUser?.uid);
     final prefs = (uid == null) ? TastePrefs.empty() : await _fetchTaste(uid);
 
     // 4) Filter by mode
@@ -168,6 +170,3 @@ class TastePrefs {
     return TastePrefs(likes: likes, avoids: avoids, spiceTolerance: spice);
   }
 }
-
-
-

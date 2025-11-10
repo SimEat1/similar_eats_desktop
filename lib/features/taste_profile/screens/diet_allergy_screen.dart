@@ -12,13 +12,37 @@ class DietAllergyScreen extends StatefulWidget {
 class _DietAllergyScreenState extends State<DietAllergyScreen> {
   // simple tag sets; you can expand later
   final List<String> cuisines = [
-    'Sushi','BBQ','Ethiopian','Indian','Thai','Greek','French','Mexican','Chinese','Italian',
+    'Sushi',
+    'BBQ',
+    'Ethiopian',
+    'Indian',
+    'Thai',
+    'Greek',
+    'French',
+    'Mexican',
+    'Chinese',
+    'Italian',
   ];
   final List<String> restrictions = [
-    'Gluten-free','Dairy-free','Vegan','Vegetarian','Keto','Halal','Kosher','Low-sodium',
+    'Gluten-free',
+    'Dairy-free',
+    'Vegan',
+    'Vegetarian',
+    'Keto',
+    'Halal',
+    'Kosher',
+    'Low-sodium',
   ];
   final List<String> hardNo = [
-    'Cilantro','Blue cheese','Anchovies','Raw onion','Peanut','Shellfish','Pork','Beef','Chicken',
+    'Cilantro',
+    'Blue cheese',
+    'Anchovies',
+    'Raw onion',
+    'Peanut',
+    'Shellfish',
+    'Pork',
+    'Beef',
+    'Chicken',
   ];
 
   final Set<String> avoidCuisines = {};
@@ -46,7 +70,7 @@ class _DietAllergyScreenState extends State<DietAllergyScreen> {
           _Chips(
             all: cuisines,
             selected: avoidCuisines,
-            onChanged: (s) => setState((){}),
+            onChanged: (s) => setState(() {}),
           ),
           const SizedBox(height: 20),
           Text('Restrictions', style: theme.textTheme.titleMedium),
@@ -54,7 +78,7 @@ class _DietAllergyScreenState extends State<DietAllergyScreen> {
           _Chips(
             all: restrictions,
             selected: dietRestrictions,
-            onChanged: (s) => setState((){}),
+            onChanged: (s) => setState(() {}),
           ),
           const SizedBox(height: 20),
           Text('Hard no items', style: theme.textTheme.titleMedium),
@@ -62,8 +86,9 @@ class _DietAllergyScreenState extends State<DietAllergyScreen> {
           _Chips(
             all: hardNo,
             selected: hardNoItems,
-            onChanged: (s) => setState((){}),
-            allowCustom: true, // allow user to add their own (e.g., “German”, “Pizza”)
+            onChanged: (s) => setState(() {}),
+            allowCustom:
+                true, // allow user to add their own (e.g., “German”, “Pizza”)
           ),
           const SizedBox(height: 12),
           Text(
@@ -97,7 +122,11 @@ class _Chips extends StatefulWidget {
   final Set<String> selected;
   final ValueChanged<Set<String>> onChanged;
   final bool allowCustom;
-  const _Chips({required this.all, required this.selected, required this.onChanged, this.allowCustom=false});
+  const _Chips(
+      {required this.all,
+      required this.selected,
+      required this.onChanged,
+      this.allowCustom = false});
 
   @override
   State<_Chips> createState() => _ChipsState();
@@ -117,7 +146,11 @@ class _ChipsState extends State<_Chips> {
             selected: widget.selected.contains(t),
             onSelected: (v) {
               setState(() {
-                if (v) { widget.selected.add(t); } else { widget.selected.remove(t); }
+                if (v) {
+                  widget.selected.add(t);
+                } else {
+                  widget.selected.remove(t);
+                }
               });
               widget.onChanged(widget.selected);
             },
@@ -136,8 +169,12 @@ class _ChipsState extends State<_Chips> {
                   title: const Text('Add custom item'),
                   content: TextField(controller: c, autofocus: true),
                   actions: [
-                    TextButton(onPressed: ()=> Navigator.pop(ctx), child: const Text('Cancel')),
-                    TextButton(onPressed: ()=> Navigator.pop(ctx, c.text.trim()), child: const Text('Add')),
+                    TextButton(
+                        onPressed: () => Navigator.pop(ctx),
+                        child: const Text('Cancel')),
+                    TextButton(
+                        onPressed: () => Navigator.pop(ctx, c.text.trim()),
+                        child: const Text('Add')),
                   ],
                 );
               },
@@ -156,4 +193,3 @@ class _ChipsState extends State<_Chips> {
     return Wrap(children: chips);
   }
 }
-

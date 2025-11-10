@@ -49,7 +49,7 @@ class _HeatPainter extends CustomPainter {
     Color base = Colors.orange;
     for (final s in selected) {
       final c = catColors[s];
-      if (c != null) base = Color.alphaBlend(c.withValues(alpha: .6), base);
+      if (c != null) base = Color.alphaBlend(c.withOpacity(.6), base);
     }
 
     final centers = List.generate(
@@ -61,7 +61,7 @@ class _HeatPainter extends CustomPainter {
     for (final c in centers) {
       for (var i = 4; i >= 1; i--) {
         final paint = Paint()
-          ..color = base.withValues(alpha: 0.08 * i)
+          ..color = base.withOpacity(0.08 * i)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 30);
         canvas.drawCircle(c, 60.0 * i, paint);
       }

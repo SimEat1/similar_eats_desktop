@@ -3,9 +3,11 @@ import "package:firebase_auth/firebase_auth.dart";
 import 'package:similar_eats_desktop/features/social/models/public_profile.dart';
 
 import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
+
 class FriendsRepository {
   final _db = FirebaseFirestore.instance;
-  String? get _uid => PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
+  String? get _uid => PlatformHelper.getCurrentUid(
+      firebaseUid: FirebaseAuth.instance.currentUser?.uid);
 
   // Ensure I have a public card with a friendCode
   Future<PublicProfile?> ensureMyPublicCard() async {
@@ -139,5 +141,3 @@ class FriendsRepository {
         .toList());
   }
 }
-
-

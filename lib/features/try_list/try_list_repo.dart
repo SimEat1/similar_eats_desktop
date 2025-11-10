@@ -3,7 +3,8 @@ import 'dart:async';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-import 'package:similar_eats_desktop/firebase_options.dart' as fo; // lib/firebase_options.dart
+import 'package:similar_eats_desktop/firebase_options.dart'
+    as fo; // lib/firebase_options.dart
 
 /// Simple model for a Try List entry.
 class TryItem {

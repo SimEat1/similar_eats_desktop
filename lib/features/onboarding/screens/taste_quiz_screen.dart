@@ -7,6 +7,7 @@ import 'package:similar_eats_desktop/firebase_options.dart';
 import 'package:similar_eats_desktop/core/auth/anon_auth.dart';
 
 import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
+
 class TasteQuizScreen extends StatefulWidget {
   const TasteQuizScreen({super.key});
   @override
@@ -62,7 +63,8 @@ class _TasteQuizScreenState extends State<TasteQuizScreen> {
     setState(() => _saving = true);
     try {
       await _ensureFirebase();
-      final uid = PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
+      final uid = PlatformHelper.getCurrentUid(
+          firebaseUid: FirebaseAuth.instance.currentUser?.uid);
       if (uid == null) throw "No user";
 
       final payload = {
@@ -171,5 +173,3 @@ class _TasteQuizScreenState extends State<TasteQuizScreen> {
     );
   }
 }
-
-

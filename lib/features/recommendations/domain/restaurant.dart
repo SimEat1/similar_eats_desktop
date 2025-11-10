@@ -13,4 +13,3 @@ class Restaurant {
     required this.tags,
   }) : assert(tasteVector.length == 5);
 }
-

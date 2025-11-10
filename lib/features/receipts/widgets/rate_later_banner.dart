@@ -1,4 +1,4 @@
-﻿import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:similar_eats_desktop/features/receipts/rate_unlinked_items_screen.dart';
@@ -47,5 +47,3 @@ class RateLaterBanner extends StatelessWidget {
     );
   }
 }
-
-

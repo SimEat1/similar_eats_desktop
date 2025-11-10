@@ -29,12 +29,8 @@ class _TasteBudsScreenState extends State<TasteBudsScreen> {
 
     try {
       final db = FirebaseFirestore.instance;
-      await db
-          .collection('users')
-          .doc(_uid)
-          .collection('buds')
-          .doc(friend)
-          .set({'since': FieldValue.serverTimestamp()}, SetOptions(merge: true));
+      await db.collection('users').doc(_uid).collection('buds').doc(friend).set(
+          {'since': FieldValue.serverTimestamp()}, SetOptions(merge: true));
 
       if (!mounted) return;
       _addCtrl.clear();
@@ -120,7 +116,7 @@ class _TasteBudsScreenState extends State<TasteBudsScreen> {
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(14),
                         side: BorderSide(
-                          color: Colors.black.withOpacity(.04),
+                          color: Colors.black.withValues(alpha: .04),
                         ),
                       ),
                       leading: const CircleAvatar(child: Icon(Icons.person)),
@@ -129,7 +125,8 @@ class _TasteBudsScreenState extends State<TasteBudsScreen> {
                       trailing: IconButton(
                         tooltip: 'Restaurants near me',
                         icon: const Icon(Icons.map_outlined),
-                        onPressed: () => openMapSearch(query: 'restaurants near me'),
+                        onPressed: () =>
+                            openMapSearch(query: 'restaurants near me'),
                       ),
                     );
                   },
@@ -142,4 +139,3 @@ class _TasteBudsScreenState extends State<TasteBudsScreen> {
     );
   }
 }
-

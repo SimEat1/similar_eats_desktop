@@ -80,5 +80,3 @@ Future<void> _launchPreferGoogle(Uri google, Uri apple) async {
   // Final fallback: try default handler (web)
   await launchUrl(first);
 }
-
-

@@ -7,16 +7,18 @@ import 'package:similar_eats_desktop/features/try_list/presentation/try_list_con
 
 import 'package:similar_eats_desktop/features/taste_quiz/presentation/taste_quiz_controller.dart';
 import 'package:similar_eats_desktop/features/taste_profiles/repo/taste_profiles_repo.dart';
+
 Widget withAppProviders(Widget child) {
   return MultiProvider(
-    providers: [ ChangeNotifierProvider(create: (_) => TasteQuizController()..init()), ChangeNotifierProvider(create: (_) => TasteQuizController(TasteProfilesRepo())..init()), 
-      ChangeNotifierProvider(create: (_) => FavoritesController(FavoritesStore())..init()),
-      ChangeNotifierProvider(create: (_) => TryListController(TryListStore())..init()),
+    providers: [
+      ChangeNotifierProvider(create: (_) => TasteQuizController()..init()),
+      ChangeNotifierProvider(
+          create: (_) => TasteQuizController(TasteProfilesRepo())..init()),
+      ChangeNotifierProvider(
+          create: (_) => FavoritesController(FavoritesStore())..init()),
+      ChangeNotifierProvider(
+          create: (_) => TryListController(TryListStore())..init()),
     ],
     child: child,
   );
 }
-
-
-
-

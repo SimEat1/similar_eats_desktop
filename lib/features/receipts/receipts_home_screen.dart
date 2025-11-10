@@ -56,7 +56,9 @@ class _ReceiptsHomeScreenState extends State<ReceiptsHomeScreen> {
               final createdIso = r['created_at'] as String?;
               DateTime? created;
               if (createdIso != null) {
-                try { created = DateTime.parse(createdIso); } catch (_) {}
+                try {
+                  created = DateTime.parse(createdIso);
+                } catch (_) {}
               }
 
               return ExpansionTile(
@@ -64,11 +66,11 @@ class _ReceiptsHomeScreenState extends State<ReceiptsHomeScreen> {
                 childrenPadding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
-                  side: BorderSide(color: Colors.black.withOpacity(.04)),
+                  side: BorderSide(color: Colors.black.withValues(alpha: .04)),
                 ),
                 collapsedShape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
-                  side: BorderSide(color: Colors.black.withOpacity(.04)),
+                  side: BorderSide(color: Colors.black.withValues(alpha: .04)),
                 ),
                 title: Row(
                   children: [
@@ -100,12 +102,16 @@ class _ReceiptsHomeScreenState extends State<ReceiptsHomeScreen> {
                     IconButton(
                       tooltip: 'Open in Maps',
                       icon: const Icon(Icons.map_outlined),
-                      onPressed: () => openMapSearch(query: merchant.isEmpty ? 'restaurants near me' : merchant,),
+                      onPressed: () => openMapSearch(
+                        query:
+                            merchant.isEmpty ? 'restaurants near me' : merchant,
+                      ),
                     ),
                   ],
                 ),
                 children: [
-                  _ReceiptItemsList(uid: _uid, receiptId: id, merchant: merchant),
+                  _ReceiptItemsList(
+                      uid: _uid, receiptId: id, merchant: merchant),
                 ],
               );
             },
@@ -215,4 +221,3 @@ class _ReceiptItemsList extends StatelessWidget {
     );
   }
 }
-

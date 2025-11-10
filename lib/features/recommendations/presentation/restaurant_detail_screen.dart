@@ -16,13 +16,14 @@ class RestaurantDetailScreen extends StatelessWidget {
     final r = args;
 
     Widget bar(String k, double v) => Row(
-      children: [
-        SizedBox(width: 90, child: Text(k)),
-        Expanded(child: LinearProgressIndicator(value: (v.clamp(0, 5)) / 5)),
-        const SizedBox(width: 12),
-        Text(v.toStringAsFixed(1)),
-      ],
-    );
+          children: [
+            SizedBox(width: 90, child: Text(k)),
+            Expanded(
+                child: LinearProgressIndicator(value: (v.clamp(0, 5)) / 5)),
+            const SizedBox(width: 12),
+            Text(v.toStringAsFixed(1)),
+          ],
+        );
 
     return Scaffold(
       appBar: AppBar(title: Text(r.name)),
@@ -39,20 +40,21 @@ class RestaurantDetailScreen extends StatelessWidget {
           const SizedBox(height: 20),
           Text("Taste profile", style: Theme.of(context).textTheme.titleMedium),
           const SizedBox(height: 8),
-          bar("Sweet",  r.tasteVector[0]),
+          bar("Sweet", r.tasteVector[0]),
           const SizedBox(height: 8),
-          bar("Salty",  r.tasteVector[1]),
+          bar("Salty", r.tasteVector[1]),
           const SizedBox(height: 8),
-          bar("Sour",   r.tasteVector[2]),
+          bar("Sour", r.tasteVector[2]),
           const SizedBox(height: 8),
-          bar("Spicy",  r.tasteVector[3]),
+          bar("Spicy", r.tasteVector[3]),
           const SizedBox(height: 8),
-          bar("Umami",  r.tasteVector[4]),
+          bar("Umami", r.tasteVector[4]),
           const SizedBox(height: 24),
           FilledButton(
             onPressed: () {
               ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text("Coming soon: Save to Favorites / Try List")),
+                const SnackBar(
+                    content: Text("Coming soon: Save to Favorites / Try List")),
               );
             },
             child: const Text("Save to Favorites"),

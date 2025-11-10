@@ -35,7 +35,9 @@ class TasteTypeBadges extends StatelessWidget {
         }
 
         // 2) Otherwise, try to derive from vector
-        final vector = (data['vector'] as List?)?.map((e) => (e as num).toDouble()).toList();
+        final vector = (data['vector'] as List?)
+            ?.map((e) => (e as num).toDouble())
+            .toList();
         if (vector == null || vector.isEmpty) {
           return _missingBanner(context);
         }
@@ -66,10 +68,12 @@ class TasteTypeBadges extends StatelessWidget {
       child: Wrap(
         spacing: 8,
         runSpacing: 8,
-        children: types.map((t) => Chip(
-          label: Text(t),
-          avatar: const Icon(Icons.local_fire_department, size: 18),
-        )).toList(),
+        children: types
+            .map((t) => Chip(
+                  label: Text(t),
+                  avatar: const Icon(Icons.local_fire_department, size: 18),
+                ))
+            .toList(),
       ),
     );
   }
@@ -79,7 +83,8 @@ class TasteTypeBadges extends StatelessWidget {
       padding: const EdgeInsets.only(top: 6, bottom: 6),
       child: Row(
         children: [
-          Icon(Icons.info_outline, color: Theme.of(context).colorScheme.primary),
+          Icon(Icons.info_outline,
+              color: Theme.of(context).colorScheme.primary),
           const SizedBox(width: 8),
           const Expanded(
             child: Text(
@@ -91,4 +96,3 @@ class TasteTypeBadges extends StatelessWidget {
     );
   }
 }
-

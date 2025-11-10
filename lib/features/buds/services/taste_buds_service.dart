@@ -1,4 +1,4 @@
-﻿import 'dart:math' as math;
+import 'dart:math' as math;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -9,7 +9,8 @@ class TasteBudsService {
   String? get _uid => _auth.currentUser?.uid;
 
   // Friend doc under owner: /users/{uid}/buds/{friendUid}
-  DocumentReference<Map<String, dynamic>> _budDoc(String ownerUid, String friendUid) =>
+  DocumentReference<Map<String, dynamic>> _budDoc(
+          String ownerUid, String friendUid) =>
       _db.collection('users').doc(ownerUid).collection('buds').doc(friendUid);
 
   // Public taste vector: /public_taste/{uid}
@@ -42,17 +43,22 @@ class TasteBudsService {
       return const Stream.empty();
     }
     return _db
-        .collection('users').doc(me).collection('buds')
+        .collection('users')
+        .doc(me)
+        .collection('buds')
         .orderBy('since', descending: true)
         .snapshots()
-        .map((qs) => qs.docs.map((d) => BudLink.fromDoc(d.id, d.data())).toList());
+        .map((qs) =>
+            qs.docs.map((d) => BudLink.fromDoc(d.id, d.data())).toList());
   }
 
   /// Reads a public taste vector for any uid
   Future<List<double>?> readPublicVector(String uid) async {
     final snap = await _publicTasteDoc(uid).get();
     if (!snap.exists) return null;
-    final v = (snap.data()?['vector'] as List?)?.map((e) => (e as num).toDouble()).toList();
+    final v = (snap.data()?['vector'] as List?)
+        ?.map((e) => (e as num).toDouble())
+        .toList();
     return v;
   }
 
@@ -81,7 +87,9 @@ class BudLink {
     return BudLink(
       friendUid: id,
       alias: data['alias'] as String?,
-      since: (data['since'] is Timestamp) ? (data['since'] as Timestamp).toDate() : null,
+      since: (data['since'] is Timestamp)
+          ? (data['since'] as Timestamp).toDate()
+          : null,
     );
   }
 }

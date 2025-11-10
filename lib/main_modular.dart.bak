@@ -321,7 +321,7 @@ class _SelectedChips extends StatelessWidget {
                 borderRadius: BorderRadius.circular(28),
                 // ✅ Border.all instead of Border(side: …)
                 border: Border.all(
-                    color: cs.outlineVariant.withValues(alpha: .4), width: 1),
+                    color: cs.outlineVariant.withOpacity(.4), width: 1),
               ),
               child: Text('$emoji  ${_titleCase(key)}',
                   style: const TextStyle(fontWeight: FontWeight.w600)),
@@ -652,7 +652,7 @@ class SimpleGlowPainter extends CustomPainter {
     for (final c in centers) {
       for (var i = 4; i >= 1; i--) {
         final paint = Paint()
-          ..color = seedColor.withValues(alpha: 0.08 * i)
+          ..color = seedColor.withOpacity(0.08 * i)
           ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 30);
         canvas.drawCircle(c, 60.0 * i, paint);
       }

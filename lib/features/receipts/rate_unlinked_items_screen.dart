@@ -7,7 +7,8 @@ class RateUnlinkedItemsScreen extends StatefulWidget {
   const RateUnlinkedItemsScreen({super.key});
 
   @override
-  State<RateUnlinkedItemsScreen> createState() => _RateUnlinkedItemsScreenState();
+  State<RateUnlinkedItemsScreen> createState() =>
+      _RateUnlinkedItemsScreenState();
 }
 
 class _RateUnlinkedItemsScreenState extends State<RateUnlinkedItemsScreen> {
@@ -75,7 +76,8 @@ class _RateUnlinkedItemsScreenState extends State<RateUnlinkedItemsScreen> {
               final data = d.data();
               final name = (data['name'] as String?) ?? '(item)';
               final price = (data['price'] as num?)?.toDouble();
-              final parentReceipt = d.reference.parent.parent; // .../receipts/{rid}
+              final parentReceipt =
+                  d.reference.parent.parent; // .../receipts/{rid}
 
               final pick = _picks[d.reference.path]!;
 
@@ -95,7 +97,8 @@ class _RateUnlinkedItemsScreenState extends State<RateUnlinkedItemsScreen> {
                           Expanded(
                             child: Text(
                               '$name${price != null ? "  •  \$${price.toStringAsFixed(2)}" : ""}',
-                              style: const TextStyle(fontWeight: FontWeight.w600),
+                              style:
+                                  const TextStyle(fontWeight: FontWeight.w600),
                             ),
                           ),
                         ],
@@ -103,7 +106,8 @@ class _RateUnlinkedItemsScreenState extends State<RateUnlinkedItemsScreen> {
                       if (parentReceipt != null)
                         Text(
                           'Receipt: ${parentReceipt.id}',
-                          style: const TextStyle(fontSize: 12, color: Colors.grey),
+                          style:
+                              const TextStyle(fontSize: 12, color: Colors.grey),
                         ),
                       const SizedBox(height: 6),
                       Text('Taste: ${pick.tasteRating}'),
@@ -167,11 +171,8 @@ class _RateUnlinkedItemsScreenState extends State<RateUnlinkedItemsScreen> {
 
         if (item == null) continue;
 
-        final visitRef = db
-            .collection('users')
-            .doc(uid)
-            .collection('visits')
-            .doc();
+        final visitRef =
+            db.collection('users').doc(uid).collection('visits').doc();
 
         await visitRef.set({
           'created_at': DateTime.now().toIso8601String(),
@@ -213,6 +214,3 @@ class _Pick {
     required this.portionRating,
   });
 }
-
-
-

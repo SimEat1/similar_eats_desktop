@@ -37,9 +37,11 @@ class _DemoHomeState extends State<DemoHome> {
               MaterialPageRoute(builder: (_) => const DietAllergyStep()),
             );
             if (r != null) {
-              setState(
-                () {a = r.allergies; d = r.diets; h = r.hideMismatches;},
-              );
+              setState(() {
+                a = r.allergies;
+                d = r.diets;
+                h = r.hideMismatches;
+              });
             }
           },
         ),

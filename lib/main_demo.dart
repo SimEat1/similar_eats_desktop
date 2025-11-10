@@ -1,3 +1,4 @@
+// ignore_for_file: equal_keys_in_map
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:similar_eats_desktop/firebase_options.dart';
@@ -25,7 +26,13 @@ class DemoApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(routes: { RecommendationsScreen.route: (_) => const RecommendationsScreen(),  RecommendationsScreen.route: (_) => const RecommendationsScreen(),  FavoritesScreen.route: (_) => const FavoritesScreen(), TryListScreen.route: (_) => const TryListScreen(), }, 
+    return MaterialApp(
+      routes: {
+        RecommendationsScreen.route: (_) => const RecommendationsScreen(),
+        RecommendationsScreen.route: (_) => const RecommendationsScreen(),
+        FavoritesScreen.route: (_) => const FavoritesScreen(),
+        TryListScreen.route: (_) => const TryListScreen(),
+      },
       title: 'Similar Eats Demo',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: const Color(0xFF0B6B57)),
@@ -128,9 +135,3 @@ class _DemoTile extends StatelessWidget {
     );
   }
 }
-
-
-
-
-
-

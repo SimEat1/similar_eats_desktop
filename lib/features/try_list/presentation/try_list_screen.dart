@@ -27,11 +27,15 @@ class TryListScreen extends StatelessWidget {
                 final Restaurant r = list[i];
                 return Dismissible(
                   key: ValueKey(r.id),
-                  background: Container(color: Theme.of(context).colorScheme.error),
-                  onDismissed: (_) => context.read<TryListController>().toggle(r.id),
+                  background:
+                      Container(color: Theme.of(context).colorScheme.error),
+                  onDismissed: (_) =>
+                      context.read<TryListController>().toggle(r.id),
                   child: ListTile(
-                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-                    tileColor: Theme.of(context).colorScheme.surfaceContainerHighest,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16)),
+                    tileColor:
+                        Theme.of(context).colorScheme.surfaceContainerHighest,
                     title: Text(r.name),
                     subtitle: Text(r.cuisine),
                     onTap: () => Navigator.of(context).pushNamed(

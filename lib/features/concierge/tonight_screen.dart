@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class TonightConciergeScreen extends StatelessWidget {
   static const route = '/tonight';
@@ -26,4 +26,3 @@ class TonightConciergeScreen extends StatelessWidget {
     );
   }
 }
-

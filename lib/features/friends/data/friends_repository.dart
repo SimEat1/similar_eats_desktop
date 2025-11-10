@@ -6,9 +6,11 @@ import 'package:similar_eats_desktop/features/friends/models/public_profile.dart
 import 'package:similar_eats_desktop/features/friends/models/friend_request.dart';
 
 import 'package:similar_eats_desktop/core/platform/platform_helper.dart';
+
 class FriendsRepository {
   final _db = FirebaseFirestore.instance;
-  String? get _uid => PlatformHelper.getCurrentUid(firebaseUid: FirebaseAuth.instance.currentUser?.uid);
+  String? get _uid => PlatformHelper.getCurrentUid(
+      firebaseUid: FirebaseAuth.instance.currentUser?.uid);
 
   // --- Friend code helpers ---
   static String _randCode([int len = 8]) {
@@ -198,5 +200,3 @@ class FriendsRepository {
             }).toList());
   }
 }
-
-

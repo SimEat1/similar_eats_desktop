@@ -8,9 +8,9 @@ class PlatformHelper {
 
   /// Return a safe UID for desktop dev; on mobile/web you can pass FirebaseAuth uid.
   static String? getCurrentUid({String? firebaseUid}) {
-    if (isDesktop) return (FirebaseAuth.instance.currentUser?.uid ?? 'desktop-mock');
+    if (isDesktop) {
+      return (FirebaseAuth.instance.currentUser?.uid ?? 'desktop-mock');
+    }
     return firebaseUid;
   }
 }
-
-

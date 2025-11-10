@@ -1,4 +1,4 @@
-﻿import 'dart:convert';
+import 'dart:convert';
 import 'dart:io';
 
 /// Minimal Tesseract wrapper.
@@ -38,7 +38,8 @@ class TesseractOcr {
     final proc = await Process.start(exe, args, runInShell: true);
     final out = utf8.decodeStream(proc.stdout);
     final err = utf8.decodeStream(proc.stderr);
-    final result = await Future.wait([out, err, proc.exitCode.timeout(timeout)]);
+    final result =
+        await Future.wait([out, err, proc.exitCode.timeout(timeout)]);
 
     final exitCode = result[2] as int;
     final stdoutText = result[0] as String;
@@ -81,4 +82,3 @@ class TesseractOcr {
     }
   }
 }
-

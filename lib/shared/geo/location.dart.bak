@@ -1,4 +1,4 @@
-import 'package:geolocator/geolocator.dart';
+﻿import 'package:geolocator/geolocator.dart';
 
 /// Ask for permission and return the current [Position] if available.
 /// Returns null if permission denied, services off, or any error occurs.
@@ -30,3 +30,5 @@ Future<Position?> getCurrentPositionOrNull() async {
     return null;
   }
 }
+
+

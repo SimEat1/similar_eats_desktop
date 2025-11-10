@@ -1,4 +1,4 @@
-﻿import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
 
 class TasteGraphScreen extends StatelessWidget {
   static const route = '/taste_graph';
@@ -25,4 +25,3 @@ class TasteGraphScreen extends StatelessWidget {
     );
   }
 }
-
