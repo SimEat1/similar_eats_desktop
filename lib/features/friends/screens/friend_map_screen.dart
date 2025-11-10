@@ -153,7 +153,8 @@ class _FriendMapScreenState extends State<FriendMapScreen> {
         return;
       }
       final pos = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.best);
+          locationSettings:
+              const LocationSettings(accuracy: LocationAccuracy.best));
       final p = LatLng(pos.latitude, pos.longitude);
       setState(() {
         _center = p;

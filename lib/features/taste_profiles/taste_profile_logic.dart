@@ -38,8 +38,6 @@ Future<void> debugTaste() async {
     'crispy': 4,
     'cheesy': 1,
   };
-
-  final sim = TasteProfileLogic.cosine(user, other);
   print('>>> [debugTaste] cosine(user, other) = ');
 
   print('>>> [debugTaste] done.');

@@ -24,7 +24,7 @@ Future<Position?> getCurrentPositionOrNull() async {
     }
 
     return await Geolocator.getCurrentPosition(
-      desiredAccuracy: LocationAccuracy.best,
+      locationSettings: const LocationSettings(accuracy: LocationAccuracy.best),
     );
   } catch (_) {
     return null;
