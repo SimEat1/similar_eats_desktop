@@ -8,7 +8,7 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
 
   const codec = StandardMessageCodec();
 
-  // Pigeon channels used by firebase_core on Flutter (Dart side talks to host).
+  // Pigeon channels used by firebase_core on Flutter.
   const chInitializeCore =
       BasicMessageChannel<dynamic>(
         'dev.flutter.pigeon.firebase_core_platform_interface.FirebaseCoreHostApi.initializeCore',
@@ -21,11 +21,10 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
         codec,
       );
 
-  // Mock responses that look like what the native side would return.
+  // Mock: return [ result ]
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockDecodedMessageHandler<dynamic>(chInitializeCore, (message) async {
-    // Return one default app.
-    return <Object?>[
+    final List<Object?> apps = <Object?>[
       <String, Object?>{
         'name': '[DEFAULT]',
         'options': <String, Object?>{
@@ -39,17 +38,17 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
         'pluginConstants': <String, Object?>{},
       }
     ];
+    return <Object?>[apps]; // <-- wrap result
   });
 
   TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
       .setMockDecodedMessageHandler<dynamic>(chInitializeApp, (message) async {
-    // message is usually a Map with app options; we just echo back a valid app.
     final Map<Object?, Object?> args =
         (message as Map<Object?, Object?>?) ?? <Object?, Object?>{};
     final String appName =
         (args['appName'] as String?) ?? (args['name'] as String?) ?? '[DEFAULT]';
 
-    return <String, Object?>{
+    final Map<String, Object?> app = <String, Object?>{
       'name': appName,
       'options': <String, Object?>{
         'apiKey': 'test',
@@ -61,6 +60,8 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
       'isAutomaticResourceManagementEnabled': false,
       'pluginConstants': <String, Object?>{},
     };
+
+    return <Object?>[app]; // <-- wrap result
   });
 
   await testMain();
