@@ -4,7 +4,6 @@ import "package:flutter_map/flutter_map.dart";
 import "package:latlong2/latlong.dart";
 import "package:cloud_firestore/cloud_firestore.dart";
 import "package:firebase_auth/firebase_auth.dart";
-import "package:geolocator/geolocator.dart";
 
 import 'package:similar_eats_desktop/features/friends/data/friends_repository.dart';
 
