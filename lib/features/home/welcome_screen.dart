@@ -1,3 +1,5 @@
+import 'package:similar_eats_desktop/features/try_list/screens/try_list_screen.dart'
+    as legacy_try;
 import "package:flutter/material.dart";
 import 'package:similar_eats_desktop/features/dinner/dinner_screen.dart';
 import 'package:similar_eats_desktop/features/explore/explore_map_screen.dart';
@@ -29,6 +31,7 @@ class WelcomeScreen extends StatelessWidget {
     Widget bigButton(
         String title, String subtitle, IconData icon, VoidCallback onTap) {
       return Card(
+        color: const Color(0xFFFFEDE6),
         child: ListTile(
           leading: Icon(icon, size: 28),
           title: Text(title, style: theme.textTheme.titleMedium),
@@ -82,6 +85,13 @@ class WelcomeScreen extends StatelessWidget {
               context,
               MaterialPageRoute(builder: (_) => const GroupMatchScreen()),
             ),
+          ),
+          // 👇 Added Try List tile
+          bigButton(
+            "Try list",
+            "Save places you want to try",
+            Icons.playlist_add_check_rounded,
+            () => Navigator.pushNamed(context, legacy_try.TryListScreen.route),
           ),
           bigButton(
             "Taste quiz",
@@ -170,3 +180,4 @@ class WelcomeScreen extends StatelessWidget {
     );
   }
 }
+

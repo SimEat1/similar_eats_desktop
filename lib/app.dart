@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:similar_eats_desktop/widgets/offline_banner.dart';
 import 'package:similar_eats_desktop/features/home/home_screen.dart';
 import 'package:similar_eats_desktop/features/explore/choose_categories_screen.dart';
 
@@ -29,6 +30,20 @@ class SimilarEatsApp extends StatelessWidget {
           labelStyle: TextStyle(fontWeight: FontWeight.w600),
         ),
       ),
+      // Overlay OfflineBanner on top of every screen
+      builder: (context, child) {
+        return Stack(
+          children: [
+            if (child != null) child,
+            const Positioned(
+              top: 0,
+              left: 0,
+              right: 0,
+              child: OfflineBanner(),
+            ),
+          ],
+        );
+      },
       initialRoute: '/',
       routes: {
         '/': (_) => const HomeScreen(),
@@ -37,3 +52,4 @@ class SimilarEatsApp extends StatelessWidget {
     );
   }
 }
+

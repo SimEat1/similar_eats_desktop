@@ -1,20 +1,17 @@
+// test/try_list_smoke_test.dart
 import 'dart:async';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 
 import 'package:similar_eats_desktop/firebase_options.dart';
-import 'package:similar_eats_desktop/features/try_list/try_list_repo.dart'
-    as tr;
+import 'package:similar_eats_desktop/features/try_list/try_list_repo.dart' as tr;
 
 void main() {
-  // Widget binding (ensures platform channels are ready)
   TestWidgetsFlutterBinding.ensureInitialized();
 
   setUpAll(() async {
-    // Initialize Firebase once
+    // Init Core
     try {
       Firebase.app();
     } catch (_) {
@@ -23,12 +20,7 @@ void main() {
       );
     }
 
-    // Sign in anonymously for RTDB rules
-    if (FirebaseAuth.instance.currentUser == null) {
-      await FirebaseAuth.instance.signInAnonymously();
-    }
-
-    // Ensure DB instance has explicit URL
+    // Ensure DB instance uses an explicit URL (helps on desktop/tests)
     FirebaseDatabase.instanceFor(
       app: Firebase.app(),
       databaseURL: DefaultFirebaseOptions.currentPlatform.databaseURL ??
@@ -36,9 +28,9 @@ void main() {
     );
   });
 
-  // ✅ Make it a widget test
   testWidgets('TryList add -> list -> delete', (tester) async {
-    final uid = FirebaseAuth.instance.currentUser!.uid;
+    // Use a synthetic uid for tests so we don’t need firebase_auth
+    final uid = 'test-smoke-${DateTime.now().millisecondsSinceEpoch}';
     final repo = tr.TryListRepo();
 
     // 1) add

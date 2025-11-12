@@ -12,17 +12,19 @@ dependencies:
   flutter_svg: ^2.0.10+1
   google_fonts: ^6.1.0
   collection: ^1.18.0
+  intl: any
+  meta: any
 
-  # Firebase
-  firebase_core: ^4.1.0
-  firebase_database: ^12.0.1
-  firebase_remote_config: ^6.0.1
-  firebase_auth: ^6.0.2
-  cloud_firestore: ^6.0.1
-  firebase_storage: ^13.0.2
+  # Firebase core packages (desktop-safe)
+  firebase_core: ^4.2.1
+  firebase_auth: ^6.1.2
+  firebase_database: ^12.0.4
+  firebase_remote_config: ^6.1.1
+  cloud_firestore: ^6.1.0
+  firebase_storage: ^13.0.4
 
   # Maps / geo / utils
-  flutter_map: ^8.2.1
+  flutter_map: ^8.2.2
   latlong2: ^0.9.1
   geolocator: ^14.0.2
   geocoding: ^4.0.0
@@ -36,22 +38,23 @@ dependencies:
   image: ^4.5.4
   zxing2: ^0.2.4
 
-  # DRAG & DROP for desktop
+  # Desktop drag-and-drop
   desktop_drop: ^0.4.4
 
-  # OCR + image pick (used on mobile; harmless on desktop)
+  # OCR + image pick (safe on desktop)
   image_picker: ^1.2.0
   google_mlkit_text_recognition: ^0.13.1
   google_mlkit_commons: ^0.8.1
+  shimmer: ^3.0.0
+  connectivity_plus: ^7.0.0
 
-  intl: any
-  meta: any
 dev_dependencies:
-  firebase_core_platform_interface: ^6.0.1
-
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0
+  # for integration_test runner
+  integration_test:
+    sdk: flutter
 
 flutter:
   uses-material-design: true
@@ -60,4 +63,6 @@ flutter:
     - assets/food2.jpg
     - assets/food3.jpg
     - assets/food4.jpg
+
+
 

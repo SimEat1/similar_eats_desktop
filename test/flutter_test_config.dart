@@ -1,48 +1,27 @@
-// ...imports and binding setup above...
+// test/flutter_test_config.dart
+import 'dart:async';
+import 'package:flutter/widgets.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:similar_eats_desktop/firebase_options.dart';
 
-// initializeCore → return [ { 'apps': [ <app map>, ... ] } ]
-TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-    .setMockDecodedMessageHandler<dynamic>(chInitializeCore, (message) async {
-  final Map<String, Object?> coreInitResponse = <String, Object?>{
-    'apps': <Object?>[
-      <String, Object?>{
-        'name': '[DEFAULT]',
-        'options': <String, Object?>{
-          'apiKey': 'test',
-          'appId': 'test',
-          'messagingSenderId': 'test',
-          'projectId': 'test',
-        },
-        'isAutomaticDataCollectionEnabled': false,
-        'isAutomaticResourceManagementEnabled': false,
-        'pluginConstants': <String, Object?>{},
-      },
-    ],
-  };
-  return <Object?>[coreInitResponse]; // <-- CoreInitializeResponse
-});
+// This wraps every test. Keep it tiny: just init Core and DB URL.
+Future<void> testExecutable(FutureOr<void> Function() testMain) async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-// initializeApp → still return [ <app map> ] (already correct)
-TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-    .setMockDecodedMessageHandler<dynamic>(chInitializeApp, (message) async {
-  final Map<Object?, Object?> args =
-      (message as Map<Object?, Object?>?) ?? <Object?, Object?>{};
-  final String appName =
-      (args['appName'] as String?) ?? (args['name'] as String?) ?? '[DEFAULT]';
+  // Initialize Firebase only once
+  try {
+    Firebase.app();
+  } catch (_) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+  }
 
-  final Map<String, Object?> app = <String, Object?>{
-    'name': appName,
-    'options': <String, Object?>{
-      'apiKey': 'test',
-      'appId': 'test',
-      'messagingSenderId': 'test',
-      'projectId': 'test',
-    },
-    'isAutomaticDataCollectionEnabled': false,
-    'isAutomaticResourceManagementEnabled': false,
-    'pluginConstants': <String, Object?>{},
-  };
+  // If you use the RTDB emulator locally, uncomment:
+  // import 'package:firebase_database/firebase_database.dart';
+  // FirebaseDatabase.instance.useDatabaseEmulator('localhost', 9000);
 
-  return <Object?>[app]; // <-- CoreFirebaseApp
-});
+  await testMain();
+}
+
 

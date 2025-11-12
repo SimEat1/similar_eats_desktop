@@ -1,93 +1,95 @@
-import 'dart:async';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_database/firebase_database.dart';
-
-import 'package:similar_eats_desktop/firebase_options.dart'
-    as fo; // lib/firebase_options.dart
-
-/// Simple model for a Try List entry.
+/// Simple data model we use on the UI.
 class TryItem {
   final String id;
   final String name;
-  final DateTime? createdAt;
+  /// Stored as millis since epoch for simplicity in UI.
+  final int? createdAtMillis;
 
   TryItem({
     required this.id,
     required this.name,
-    this.createdAt,
+    required this.createdAtMillis,
   });
 
-  factory TryItem.fromMap(String id, Map<dynamic, dynamic> map) {
-    final ts = map['createdAt'];
-    DateTime? dt;
-    if (ts is int) {
-      // store millisecondsSinceEpoch
-      dt = DateTime.fromMillisecondsSinceEpoch(ts);
-    }
+  factory TryItem.fromDoc(DocumentSnapshot<Map<String, dynamic>> doc) {
+    final data = doc.data() ?? const {};
+    final ts = data['createdAt'] as Timestamp?;
+    final millis = ts?.millisecondsSinceEpoch ?? data['createdAtMillis'] as int?;
     return TryItem(
-      id: id,
-      name: (map['name'] ?? '') as String,
-      createdAt: dt,
+      id: doc.id,
+      name: (data['name'] as String?)?.trim() ?? '',
+      createdAtMillis: millis,
     );
   }
 
-  Map<String, dynamic> toMap() {
-    return {
-      'name': name,
-      'createdAt': (createdAt ?? DateTime.now()).millisecondsSinceEpoch,
-    };
-  }
+  Map<String, dynamic> toJson() => {
+        'name': name,
+        // prefer server timestamp, but keep a plain millis for safety too
+        'createdAt': FieldValue.serverTimestamp(),
+        'createdAtMillis': createdAtMillis,
+      };
+}
+
+/// View object that carries both list and Firestore metadata needed by the UI.
+class TryListView {
+  final List<TryItem> items;
+  final bool isFromCache;
+  final bool hasPendingWrites;
+  final DateTime lastSnapshotAt;
+
+  const TryListView({
+    required this.items,
+    required this.isFromCache,
+    required this.hasPendingWrites,
+    required this.lastSnapshotAt,
+  });
 }
 
 class TryListRepo {
-  TryListRepo({FirebaseDatabase? db}) : _db = db ?? _dbForOptions();
+  CollectionReference<Map<String, dynamic>> _userCol() =>
+      FirebaseFirestore.instance.collection('users');
 
-  final FirebaseDatabase _db;
+  CollectionReference<Map<String, dynamic>> _listCol(String uid) =>
+      _userCol().doc(uid).collection('tryList');
 
-  static FirebaseDatabase _dbForOptions() {
-    // Ensure we target your project’s RTDB URL explicitly.
-    final url = fo.DefaultFirebaseOptions.currentPlatform.databaseURL ??
-        'https://similar-eats-default-rtdb.firebaseio.com';
-    // Need to pass the Firebase app for web/desktop
-    final app = Firebase.apps.isNotEmpty
-        ? Firebase.apps.first
-        : Firebase.app(); // throws if not initialized
-    return FirebaseDatabase.instanceFor(app: app, databaseURL: url);
-  }
-
-  DatabaseReference _userRoot(String uid) => _db.ref('userTryList').child(uid);
-
-  /// Live stream of items for a user.
-  Stream<List<TryItem>> watchItems(String uid) {
-    final ref = _userRoot(uid);
-    // Order by createdAt so newest appear last (stable ordering)
-    final q = ref.orderByChild('createdAt');
-    return q.onValue.map((event) {
-      final data = event.snapshot.value;
-      if (data == null || data is! Map) return <TryItem>[];
-      final map = Map<dynamic, dynamic>.from(data);
-      final list = <TryItem>[];
-      map.forEach((key, value) {
-        if (value is Map) {
-          list.add(TryItem.fromMap(
-              key.toString(), Map<dynamic, dynamic>.from(value)));
-        }
-      });
-      // already ordered by createdAt; keep
-      return list;
+  /// Add an item.
+  Future<void> addItem({required String uid, required String name}) async {
+    await _listCol(uid).add({
+      'name': name.trim(),
+      'createdAt': FieldValue.serverTimestamp(),
+      'createdAtMillis': DateTime.now().millisecondsSinceEpoch,
     });
   }
 
-  /// Add a new item.
-  Future<void> addItem({required String uid, required String name}) async {
-    final ref = _userRoot(uid).push();
-    await ref.set(
-        TryItem(id: ref.key!, name: name, createdAt: DateTime.now()).toMap());
+  /// Delete an item by document id.
+  Future<void> deleteItem({required String uid, required String id}) async {
+    await _listCol(uid).doc(id).delete();
   }
 
-  /// Delete an item by its generated id.
-  Future<void> deleteItem({required String uid, required String id}) async {
-    await _userRoot(uid).child(id).remove();
+  /// Old “simple list” stream (kept for reference/compat).
+  Stream<List<TryItem>> watchItems(String uid) {
+    return _listCol(uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snap) => snap.docs.map(TryItem.fromDoc).toList());
+  }
+
+  /// New stream with **metadata** for SyncBadge.
+  Stream<TryListView> watchItemsWithMeta(String uid) {
+    return _listCol(uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map((snap) {
+      final items = snap.docs.map(TryItem.fromDoc).toList();
+      final meta = snap.metadata;
+      return TryListView(
+        items: items,
+        isFromCache: meta.isFromCache,
+        hasPendingWrites: meta.hasPendingWrites,
+        lastSnapshotAt: DateTime.now(),
+      );
+    });
   }
 }

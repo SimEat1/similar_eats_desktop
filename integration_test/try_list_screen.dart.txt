@@ -1,0 +1,74 @@
+// integration_test/try_list_add_delete_test.dart
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import 'package:integration_test/integration_test.dart';
+
+// Start the real app.
+import 'package:similar_eats_desktop/main.dart' as app;
+
+void main() {
+  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+
+  testWidgets('Try List: add -> appears -> delete -> disappears',
+      (WidgetTester tester) async {
+    // 1) Launch app
+    app.main();
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    // 2) Open "Try list" from Home
+    final tryListTile = find.text('Try list');
+    expect(tryListTile, findsOneWidget);
+    await tester.tap(tryListTile);
+    await tester.pumpAndSettle(const Duration(seconds: 3));
+
+    // 3) Add a unique item
+    final name = 'Smoke ${DateTime.now().millisecondsSinceEpoch}';
+
+    // Tap the FAB ("Add")
+    final addFab = find.byType(FloatingActionButton);
+    expect(addFab, findsOneWidget);
+    await tester.tap(addFab);
+    await tester.pumpAndSettle();
+
+    // Enter name in dialog, press "Add"
+    final field = find.byType(TextField);
+    expect(field, findsOneWidget);
+    await tester.enterText(field, name);
+    await tester.pump();
+
+    final addBtn = find.widgetWithText(FilledButton, 'Add');
+    expect(addBtn, findsOneWidget);
+    await tester.tap(addBtn);
+    await tester.pumpAndSettle(const Duration(seconds: 4));
+
+    // 4) Verify it appears
+    expect(find.text(name), findsOneWidget);
+
+    // 5) Delete it (tap the trailing trash icon in its tile)
+    // Find the ListTile that contains our text, then its delete button
+    final tile = find.ancestor(
+      of: find.text(name),
+      matching: find.byType(ListTile),
+    );
+    expect(tile, findsOneWidget);
+
+    final deleteBtn = find.descendant(
+      of: tile,
+      matching: find.byIcon(Icons.delete_outline),
+    );
+    expect(deleteBtn, findsOneWidget);
+
+    await tester.tap(deleteBtn);
+    await tester.pump(); // show snackbar
+    // Let stream update; give Firestore/stream a moment
+    await tester.pumpAndSettle(const Duration(seconds: 5));
+
+    // 6) Verify it disappears
+    expect(find.text(name), findsNothing);
+  });
+}
+
+
+
+
+

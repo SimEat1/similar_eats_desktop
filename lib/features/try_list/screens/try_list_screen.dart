@@ -1,13 +1,15 @@
-// ignore_for_file: avoid_print
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:similar_eats_desktop/firebase_options.dart';
-import 'package:similar_eats_desktop/core/auth/anon_auth.dart';
-import 'package:similar_eats_desktop/features/try_list/try_list_repo.dart'; // provides TryListRepo + TryItem
+// Use the repo that exists in your tree:
+import 'package:similar_eats_desktop/features/try_list/try_list_repo.dart' as tr;
+
+// Local widgets
+import 'package:similar_eats_desktop/widgets/shimmer_list.dart';
+import 'package:similar_eats_desktop/widgets/sync_badge.dart';
 
 class TryListScreen extends StatefulWidget {
+  static const route = '/try-list';
   const TryListScreen({super.key});
 
   @override
@@ -15,58 +17,12 @@ class TryListScreen extends StatefulWidget {
 }
 
 class _TryListScreenState extends State<TryListScreen> {
-  final _repo = TryListRepo();
+  // ✅ Use the available constructor
+  final _repo = tr.TryListRepo();
 
-  String? _uid;
-  Stream<List<TryItem>>? _stream;
-
-  @override
-  void initState() {
-    super.initState();
-    _init();
-  }
-
-  Future<void> _init() async {
-    print(">>> [TryList] Starting init...");
-
-    // Ensure Firebase app exists
-    try {
-      Firebase.app();
-      print(">>> [TryList] Firebase already initialized.");
-    } catch (_) {
-      print(">>> [TryList] Initializing Firebase...");
-      await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform,
-      );
-    }
-
-    // Ensure anonymous sign-in
-    try {
-      await AnonAuth.instance.ensureSignedIn();
-    } catch (e) {
-      print(">>> [TryList] ensureSignedIn threw: $e");
-    }
-
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      print(">>> [TryList] ERROR: No Firebase user after ensureSignedIn!");
-      return;
-    }
-
-    _uid = user.uid;
-    print(">>> [TryList] Signed in as UID: $_uid");
-
-    // Start watching list
-    _stream = _repo.watchItems(_uid!);
-    print(">>> [TryList] Stream attached.");
-
-    if (mounted) setState(() {});
-  }
-
-  Future<void> _addItemDialog() async {
-    if (_uid == null) return;
+  Future<void> _addItemDialog(String uid) async {
     final controller = TextEditingController();
-    final name = await showDialog<String>(
+    final ok = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
         title: const Text('Add to Try List'),
@@ -74,109 +30,180 @@ class _TryListScreenState extends State<TryListScreen> {
           controller: controller,
           autofocus: true,
           decoration: const InputDecoration(
-            hintText: 'Place or dish name',
+            hintText: 'e.g. “Bistro Leon — duck confit”',
           ),
-          onSubmitted: (v) => Navigator.of(ctx).pop(v.trim()),
+          onSubmitted: (_) => Navigator.of(ctx).pop(true),
         ),
         actions: [
           TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
+            onPressed: () => Navigator.of(ctx).pop(false),
             child: const Text('Cancel'),
           ),
           FilledButton(
-            onPressed: () => Navigator.of(ctx).pop(controller.text.trim()),
+            onPressed: () => Navigator.of(ctx).pop(true),
             child: const Text('Add'),
           ),
         ],
       ),
     );
 
-    if (name == null || name.isEmpty) return;
-
-    try {
-      await _repo.addItem(uid: _uid!, name: name);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to add: $e')),
-      );
-    }
-  }
-
-  Future<void> _deleteItem(TryItem it) async {
-    if (_uid == null) return;
-    try {
-      await _repo.deleteItem(uid: _uid!, id: it.id);
-    } catch (e) {
-      if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Failed to delete: $e')),
-      );
+    if (ok == true) {
+      final name = controller.text.trim();
+      if (name.isNotEmpty) {
+        await _repo.addItem(uid: uid, name: name);
+      }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final uid = FirebaseAuth.instance.currentUser?.uid;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Try List'),
-        actions: [
-          if (_uid != null)
-            Padding(
-              padding: const EdgeInsets.only(right: 12),
-              child: Center(
-                child: Text(
-                  _uid!.substring(0, 6), // just a short indicator
-                  style: Theme.of(context).textTheme.labelMedium,
-                ),
+        actions: const [
+          Padding(
+            padding: EdgeInsets.only(right: 12),
+            child: Center(
+              child: SyncBadge(
+                isFromCache: false,
+                hasPendingWrites: false,
               ),
             ),
+          ),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: _addItemDialog,
-        icon: const Icon(Icons.add),
-        label: const Text('Add'),
-      ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 8),
-        child: _stream == null
-            ? const Center(child: CircularProgressIndicator())
-            : StreamBuilder<List<TryItem>>(
-                stream: _stream,
-                builder: (ctx, snap) {
-                  if (snap.connectionState == ConnectionState.waiting) {
-                    return const Center(child: CircularProgressIndicator());
-                  }
-                  if (snap.hasError) {
-                    return Center(
-                      child: Text('Error: ${snap.error}'),
-                    );
-                  }
-                  final items = snap.data ?? const <TryItem>[];
-                  if (items.isEmpty) {
-                    return const Center(
-                      child: Text('Nothing yet — add something to try!'),
-                    );
-                  }
-                  return ListView.separated(
-                    itemCount: items.length,
-                    separatorBuilder: (_, __) => const Divider(height: 1),
-                    itemBuilder: (ctx, i) {
-                      final it = items[i];
-                      return ListTile(
-                        leading: const Icon(Icons.push_pin_outlined),
-                        title: Text(it.name),
-                        trailing: IconButton(
-                          icon: const Icon(Icons.delete_outline),
-                          onPressed: () => _deleteItem(it),
-                        ),
-                      );
-                    },
+      floatingActionButton: uid == null
+          ? null
+          : FloatingActionButton.extended(
+              onPressed: () => _addItemDialog(uid),
+              icon: const Icon(Icons.add),
+              label: const Text('Add'),
+            ),
+      body: uid == null
+          ? const _AuthHint()
+          : StreamBuilder<List<tr.TryItem>>(
+              stream: _repo.watchItems(uid),
+              builder: (context, snap) {
+                if (snap.connectionState == ConnectionState.waiting) {
+                  return const ShimmerList(count: 6);
+                }
+                if (snap.hasError) {
+                  return _ErrorState(
+                    error: snap.error,
+                    onRetry: () => setState(() {}),
                   );
-                },
-              ),
+                }
+
+                final items = snap.data ?? const <tr.TryItem>[];
+                if (items.isEmpty) {
+                  return const _EmptyState();
+                }
+
+                return ListView.separated(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                  itemCount: items.length,
+                  separatorBuilder: (_, __) => const SizedBox(height: 6),
+                  itemBuilder: (_, i) {
+                    final it = items[i];
+                    return Card(
+                      child: ListTile(
+                        title: Text(
+                          it.name,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        // 👇 No subtitle: avoids touching a non-existent createdAt
+                        trailing: IconButton(
+                          tooltip: 'Remove',
+                          icon: const Icon(Icons.delete_outline),
+                          onPressed: () async {
+                            await _repo.deleteItem(uid: uid!, id: it.id);
+                          },
+                        ),
+                      ),
+                    );
+                  },
+                );
+              },
+            ),
+    );
+  }
+}
+
+class _AuthHint extends StatelessWidget {
+  const _AuthHint();
+
+  @override
+  Widget build(BuildContext context) {
+    return const Center(
+      child: Padding(
+        padding: EdgeInsets.all(24.0),
+        child: Text(
+          'Sign-in is required to use the Try List.\n'
+          '(Anonymous is fine — hit the Sign In button on the home screen.)',
+          textAlign: TextAlign.center,
+        ),
       ),
     );
   }
 }
+
+class _EmptyState extends StatelessWidget {
+  const _EmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        const Icon(Icons.playlist_add_outlined, size: 56),
+        const SizedBox(height: 12),
+        const Text(
+          'Your Try List is empty',
+          style: TextStyle(fontWeight: FontWeight.w700),
+        ),
+        const SizedBox(height: 8),
+        Text(
+          'Tap “Add” to stash a place you want to try.',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+      ]),
+    );
+  }
+}
+
+class _ErrorState extends StatelessWidget {
+  const _ErrorState({required this.error, required this.onRetry});
+  final Object? error;
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(mainAxisSize: MainAxisSize.min, children: [
+        const Icon(Icons.error_outline, size: 40),
+        const SizedBox(height: 8),
+        Text(
+          'Oops — could not load your Try List.',
+          style: Theme.of(context).textTheme.titleMedium,
+        ),
+        const SizedBox(height: 6),
+        Text(
+          '$error',
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 12),
+        FilledButton.icon(
+          onPressed: onRetry,
+          icon: const Icon(Icons.refresh),
+          label: const Text('Retry'),
+        )
+      ]),
+    );
+  }
+}
+
+
+
+
